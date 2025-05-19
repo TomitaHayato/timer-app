@@ -1,0 +1,12 @@
+services:
+  front:
+    build: ./front
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front:/app
+      - learning_app_front_modules:/app/node_modules
+    command: sh -c "npm install && npm run dev -- --host"
+
+volumes:
+  learning_app_front_modules:
