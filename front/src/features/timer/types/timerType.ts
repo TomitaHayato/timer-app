@@ -1,10 +1,10 @@
-export type timerState = {
+export type TimerState = {
   workSec:  number,
   restSec:  number,
   longRest: number,
 }
 
-export type timerStatePayload = {
+export type TimerStatePayload = {
   workSec?:  number,
   restSec?:  number,
   longRest?: number,

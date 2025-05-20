@@ -1,11 +1,11 @@
 import { secToHMS } from "../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useState } from "react";
-import { useSelector } from 'react-redux';
 import { selectTimer } from "../timerSlice";
+import { useAppSelector } from "../../../reduxStore/hooks";
 
 export default function Timer() {
-  const { workSec } = useSelector(selectTimer);
+  const { workSec } = useAppSelector(selectTimer);
 
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true)
 
