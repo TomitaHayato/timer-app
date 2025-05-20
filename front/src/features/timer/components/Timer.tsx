@@ -1,15 +1,16 @@
 import { secToHMS } from "../utils/secFormat";
-import { useCustomTimer } from "../hooks/countDown";
 import { useTimer } from 'react-timer-hook';
 import { useState } from "react";
+import { useSelector } from 'react-redux';
+import { selectTimer } from "../timerSlice";
 
 export default function Timer() {
-  const { sec } = useCustomTimer();
+  const { workSec } = useSelector(selectTimer);
 
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true)
 
   const expiryTimestamp = new Date();
-  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + sec);
+  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + workSec);
   // react-timer-hookから Timer情報を取得
   const {
     totalSeconds,
@@ -22,7 +23,7 @@ export default function Timer() {
 
   function hundleReset() {
     const time = new Date();
-    time.setSeconds(time.getSeconds() + sec);
+    time.setSeconds(time.getSeconds() + workSec);
     restart(time);
     pause();
   }
