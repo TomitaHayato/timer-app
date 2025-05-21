@@ -83,13 +83,6 @@ export default function Timer() {
             </div>
           </div>
         </div>
-
-        <div className="indicator">
-          <span className="indicator-item status status-success animate-pulse"></span>
-          <Drawer btnText={'記録を見る'}>
-            <Records />
-          </Drawer>
-        </div>
       </div>
     </>
   )
