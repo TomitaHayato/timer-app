@@ -53,7 +53,7 @@ export default function Timer() {
 
   return(
     <>
-      <div>
+      <div className="my-8">
         <div>
           <div className="flex justify-center mb-5">
             <p className="text-2xl">現在: {count} ポモドーロ完了</p>
