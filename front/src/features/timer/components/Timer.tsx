@@ -1,16 +1,18 @@
 import { secToHMS } from "../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
-import { useState } from "react";
-import { selectTimer } from "../timerSlice";
-import { useAppSelector } from "../../../reduxStore/hooks";
+import { useEffect, useState } from "react";
+import { modeChange, selectCurrentSec, selectTimer } from "../timerSlice";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { createExpiryTimestamp } from "../utils/expiryTimestamp";
 
 export default function Timer() {
-  const { workSec } = useAppSelector(selectTimer);
+  const sec = useAppSelector(selectCurrentSec);
+  const { count } = useAppSelector(selectTimer);
+  const dispatch = useAppDispatch()
 
+  // 初めてタイマーをスタートしたかどうか
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true)
-
-  const expiryTimestamp = new Date();
-  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + workSec);
+  
   // react-timer-hookから Timer情報を取得
   const {
     totalSeconds,
@@ -19,12 +21,24 @@ export default function Timer() {
     pause,
     resume,
     restart,
-  } = useTimer({ expiryTimestamp, autoStart: false});
+  } = useTimer({
+    expiryTimestamp: createExpiryTimestamp(sec),
+    autoStart: false,
+    onExpire: () => {
+      dispatch(modeChange());
+    },
+  });
+
+  // 秒数更新後、タイマーをリスタート
+  useEffect(() => {
+    if (isFirstStart) return;
+    restart(createExpiryTimestamp(sec))
+  }, [isFirstStart, restart, sec])
 
   function hundleReset() {
-    const time = new Date();
-    time.setSeconds(time.getSeconds() + workSec);
-    restart(time);
+    // const confirm = window.confirm('タイマーの記録がリセットされます。よろしいですか？');
+    // if (!confirm) return;
+    restart(createExpiryTimestamp(sec));
     pause();
   }
 
@@ -41,6 +55,9 @@ export default function Timer() {
     <>
       <div>
         <div>
+          <div className="flex justify-center mb-5">
+            <p className="text-2xl">現在: {count} ポモドーロ完了</p>
+          </div>
           {/* 円状のコンテナ */}
           <div className="border-2 border-emerald-500 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex items-center justify-center mb-8">
             <p className="text-6xl">
@@ -62,8 +79,6 @@ export default function Timer() {
           </div>
         </div>
       </div>
-
-      {/* Todo一覧 */}
     </>
   )
 }
