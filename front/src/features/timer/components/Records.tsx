@@ -1,0 +1,24 @@
+import { useAppSelector } from "../../../reduxStore/hooks";
+import { selectTimer } from "../timerSlice";
+
+export default function Records() {
+  const { count } = useAppSelector(selectTimer);
+
+  return (
+    <>
+      <div className="h-8/12 bg-gray-600 w-80 p-4 z-20">
+        <h3 className="text-lg font-semibold text-center mb-4">今日の記録</h3>
+        <div className="text-center mb-12">
+          <p className="">完了済ポモドーロ: {count}</p>
+          <p className="">合計集中時間：{'125分'}</p>
+        </div>
+
+        <h3 className="text-lg font-semibold text-center mb-4">完了したTodo</h3>
+        <div className="text-center mb-12">
+          <p className="">完了済ポモドーロ: {count}</p>
+          <p className="">合計集中時間：{'125分'}</p>
+        </div>
+      </div>
+    </>
+  )
+}

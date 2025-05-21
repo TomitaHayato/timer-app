@@ -1,13 +1,14 @@
 import { secToHMS } from "../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useEffect, useState } from "react";
-import { modeChange, selectCurrentSec, selectTimer } from "../timerSlice";
+import { modeChange, selectCurrentSec } from "../timerSlice";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { createExpiryTimestamp } from "../utils/expiryTimestamp";
+import Records from "./Records";
+import Drawer from "../../../components/Drawer";
 
 export default function Timer() {
   const sec = useAppSelector(selectCurrentSec);
-  const { count } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch()
 
   // 初めてタイマーをスタートしたかどうか
@@ -53,11 +54,8 @@ export default function Timer() {
 
   return(
     <>
-      <div className="my-8">
+      <div className="py-8">
         <div>
-          <div className="flex justify-center mb-5">
-            <p className="text-2xl">現在: {count} ポモドーロ完了</p>
-          </div>
           {/* 円状のコンテナ */}
           <div className="border-2 border-emerald-500 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex items-center justify-center mb-8">
             <p className="text-6xl">
@@ -77,6 +75,12 @@ export default function Timer() {
               <button className="btn btn-success btn-lg">ここまでの作業時間を記録</button>
             </div>
           </div>
+        </div>
+
+        <div>
+          <Drawer btnText={'記録を見る'}>
+            <Records />
+          </Drawer>
         </div>
       </div>
     </>
