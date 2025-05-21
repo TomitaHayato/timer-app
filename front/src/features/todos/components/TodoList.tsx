@@ -1,16 +1,15 @@
+import type { Todo, Todos } from "../types/todoType";
 import TodoItem from "./TodoItem"
 
-const todos = [
-  {title: 'Todo1'},
-  {title: 'Todo2'},
-  {title: 'Todo3'},
-]
+type Props = {
+  todos: Todos,
+}
 
-export default function TodoList() {
+export default function TodoList({ todos }: Props) {
   return(
     <>
-      <ul className="list rounded-box shadow-md w-full bg-gray-700">
-        { todos.map((todo, index: number) => <TodoItem title={todo.title} index={index + 1} />) }
+      <ul className="list rounded-box shadow-md w-full bg-base-200">
+        { todos.map((todo: Todo, index: number) => <TodoItem key={todo.id} todo={todo} index={index + 1} />) }
       </ul>
     </>
   )

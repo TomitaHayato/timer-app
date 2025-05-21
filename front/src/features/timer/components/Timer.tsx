@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { modeChange, selectCurrentSec } from "../timerSlice";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { createExpiryTimestamp } from "../utils/expiryTimestamp";
-import Records from "./Records";
-import Drawer from "../../../components/Drawer";
 
 export default function Timer() {
   const sec = useAppSelector(selectCurrentSec);
