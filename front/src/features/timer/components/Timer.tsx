@@ -56,8 +56,15 @@ export default function Timer() {
     <>
       <div className="py-8">
         <div>
+          {/* Todoを表示 */}
+          <div className="join flex gap-4 justify-center items-center mb-8">
+            <p>・</p>
+            <h3 className="text-3xl text-center">Typescript演習</h3>
+            <button className="btn btn-sm btn-success rounded-full">✔︎</button>
+          </div>
+          
           {/* 円状のコンテナ */}
-          <div className="border-2 border-emerald-500 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex items-center justify-center mb-8">
+          <div className="border-2 border-indigo-600 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex items-center justify-center mb-8">
             <p className="text-6xl">
               {secToHMS(totalSeconds)}
             </p>
@@ -77,7 +84,8 @@ export default function Timer() {
           </div>
         </div>
 
-        <div>
+        <div className="indicator">
+          <span className="indicator-item status status-success animate-pulse"></span>
           <Drawer btnText={'記録を見る'}>
             <Records />
           </Drawer>

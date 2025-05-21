@@ -1,4 +1,11 @@
-export default function Drawer({ children, btnText }) {
+import React from "react";
+
+type Props = {
+  children: React.ReactNode,
+  btnText: string,
+}
+
+export default function Drawer({ children, btnText,}: Props) {
 
   return (
     <>
