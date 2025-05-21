@@ -1,26 +1,38 @@
+import { useState } from "react";
 import { useAppSelector } from "../../../reduxStore/hooks";
+import { bgSide } from "../../../utils/class";
 import { selectTodosUncompleted } from "../todoSlice";
 import TodoCreateForm from "./TodoCreateForm";
 import TodoList from "./TodoList";
 
 export default function TodosIndexSide() {
-  const todos = useAppSelector(selectTodosUncompleted)
+  const todos = useAppSelector(selectTodosUncompleted);
+
+  const [todosSide, setTodosSide] = useState<boolean>(false);
+  
+    function hundleTodoSide() {
+      setTodosSide(prev => !prev);
+    }
 
   return(
     <>
-      <div className="bg-indigo-400 py-4 px-2 z-20 absolute right-0 min-h-10/12 w-80">
-        <div className="mb-8">
-          <h3 className="text-center text-2xl">Todoリスト</h3>
-        </div>
+      <button className={`btn bg-blue-300 rounded-full fixed right-2 z-30 text-black`} onClick={hundleTodoSide}>
+        Todo一覧
+      </button>
 
-        <div className="mb-4 flex justify-center">
-          <TodoCreateForm />
-        </div>
+      {
+        todosSide &&
+        <div className={`py-12 px-2 z-20 fixed right-0 top-16 min-h-11/12 w-80 ${bgSide()}`}>
+          <div className="mb-4 flex justify-center">
+            <TodoCreateForm />
+          </div>
 
-        <div>
-          <TodoList todos={todos}/>
+          <div>
+            <TodoList todos={todos}/>
+          </div>
         </div>
-      </div>
+      }
+      
     </>
   )
 }

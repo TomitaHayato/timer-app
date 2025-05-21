@@ -6,7 +6,6 @@ import TodosIndexSide from "../features/todos/components/TodosIndexSide";
 export default function TimerPage() {
   return(
     <>
-
       <TodosIndexSide />
 
       <div>
@@ -15,7 +14,7 @@ export default function TimerPage() {
 
       <div className="indicator z-10 fixed bottom-1/12 left-4">
         <span className="indicator-item status status-success animate-pulse"></span>
-        <Drawer btnText={'記録を見る'}>
+        <Drawer btnText={'今日の記録'}>
           <Records />
         </Drawer>
       </div>

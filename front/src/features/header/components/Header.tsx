@@ -3,7 +3,7 @@ import MobileDropDown from "./MobileDropDown";
 export default function Header() {
   return(
     <>
-      <div className="navbar bg-ghost shadow-none">
+      <div className="navbar bg-ghost shadow-none h-16">
         <div className="navbar-start">
           <MobileDropDown />
           <a className="btn btn-ghost text-xl">Timer</a>
@@ -26,7 +26,7 @@ export default function Header() {
         </div>
 
         <div className="navbar-end">
-          <a className="btn btn-outline">Todo一覧</a>
+          <a className="btn btn-ghost">≡</a>
         </div>
       </div>
     </>
