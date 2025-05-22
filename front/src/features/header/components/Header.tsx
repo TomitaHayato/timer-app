@@ -1,6 +1,13 @@
+import { Modal } from "../../../components/Modal";
+import { LoginForm } from "../../session/components/LoginForm";
+import { SignupForm } from "../../session/components/SignupForm";
 import MobileDropDown from "./MobileDropDown";
 
 export default function Header() {
+  function openModal(id: string) {
+    document?.getElementById(id)?.showModal()
+  }
+
   return(
     <>
       <div className="navbar bg-ghost shadow-none h-16">
@@ -26,7 +33,16 @@ export default function Header() {
         </div>
 
         <div className="navbar-end">
-          <button className="btn btn-sm btn-outline">Login</button>
+          <button className="btn btn-sm btn-outline" onClick={() => openModal('login-form')}>
+            Login / Signup
+          </button>
+
+          <Modal modalId={'login-form'}>
+            <div className="flex flex-col gap-8">
+              <LoginForm />
+              <SignupForm />
+            </div>
+          </Modal>
         </div>
       </div>
     </>
