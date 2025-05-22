@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppSelector } from "../../../reduxStore/hooks";
-import { bgSide } from "../../../utils/class";
+import { bgSide, rightDrawer } from "../../../utils/class";
 import { selectTodosUncompleted } from "../todoSlice";
 import TodoCreateForm from "./TodoCreateForm";
 import TodoList from "./TodoList";
@@ -20,19 +20,15 @@ export default function TodosIndexSide() {
         Todo一覧
       </button>
 
-      {
-        todosSide &&
-        <div className={`py-12 px-2 z-20 fixed right-0 top-16 min-h-11/12 w-80 ${bgSide()}`}>
-          <div className="mb-4 flex justify-center">
-            <TodoCreateForm />
-          </div>
-
-          <div>
-            <TodoList todos={todos}/>
-          </div>
+      <div className={`py-12 px-2 z-20 fixed right-0 top-16 min-h-11/12 w-80 bg-gray-600 transition duration-150 ${rightDrawer(todosSide)}`}>
+        <div className="mb-4 flex justify-center">
+          <TodoCreateForm />
         </div>
-      }
-      
+
+        <div>
+          <TodoList todos={todos}/>
+        </div>
+      </div>
     </>
   )
 }

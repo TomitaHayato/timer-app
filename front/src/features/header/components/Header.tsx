@@ -26,7 +26,7 @@ export default function Header() {
         </div>
 
         <div className="navbar-end">
-          <a className="btn btn-ghost">≡</a>
+          <button className="btn btn-sm btn-outline">Login</button>
         </div>
       </div>
     </>

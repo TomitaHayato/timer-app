@@ -16,6 +16,5 @@ const settingSlice = createSlice({
   },
 })
 
-
 export const selectSetting = (state: RootState): Setting => state.setting;
 export const settingReducer = settingSlice.reducer;
