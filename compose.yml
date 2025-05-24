@@ -14,6 +14,17 @@ services:
       - mysql-pass
     volumes:
       - node_db1:/var/lib/mysql
+  
+  back:
+    build: ./back
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - ./back:/app
+      - learning_app_back_modules:/app/node_modules
+    command: sh -c "npm install"
 
   front:
     build: ./front
@@ -21,6 +32,7 @@ services:
       - "5173:5173"
     depends_on:
       - db
+      - back
     volumes:
       - ./front:/app
       - learning_app_front_modules:/app/node_modules
@@ -28,6 +40,7 @@ services:
 
 volumes:
   learning_app_front_modules:
+  learning_app_back_modules:
   node_db1:
 
 secrets:
