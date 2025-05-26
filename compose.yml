@@ -24,7 +24,7 @@ services:
     volumes:
       - ./back:/app
       - learning_app_back_modules:/app/node_modules
-    command: sh -c "npm install && node index.js"
+    command: sh -c "npm install && npm run dev"
 
   front:
     build: ./front
