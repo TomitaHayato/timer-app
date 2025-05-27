@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "files": true // ts-node実行時に、プロジェクト全体から型定義ファイルを読み取る
+  },
   "compilerOptions": {
     /* Projects */
     // "incremental": true,                              /* インクリメンタルビルド用の.tsbuildinfoファイルを保存します。 */
