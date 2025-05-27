@@ -22,7 +22,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./back:/app
+      - ./back:/node_app
       - learning_app_back_modules:/app/node_modules
     command: sh -c "npm install && npm run dev"
 
