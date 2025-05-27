@@ -1,8 +1,8 @@
-import 'express'
+// import 'express'
 
 // Request型を上書き
-declare module 'express-serve-static-core' {
+declare namespace Express {
   interface Request {
-    isAuthenticated?: boolean,
+    isAuthenticated: boolean | undefined
   }
 }
