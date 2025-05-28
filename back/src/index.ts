@@ -1,11 +1,15 @@
 import express, { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv';
 import routers from './routes/index'
+import { initMysql } from './config/database/mysql';
 
 dotenv.config();
 
 const port = process.env.PORT;
 const app = express();
+
+// DB接続
+initMysql();
 
 app.use('/api', routers);
 
