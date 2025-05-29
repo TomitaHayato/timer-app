@@ -23,34 +23,36 @@ model User {
   email     String    @unique
   name      String
   todos     Todo[]
+  settings  Setting[]
+  records   Record[]
 }
 
 model Todo {
   id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  title       String    @db.VarChar(255)
+  title       String
   isCompleted Boolean   @default(false)
-  deadline    Date  
+  deadline    DateTime?
   user        User      @relation(fields: [userId], references: [id])
   userId      String
 }
 
 model Setting {
-  id        String    @id @default(@uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  volume    Int       @default(50)
-  isMuted   Boolean   @default(false)
-  workSec   Int       @default(1500)
-  restSec   Int       @default(300)
-  longRest  Int       @default(900)
-  user      User      @relation(fields: [userId], references: [id])
-  userId    String
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  volume      Int       @default(50)
+  isMuted     Boolean   @default(false)
+  workSec     Int       @default(1500)
+  restSec     Int       @default(300)
+  longRestSec Int       @default(900)
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @unique
 }
 
 model Record {
-  id  String  @id       @default(@uuid())
+  id  String  @id       @default(uuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   workTime    Int       @default(0)
