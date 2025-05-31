@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import FormErrorText from "./FormErrorText"
+import { client } from "../../../utils/axios"
 
 type formParams = {
   name: string,
@@ -11,8 +12,10 @@ type formParams = {
 export function SignupForm() {
   const { register, handleSubmit, formState: { errors }, } = useForm()
 
-  const onSubmit = (data: formParams) => {
-    console.log(data)
+  const onSubmit = async (data: formParams) => {
+    console.log(data);
+    const res = await client.post('/auth', data);
+    console.log(res);
   }
 
   return(
