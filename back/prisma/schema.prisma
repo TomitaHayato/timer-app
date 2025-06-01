@@ -22,6 +22,7 @@ model User {
   updatedAt DateTime  @updatedAt
   email     String    @unique
   name      String
+  hashedPassword String
   todos     Todo[]
   settings  Setting[]
   records   Record[]

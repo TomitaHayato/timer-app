@@ -15,13 +15,26 @@ export const getUserById = async(userId: string) => {
       id: userId,
     }
   })
-  console.log(user);
+  console.log('user取得', user);
+  return user;
+}
+
+export const getUserByEmail = async(email: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    }
+  })
+  console.log('user取得', user);
   return user;
 }
 
 export const createUser = async(params: UserPostParams) => {
   // 作成処理
   await prisma.user.create({ data: params });
+  // 作成したレコードを返す
+  const newRecords = await prisma.user.findUnique({ where: params });
+  return newRecords;
 }
 
 export const updateUser = async(userUpdateParams: UserUpdateParams, userId: string) => {
