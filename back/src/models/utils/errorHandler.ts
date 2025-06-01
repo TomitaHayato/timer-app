@@ -3,12 +3,15 @@ import { PrismaClient } from "../../../generated/prisma";
 const prisma = new PrismaClient();
 
 // DBクエリ処理をエラーハンドラーでラップする
-export const dbQueryHandler = async <T>(queryFn: () => Promise<T>) => {
+export const dbQueryHandler = async < T, ArgsObject extends object | string | undefined = undefined >(
+  queryFn: (args: ArgsObject) => Promise<T>,
+  args: ArgsObject
+): Promise<T> => {
   try {
-    return await queryFn();
+    return await queryFn(args);
   } catch(err) {
-    console.error(err)
-    process.exit(1)
+    // console.error(err)
+    throw err;
   } finally {
     await prisma.$disconnect()
   }
