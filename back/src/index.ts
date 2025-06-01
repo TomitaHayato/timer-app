@@ -10,6 +10,9 @@ dotenv.config();
 const port = process.env.PORT;
 const app = express();
 
+// JSONボディをパースできるようにする
+app.use(express.json());
+
 // CORS対策
 app.use(cors(corsOption));
 
