@@ -21,6 +21,7 @@
     "prisma": "^6.8.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
     "@types/mysql": "^2.15.27",
