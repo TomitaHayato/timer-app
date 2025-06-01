@@ -9,6 +9,7 @@ export type Users = User[]
 export type UserPostParams = {
   name: string,
   email: string,
+  hashedPassword: string,
 }
 
 export type UserUpdateParams = {
