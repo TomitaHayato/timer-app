@@ -16,3 +16,7 @@ export type signinParams = {
   email: string,
   password: string,
 }
+
+export type jwtPayload = {
+  userId: string,
+}

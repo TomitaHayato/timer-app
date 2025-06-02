@@ -3,23 +3,23 @@ import { createUser, getUserByEmail } from "../../models/users";
 import { dataHash } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/errorHandler";
 import bcrypt from 'bcrypt'
+import { setJwtInCookie } from "../../utils/jwt";
 
 export const signUp = async(req: Request, res: Response) => {
-  // クライアントからの入力値を取得
   const { name, email, password } = req.body;
+
   try {
-    // パスワードをハッシュ化したオブジェクトを作成
+    // パスワードをハッシュ化
     const hashedPassword = await dataHash(password);
-    // console.log('ハッシュ化したPassword：', hashedPassword);
     // DBに保存
-    const newUser = await dbQueryHandler(createUser,
-      {
-        name,
-        email,
-        hashedPassword,
-      }
-    )
+    const newUser = await dbQueryHandler(createUser, {
+      name,
+      email,
+      hashedPassword,
+    })
     console.log('作成されたUser：', newUser);
+
+    if(newUser) setJwtInCookie(res, newUser.id);
     res.json({ name: newUser?.name });
   } catch (err) {
     console.error('Signup処理のエラー：', err);
@@ -39,8 +39,8 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     }
     // hashedPasswordカラムとpasswordのハッシュを比較
     if (await bcrypt.compare(password, user.hashedPassword)) {
-      res.status(200).json('認証成功！！')
-      // TODO: 認証成功後の処理を追加 or 他のMiddleWareに遷移
+      setJwtInCookie(res, user.id);
+      res.status(200).json('認証成功');
     } else {
       res.status(401).json('ログインに失敗しました。')
     }
