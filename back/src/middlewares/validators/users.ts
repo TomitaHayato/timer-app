@@ -24,3 +24,11 @@ export const userPostValidator = [
     })
     .withMessage('パスワードとパスワード確認が一致しません'),
 ]
+
+export const signInValidator = [
+  body('email')
+    .notEmpty()
+    .isEmail(),
+  body('password')
+    .notEmpty(),
+]
