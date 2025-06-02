@@ -1,9 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 import routers from './routes/index'
-import { initMysql } from './config/database/mysql';
-import { corsOption } from './config/cors/cors';
+import { initMysql } from './config/database/mysql'
+import { corsOption } from './config/cors/cors'
+import cookieParser from 'cookie-parser'
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ const app = express();
 
 // JSONボディをパースできるようにする
 app.use(express.json());
+// Cookieデータにアクセスできるようにする
+app.use(cookieParser());
 
 // CORS対策
 app.use(cors(corsOption));

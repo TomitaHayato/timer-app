@@ -1,4 +1,5 @@
 import { Modal } from "../../../components/Modal";
+import { clientCredentials } from "../../../utils/axios";
 import { LoginForm } from "../../session/components/LoginForm";
 import { SignupForm } from "../../session/components/SignupForm";
 import MobileDropDown from "./MobileDropDown";
@@ -6,6 +7,15 @@ import MobileDropDown from "./MobileDropDown";
 export default function Header() {
   function openModal(id: string) {
     document?.getElementById(id)?.showModal()
+  }
+
+  const checkAuth = async() => {
+    try {
+      const res = await clientCredentials.get('/auth/check');
+      console.log('検証結果：', res.data);
+    } catch {
+      console.log('検証失敗')
+    }
   }
 
   return(
@@ -28,7 +38,10 @@ export default function Header() {
                 </ul>
               </details>
             </li>
-            <li><a>Item 3</a></li>
+            <li>
+              {/* 後で消す */}
+              <button className="text-center btn btn-primary" onClick={checkAuth}>認証Check</button>
+            </li>
           </ul>
         </div>
 

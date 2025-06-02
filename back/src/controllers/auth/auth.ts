@@ -3,7 +3,7 @@ import { createUser, getUserByEmail } from "../../models/users";
 import { dataHash } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/errorHandler";
 import bcrypt from 'bcrypt'
-import { setJwtInCookie } from "../../utils/jwt";
+import { setJwtInCookie, verifyJwt } from "../../utils/jwt";
 
 export const signUp = async(req: Request, res: Response) => {
   const { name, email, password } = req.body;
@@ -52,4 +52,22 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
 }
 
 export const signOut = async(req: Request, res: Response) => {
+}
+
+export const tokenCheck = async (req: Request, res: Response) => {
+  // リクエストのCookieからJWTを取得
+  const token = req.cookies?.jwt_token;
+  if (!token) {
+    console.log('認証Tokenなし')
+    res.status(403).json('認証トークンが無効です');
+    return;
+  }
+
+  try {
+    // Token検証
+    const payload = verifyJwt(token);
+    res.status(200).json(`認証済みのUserです: ${payload.userId}`)
+  } catch {
+    res.status(403).json('認証失敗');
+  }
 }

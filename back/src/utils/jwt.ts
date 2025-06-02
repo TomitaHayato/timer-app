@@ -18,3 +18,14 @@ export const setJwtInCookie = (res: Response, userId: string): void => {
     secure: process.env.NODE_ENV === 'production',
   });
 }
+
+export const verifyJwt = (token: string) => {
+  try {
+    const payload = jwt.verify(token, SECRET_KEY);
+    if (typeof payload === 'string') throw new Error
+    return payload //検証成功時は、Payloadを返す
+  } catch(err) {
+    console.error('JWT検証失敗');
+    throw err;
+  }
+}
