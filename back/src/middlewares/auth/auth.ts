@@ -1,21 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyJwt } from "../../utils/jwt";
 
+const ERROR_MESSAGE: string = '認証されていないユーザーです'
+
 // JWTトークンを検証
 export const authCheck = async (req: Request, res: Response, next: NextFunction) => {
   // リクエストのCookieからJWTを取得
   const token = req.cookies?.jwt_token;
   if (!token) {
     console.log('認証Tokenなし')
-    res.status(403).json('認証が必要です');
+    res.status(401).json(ERROR_MESSAGE);
+    return;
   }
 
   try {
     // Token検証
     const payload = verifyJwt(token);
-    req.isAuthenticated = true;
+    req.decodedJwtPayload = payload;
     next();
   } catch {
-    res.status(403).json('認証が必要です');
+    res.status(401).json(ERROR_MESSAGE);
   }
 }

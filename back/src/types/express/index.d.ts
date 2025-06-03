@@ -4,6 +4,6 @@
 declare namespace Express {
   interface Request {
     isAuthenticated: boolean | undefined,
-    authenticatedUserId?: string,
+    decodedJwtPayload?: JwtPayload,
   }
 }

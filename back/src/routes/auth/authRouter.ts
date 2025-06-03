@@ -10,6 +10,6 @@ router.get('/', getDefault);
 
 router.get('/check', tokenCheck);
 router.post('/signup', userPostValidator, handleValidationResult, signUp);
-router.post('/signin', signInValidator, handleValidationResult, signIn);
+router.post('/signin', signInValidator  , handleValidationResult, signIn);
 
 export default router

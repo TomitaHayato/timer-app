@@ -1,5 +1,5 @@
 import { Modal } from "../../../components/Modal";
-import { clientCredentials } from "../../../utils/axios";
+import OnlyDev from "../../../components/OnlyDev";
 import { LoginForm } from "../../session/components/LoginForm";
 import { SignupForm } from "../../session/components/SignupForm";
 import MobileDropDown from "./MobileDropDown";
@@ -10,15 +10,6 @@ export default function Header() {
   function openModal(id: string) {
     const dialogHtml = document.getElementById(id) as dialogOrNull;
     dialogHtml?.showModal();
-  }
-
-  const checkAuth = async() => {
-    try {
-      const res = await clientCredentials.get('/auth/check');
-      console.log('検証結果：', res.data);
-    } catch {
-      console.log('検証失敗')
-    }
   }
 
   return(
@@ -43,7 +34,7 @@ export default function Header() {
             </li>
             <li>
               {/* 後で消す */}
-              <button className="text-center btn btn-primary" onClick={checkAuth}>認証Check</button>
+              { import.meta.env.DEV && <OnlyDev /> }
             </li>
           </ul>
         </div>
