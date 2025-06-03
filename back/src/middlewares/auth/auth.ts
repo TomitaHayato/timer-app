@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyJwt } from "../../utils/jwt";
+import { devLog } from "../../utils/dev/devLog";
 
 const ERROR_MESSAGE: string = '認証されていないユーザーです'
 
@@ -8,7 +9,7 @@ export const authCheck = async (req: Request, res: Response, next: NextFunction)
   // リクエストのCookieからJWTを取得
   const token = req.cookies?.jwt_token;
   if (!token) {
-    console.log('認証Tokenなし')
+    devLog('認証Tokenなし')
     res.status(401).json(ERROR_MESSAGE);
     return;
   }

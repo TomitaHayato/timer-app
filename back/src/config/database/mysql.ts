@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise"
 import dotenv from 'dotenv';
+import { devLog } from "../../utils/dev/devLog";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ export const initMysql = async() => {
       database: process.env.MYSQL_DB,
     });
 
-    console.log('MYSQL接続完了');
+    devLog('MYSQL接続完了');
     cachedConnection = connection;
 
     return connection;

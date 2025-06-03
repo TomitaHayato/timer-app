@@ -1,12 +1,13 @@
 import { PrismaClient } from "../../generated/prisma";
 import { createTodoParams, updateTodoParams } from "../types/todo";
+import { devLog } from "../utils/dev/devLog";
 
 // ユーザーのTodoを全件取得
 export const getUserTodos = async(prisma: PrismaClient, userId: string) => {
   const todos = await prisma.todo.findMany({
     where: { userId },
   });
-  console.log('Todo一覧取得', todos);
+  devLog('Todo一覧取得', todos);
   return todos;
 }
 
@@ -20,9 +21,7 @@ export const createTodo = async(prisma: PrismaClient, queryInfo: { params: creat
       ...params,
     }
   })
-  console.log('作成されたTodo:', newTodo)
-  // 一覧を返す
-  return await getUserTodos(prisma, userId);
+  devLog('作成されたTodo:', newTodo)
 }
 
 // Todoの情報を更新
@@ -38,9 +37,7 @@ export const updateTodo = async(prisma: PrismaClient, queryInfo: { params: updat
       ...params,
     }
   });
-  console.log('更新結果：', result);
-  // 全件返却
-  return await getUserTodos(prisma, userId);
+  devLog('更新結果：', result);
 }
 
 // Todoのステータスを更新
@@ -54,9 +51,7 @@ export const updateTodoStatus = async(prisma: PrismaClient, queryInfo: { userId:
     },
     data: { isCompleted: status }
   });
-  console.log('更新結果：', result);
-  // 全件返却
-  return await getUserTodos(prisma, userId);
+  devLog('更新結果：', result);
 }
 
 // Todoを削除
@@ -69,7 +64,5 @@ export const deleteTodo = async(prisma: PrismaClient, queryInfo: { userId: strin
       userId,
     }
   });
-  // 全件返却
-  return await getUserTodos(prisma, userId);
 }
 

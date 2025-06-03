@@ -1,9 +1,10 @@
 import { PrismaClient } from "../../generated/prisma";
 import { UserPostParams, UserUpdateParams } from "../types/user";
+import { devLog } from "../utils/dev/devLog";
 
 export const getAllUser = async(prisma: PrismaClient) => {
   const allUsers = await prisma.user.findMany();
-  console.log(allUsers);
+  devLog(allUsers);
   return allUsers;
 }
 
@@ -13,7 +14,7 @@ export const getUserById = async(prisma: PrismaClient, userId: string) => {
       id: userId,
     }
   })
-  console.log('user取得', user);
+  devLog('user取得', user);
   return user;
 }
 
@@ -23,7 +24,7 @@ export const getUserByEmail = async(prisma: PrismaClient, email: string) => {
       email: email,
     }
   })
-  console.log('user取得', user);
+  devLog('user取得', user);
   return user;
 }
 
