@@ -4,9 +4,12 @@ import { LoginForm } from "../../session/components/LoginForm";
 import { SignupForm } from "../../session/components/SignupForm";
 import MobileDropDown from "./MobileDropDown";
 
+type dialogOrNull = HTMLDialogElement | null;
+
 export default function Header() {
   function openModal(id: string) {
-    document?.getElementById(id)?.showModal()
+    const dialogHtml = document.getElementById(id) as dialogOrNull;
+    dialogHtml?.showModal();
   }
 
   const checkAuth = async() => {
