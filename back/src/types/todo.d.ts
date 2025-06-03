@@ -5,3 +5,13 @@ export type Todo = {
 }
 
 export type Todos = Todo[]
+
+export type createTodoParams = {
+  title: string,
+  expired?: Date,
+}
+
+export type updateTodoParams = {
+  title?: string,
+  expired?: Date,
+}
