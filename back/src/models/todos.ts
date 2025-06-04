@@ -2,6 +2,18 @@ import { PrismaClient } from "../../generated/prisma";
 import { createTodoParams, updateTodoParams } from "../types/todo";
 import { devLog } from "../utils/dev/devLog";
 
+export const getTodoById = async(prisma: PrismaClient, queryInfo: { userId: string, todoId: string }) => {
+  const { userId, todoId } = queryInfo;
+  const todo = prisma.todo.findUnique({
+    where: {
+      id: todoId,
+      userId,
+    }
+  });
+  devLog('取得したTodo', todo);
+  return todo;
+}
+
 // ユーザーのTodoを全件取得
 export const getUserTodos = async(prisma: PrismaClient, userId: string) => {
   const todos = await prisma.todo.findMany({
