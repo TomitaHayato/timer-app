@@ -66,6 +66,7 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
   } catch(err){ next(err) }
 }
 
+// レコード更新
 export const updateTodoRecord= async(req: Request, res: Response, next: NextFunction) => {
   const userId: string = req.decodedJwtPayload.userId;
   const todoId: string = req.params.id;
@@ -85,6 +86,7 @@ export const updateTodoRecord= async(req: Request, res: Response, next: NextFunc
   } catch(err) { next(err) }
 }
 
+// レコード削除
 export const deleteTodoRecord = async(req: Request, res: Response, next: NextFunction) => {
   const userId: string = req.decodedJwtPayload.userId;
   const todoId: string = req.params.id;
