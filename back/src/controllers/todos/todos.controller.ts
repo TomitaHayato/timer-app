@@ -59,7 +59,7 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
     }
     const statusNow: boolean | undefined = todo?.isCompleted;
     // 更新処理
-    await dbQueryHandler(updateTodoStatus, { userId, todoId, status: !statusNow });
+    await dbQueryHandler(updateTodoStatus, { userId, todoId, newStatus: !statusNow });
     // 最新状態を返す
     const todos = await dbQueryHandler(getUserTodos, userId);
     res.status(200).json(todos);

@@ -53,15 +53,15 @@ export const updateTodo = async(prisma: PrismaClient, queryInfo: { params: updat
 }
 
 // Todoのステータスを更新
-export const updateTodoStatus = async(prisma: PrismaClient, queryInfo: { userId: string, todoId: string, status: boolean }) => {
-  const { userId, todoId, status } = queryInfo;
+export const updateTodoStatus = async(prisma: PrismaClient, queryInfo: { userId: string, todoId: string, newStatus: boolean }) => {
+  const { userId, todoId, newStatus } = queryInfo;
   // ステータス更新処理
   const result = await prisma.todo.update({
     where: {
       id: todoId,
       userId,
     },
-    data: { isCompleted: status }
+    data: { isCompleted: newStatus }
   });
   devLog('更新結果：', result);
 }
