@@ -3,14 +3,12 @@ import { dbQueryHandler } from "../../models/utils/errorHandler";
 import { createSetting, getSettingByUserId, updateSetting } from "../../models/settings/settings";
 import { isEmptyObj } from "../../utils/object";
 import { PostSettingParams } from "../../types/setting";
+import { getUserIdFromRequest } from "../utils/getUserId";
+import { getIdFromRequestParams } from "../utils/getIdFromRequestParams";
 
 export const getSetting = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = req.decodedJwtPayload;
-
-  if(!userId) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
 
   try {
     const setting = await dbQueryHandler(getSettingByUserId, userId);
@@ -19,10 +17,12 @@ export const getSetting = async(req: Request, res: Response, next: NextFunction)
 }
 
 export const postSetting = async(req: Request, res: Response, next: NextFunction) => {
-  const userId: string = req.decodedJwtPayload;
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
+
   const params: PostSettingParams = req.body;
 
-  if (!userId || isEmptyObj(params)) {
+  if (isEmptyObj(params)) {
     res.status(422).json('無効なリクエストです');
     return;
   }
@@ -34,11 +34,14 @@ export const postSetting = async(req: Request, res: Response, next: NextFunction
 }
 
 export const putSetting = async(req: Request, res: Response, next: NextFunction) => {
-  const userId: string = req.decodedJwtPayload;
-  const settingId: string = req.params.id;
-  const params: PostSettingParams = req.body;
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
 
-  if (!userId || !settingId || isEmptyObj(params)) {
+  const settingId: string = getIdFromRequestParams(req, res);
+  if (!settingId) return;
+
+  const params: PostSettingParams = req.body;
+  if (isEmptyObj(params)) {
     res.status(422).json('無効なリクエストです');
     return;
   }

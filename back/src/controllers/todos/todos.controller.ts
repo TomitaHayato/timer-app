@@ -3,14 +3,13 @@ import { dbQueryHandler } from "../../models/utils/errorHandler";
 import { createTodo, deleteTodo, getTodoById, getUserTodos, updateTodo, updateTodoStatus } from "../../models/todos/todos";
 import { createTodoParams, updateTodoParams } from "../../types/todo";
 import { isEmptyObj } from "../../utils/object";
+import { getUserIdFromRequest } from "../utils/getUserId";
+import { getIdFromRequestParams } from "../utils/getIdFromRequestParams";
 
 // Todosを全件取得
 export const todosIndex = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = req.decodedJwtPayload.userId;
-  if (!userId) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
 
   try {
     // DBからログインユーザーのTodo一覧を取得
@@ -22,10 +21,12 @@ export const todosIndex = async(req: Request, res: Response, next: NextFunction)
 
 // Todoを新規作成
 export const postTodos = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = req.decodedJwtPayload.userId;
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
+
   const params: createTodoParams = req.body;
 
-  if (!userId || isEmptyObj(params)) {
+  if (isEmptyObj(params)) {
     res.status(422).json('無効なリクエストです');
     return;
   }
@@ -41,11 +42,13 @@ export const postTodos = async(req: Request, res: Response, next: NextFunction) 
 
 // TODOのStatus更新
 export const updateTodosStatus = async(req: Request, res: Response, next: NextFunction) => {
-  const userId: string = req.decodedJwtPayload.userId;
-  const todoId: string = req.params.id;
-  const params: { isCompleted: boolean } =req.body;
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
 
-  if(!userId || !todoId || typeof params.isCompleted !== 'boolean') {
+  const todoId: string = req.params.id;
+  const params: { isCompleted: boolean } = req.body;
+
+  if(!todoId || typeof params.isCompleted !== 'boolean') {
     res.status(422).json('無効なリクエストです');
     return;
   }
@@ -68,11 +71,15 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
 
 // レコード更新
 export const updateTodoRecord= async(req: Request, res: Response, next: NextFunction) => {
-  const userId: string = req.decodedJwtPayload.userId;
-  const todoId: string = req.params.id;
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
+
+  const todoId: string = getIdFromRequestParams(req, res);
+  if (!todoId) return;
+
   const params: updateTodoParams =req.body;
 
-  if(!userId || !todoId || isEmptyObj(params)) {
+  if(isEmptyObj(params)) {
     res.status(422).json('無効なリクエストです');
     return;
   }
@@ -88,13 +95,11 @@ export const updateTodoRecord= async(req: Request, res: Response, next: NextFunc
 
 // レコード削除
 export const deleteTodoRecord = async(req: Request, res: Response, next: NextFunction) => {
-  const userId: string = req.decodedJwtPayload.userId;
-  const todoId: string = req.params.id;
+  const userId = getUserIdFromRequest(req, res);
+  if (!userId) return;
 
-  if(!userId || !todoId) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const todoId: string = getIdFromRequestParams(req, res);
+  if (!todoId) return;
 
   try {
     // 削除処理

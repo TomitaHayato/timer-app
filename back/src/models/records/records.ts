@@ -16,7 +16,7 @@ export const createRecord = async(prisma: PrismaClient, queryInfo: { userId: str
   devLog('新規作成Record：', newRecord);
 }
 
-export const getAllRecords = async(prisma: PrismaClient, userId: string) => {
+export const getTotalRecords = async(prisma: PrismaClient, userId: string) => {
   const records = await prisma.record.findMany({
     select: {
       selfReview: true,
@@ -50,11 +50,10 @@ const getRecordsByTerms = async(prisma: PrismaClient, userId: string, start: Dat
 }
 
 // 指定された日の記録を取得
-export const getRecordsByDate = async(prisma: PrismaClient, queryInfo: { userId: string, beforeDaysFromToday: number }) => {
-  const { userId } = queryInfo;
-  const beforeDaysFromToday = queryInfo.beforeDaysFromToday || 0
+export const getRecordsByDate = async(prisma: PrismaClient, queryInfo: { userId: string, daysAgo: number }) => {
+  const { userId, daysAgo } = queryInfo;
 
-  const targetDay = dayjs().subtract(beforeDaysFromToday, 'd'); // 何日前のデータが欲しいか
+  const targetDay = dayjs().subtract(daysAgo, 'd'); // 何日前のデータが欲しいか
 
   const start = targetDay.startOf('day').toDate()
   const end = targetDay.endOf('day').toDate()
@@ -62,11 +61,10 @@ export const getRecordsByDate = async(prisma: PrismaClient, queryInfo: { userId:
 }
 
 // 指定された週の記録を取得
-export const getRecordsByWeek = async(prisma: PrismaClient, queryInfo: { userId: string, beforeWeeksFromToday?: number }) => {
-  const { userId } = queryInfo;
-  const beforeWeeksFromToday = queryInfo.beforeWeeksFromToday || 0
+export const getRecordsByWeek = async(prisma: PrismaClient, queryInfo: { userId: string, weeksAgo: number }) => {
+  const { userId, weeksAgo } = queryInfo;
 
-  const targetWeek = dayjs().subtract(beforeWeeksFromToday, 'w');
+  const targetWeek = dayjs().subtract(weeksAgo, 'w');
 
   const start = targetWeek.startOf('week').toDate()
   const end = targetWeek.endOf('week').toDate()
@@ -74,11 +72,10 @@ export const getRecordsByWeek = async(prisma: PrismaClient, queryInfo: { userId:
 }
 
 // 指定された月の記録を取得
-export const getRecordsByMonth = async(prisma: PrismaClient, queryInfo: { userId: string, beforeMonthsFromToday: number }) => {
-  const { userId } = queryInfo;
-  const beforeMonthsFromToday = queryInfo.beforeMonthsFromToday || 0
+export const getRecordsByMonth = async(prisma: PrismaClient, queryInfo: { userId: string, monthsAgo: number }) => {
+  const { userId, monthsAgo } = queryInfo;
 
-  const targetMonth = dayjs().subtract(beforeMonthsFromToday, 'm');
+  const targetMonth = dayjs().subtract(monthsAgo, 'm');
 
   const start = targetMonth.startOf('month').toDate()
   const end = targetMonth.endOf('month').toDate()
