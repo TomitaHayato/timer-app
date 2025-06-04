@@ -1,6 +1,6 @@
-import { PrismaClient } from "../../generated/prisma";
-import { createTodoParams, updateTodoParams } from "../types/todo";
-import { devLog } from "../utils/dev/devLog";
+import { PrismaClient } from "../../../generated/prisma";
+import { createTodoParams, updateTodoParams } from "../../types/todo";
+import { devLog } from "../../utils/dev/devLog";
 
 export const getTodoById = async(prisma: PrismaClient, queryInfo: { userId: string, todoId: string }) => {
   const { userId, todoId } = queryInfo;

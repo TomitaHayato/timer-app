@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { createUser, getUserByEmail } from "../../models/users";
+import { createUser, getUserByEmail } from "../../models/users/users";
 import { dataHash } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/errorHandler";
 import bcrypt from 'bcrypt'

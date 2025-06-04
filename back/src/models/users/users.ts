@@ -1,6 +1,6 @@
-import { PrismaClient } from "../../generated/prisma";
-import { UserPostParams, UserUpdateParams } from "../types/user";
-import { devLog } from "../utils/dev/devLog";
+import { PrismaClient } from "../../../generated/prisma";
+import { UserPostParams, UserUpdateParams } from "../../types/user";
+import { devLog } from "../../utils/dev/devLog";
 
 export const getAllUser = async(prisma: PrismaClient) => {
   const allUsers = await prisma.user.findMany();
