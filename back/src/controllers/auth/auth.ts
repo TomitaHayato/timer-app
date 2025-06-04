@@ -3,10 +3,10 @@ import { createUser, getUserByEmail } from "../../models/users/users";
 import { dataHash } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/errorHandler";
 import bcrypt from 'bcrypt'
-import { setJwtInCookie, verifyJwt } from "../../utils/jwt";
+import { clearJwtCookie, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 
-export const signUp = async(req: Request, res: Response) => {
+export const signUp = async(req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
 
   try {
@@ -23,8 +23,8 @@ export const signUp = async(req: Request, res: Response) => {
     if(newUser) setJwtInCookie(res, newUser.id);
     res.json({ name: newUser?.name });
   } catch (err) {
-    console.error('Signup処理のエラー：', err);
-    res.status(500).json('新規登録処理に失敗しました')
+    devLog('Signup処理のエラー：', err);
+    next(err);
   }
 }
 
@@ -52,7 +52,9 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export const signOut = async(req: Request, res: Response) => {
+export const signOut = async(res: Response) => {
+  clearJwtCookie(res);
+  res.status(200).json('ログアウトしました');
 }
 
 export const tokenCheck = async (req: Request, res: Response) => {

@@ -3,6 +3,7 @@ import { jwtPayload } from '../types/auth';
 import { Response } from 'express';
 
 const SECRET_KEY: string = process.env.JWT_SECRET_KEY || 'flabkdfafkadkvjkavv3d23adkjv'
+const COOKIE_NAME: string = 'jwt_token'
 
 export const createJwt = (payload: jwtPayload): string => {
   const token: string = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
@@ -12,9 +13,17 @@ export const createJwt = (payload: jwtPayload): string => {
 export const setJwtInCookie = (res: Response, userId: string): void => {
   const payload: jwtPayload = { userId }
   const token = createJwt(payload);
-  res.cookie('jwt_token', token, {
+  res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
     maxAge: 7200000,
+    secure: process.env.NODE_ENV === 'production',
+  });
+}
+
+export const clearJwtCookie = (res: Response): void => {
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: true,
+    expires: new Date(0),
     secure: process.env.NODE_ENV === 'production',
   });
 }

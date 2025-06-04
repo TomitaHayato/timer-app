@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { authCheck } from "../../middlewares/auth/auth";
+import { authCheckMiddleware } from "../../middlewares/auth/auth";
 import { todosIndex } from "../../controllers/todos/todos.controller";
 
 const router = Router();
 
 // 認証Check
-router.use(authCheck);
+router.use(authCheckMiddleware);
 
 // CRUD処理
 router.get('/', todosIndex);
