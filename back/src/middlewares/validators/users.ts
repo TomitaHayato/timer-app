@@ -2,9 +2,13 @@ import { body } from "express-validator";
 
 export const userPostValidator = [
   body('name')
+    .optional({ values: 'null' })
+    .isString()
     .notEmpty()
     .escape(),
   body('email')
+    .optional({ values: 'null' })
+    .isString()
     .notEmpty()
     .isEmail()
     .custom(async (value) => {
@@ -14,9 +18,13 @@ export const userPostValidator = [
     })
     .withMessage('既に登録されたメールアドレスはご利用できません'),
   body('password')
+    .optional({ values: 'null' })
+    .isString()
     .notEmpty()
     .isLength({ min: 6 }),
   body('passwordConfirmation')
+    .optional({ values: 'null' })
+    .isString()
     .notEmpty()
     .isLength({ min: 6 })
     .custom((value, { req }) => {
@@ -27,8 +35,12 @@ export const userPostValidator = [
 
 export const signInValidator = [
   body('email')
+    .optional({ values: 'null' })
     .notEmpty()
+    .isString()
     .isEmail(),
   body('password')
+    .optional({ values: 'null' })
+    .isString()
     .notEmpty(),
 ]
