@@ -28,6 +28,16 @@ export default function OnlyDev() {
     }
   }
 
+  const deleteUser = async() => {
+    try {
+      const res = await clientCredentials.delete(`/users`);
+      console.log('検証結果：', res.data);
+      setIsAuth(false);
+    } catch {
+      console.log('検証失敗')
+    }
+  }
+
   // TODOSにアクセス
   const reqTodosAPI = async() => {
     try {
@@ -46,9 +56,13 @@ export default function OnlyDev() {
       { isAuth &&
         <button className="text-center btn btn-primary" onClick={
           logout
-        }>確認用ボタン B</button>
+        }>ログアウト</button>
       }
-
+      { isAuth &&
+        <button className="text-center btn btn-primary" onClick={
+          deleteUser
+        }>ユーザー削除</button>
+      }
     </>
   )
 }
