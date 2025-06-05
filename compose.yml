@@ -1,8 +1,38 @@
 services:
+  db:
+    image: mysql:lts
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql-root-pass
+      MYSQL_USER_FILE: /run/secrets/mysql-user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql-pass
+      MYSQL_DATABASE: nodeapp_db
+    secrets:
+      - mysql-root-pass
+      - mysql-user
+      - mysql-pass
+    volumes:
+      - node_db1:/var/lib/mysql
+  
+  back:
+    build: ./back
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - ./back:/node_app
+      - learning_app_back_modules:/app/node_modules
+    command: sh -c "npm install && npm run dev"
+
   front:
     build: ./front
     ports:
       - "5173:5173"
+    depends_on:
+      - db
+      - back
     volumes:
       - ./front:/app
       - learning_app_front_modules:/app/node_modules
@@ -10,3 +40,13 @@ services:
 
 volumes:
   learning_app_front_modules:
+  learning_app_back_modules:
+  node_db1:
+
+secrets:
+  mysql-root-pass:
+    file: ./secrets/mysql_root_pass.txt
+  mysql-user:
+    file: ./secrets/mysql_user.txt
+  mysql-pass:
+    file: ./secrets/mysql_pass.txt
