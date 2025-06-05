@@ -24,7 +24,7 @@ model User {
   name      String
   hashedPassword String
   todos     Todo[]
-  settings  Setting[]
+  setting   Setting?
   records   Record[]
 }
 
