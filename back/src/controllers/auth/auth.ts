@@ -52,7 +52,7 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export const signOut = async(res: Response) => {
+export const signOut = (req: Request, res: Response) => {
   clearJwtCookie(res);
   res.status(200).json('ログアウトしました');
 }

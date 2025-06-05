@@ -1,3 +1,14 @@
-import { Records } from "../../types/record";
+import { RecordData, Records } from "../../types/record";
 
-export const defaultRecords: Records = []
+const defaultRecord: RecordData = {
+  selfReview: 0,
+  workCount: 0,
+  workTime: 0,
+}
+
+export const defaultRecords: Records = {
+  dailyRecord: defaultRecord,
+  weeklyRecord: defaultRecord,
+  monthlyRecord: defaultRecord,
+  totalRecord: defaultRecord,
+}

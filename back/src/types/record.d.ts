@@ -3,7 +3,12 @@ export type Record = {
   totalSec: number,
 }
 
-export type Records = Record[]
+export type Records = {
+  dailyRecord: RecordData,
+  weeklyRecord: RecordData,
+  monthlyRecord: RecordData,
+  totalRecord: RecordData,
+}
 
 export type postRecordParams = {
   selfReview: number,
