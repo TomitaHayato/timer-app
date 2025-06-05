@@ -6,20 +6,7 @@ import { getUserIdFromRequest } from "../utils/getUserId";
 import { isEmptyObj } from "../../utils/object";
 import { getRequestBody } from "../utils/getRequestBody";
 import { postRecordParams } from "../../types/record";
-
-const getRecordsFromDB = async(userId: string, daysAgo: number, weeksAgo: number, monthsAgo: number) => {
-  const dailyRecord = await dbQueryHandler(getRecordsByDate, { userId, daysAgo });
-  const weeklyRecord = await dbQueryHandler(getRecordsByWeek, { userId, weeksAgo });
-  const monthlyRecord = await dbQueryHandler(getRecordsByMonth, { userId, monthsAgo });
-  const totalRecord = await dbQueryHandler(getTotalRecords, userId);
-
-  return {
-    dailyRecord,
-    weeklyRecord,
-    monthlyRecord,
-    totalRecord,
-  }
-}
+import { getRecordsFromDB } from "../../services/records.service";
 
 // 期間ごとに集計したRecordsの配列を返す
 export const recordsIndex = async(req: Request, res: Response, next: NextFunction) => {

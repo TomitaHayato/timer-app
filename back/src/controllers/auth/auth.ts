@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express"
-import { createUser, getUserByEmail } from "../../models/users/users";
+import { createUserWithSetting, getUserByEmail, getUserWithRelation } from "../../models/users/users";
 import { dataHash } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/errorHandler";
 import bcrypt from 'bcrypt'
 import { clearJwtCookie, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
+import { getUserDataSet } from "../../services/auth.service";
 
+// ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
 
@@ -13,15 +15,18 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
     // パスワードをハッシュ化
     const hashedPassword = await dataHash(password);
     // DBに保存
-    const newUser = await dbQueryHandler(createUser, {
+    const newUser = await dbQueryHandler(createUserWithSetting, {
       name,
       email,
       hashedPassword,
     })
     devLog('作成されたUser：', newUser);
 
-    if(newUser) setJwtInCookie(res, newUser.id);
-    res.json({ name: newUser?.name });
+    if (newUser) {
+      setJwtInCookie(res, newUser.id);
+      const userDataSet = await getUserDataSet(newUser.id);
+      res.status(200).json(userDataSet);
+    } else { throw new Error }
   } catch (err) {
     devLog('Signup処理のエラー：', err);
     next(err);
@@ -41,7 +46,8 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     // hashedPasswordカラムとpasswordのハッシュを比較
     if (await bcrypt.compare(password, user.hashedPassword)) {
       setJwtInCookie(res, user.id);
-      res.status(200).json('認証成功');
+      const userDataSet = await getUserDataSet(user.id);
+      res.status(200).json(userDataSet);
     } else {
       res.status(401).json('ログインに失敗しました。')
     }
@@ -69,8 +75,11 @@ export const tokenCheck = async (req: Request, res: Response) => {
   try {
     // Token検証
     const payload = verifyJwt(token);
-    res.status(200).json(`認証済みのUserです: ${payload.userId}`)
-  } catch {
-    res.status(403).json('認証失敗');
-  }
+    // 認証成功なので、userに紐づいたTodos, Records, Settingを返す
+    const userId = payload.userId;
+    if (!userId) throw new Error;
+
+    const userDataSet = await getUserDataSet(userId);
+    res.status(200).json(userDataSet);
+  } catch { res.status(403).json('認証失敗') }
 }

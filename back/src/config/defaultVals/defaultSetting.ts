@@ -1,9 +1,9 @@
 import { Setting } from "../../types/setting";
 
 export const defaultSetting: Setting = {
-  workMin: 25,
-  restMin: 5,
-  longRestMin: 15,
+  workSec: 1500,
+  restSec: 300,
+  longRestSec: 900,
   isMuted: false,
   volume: 50,
 }

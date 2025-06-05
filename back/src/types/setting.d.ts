@@ -1,7 +1,7 @@
 export type Setting = {
-  workMin: number,
-  restMin: number,
-  longRestMin: number,
+  workSec: number,
+  restSec: number,
+  longRestSec: number,
   isMuted: boolean,
   volume: number,
 }

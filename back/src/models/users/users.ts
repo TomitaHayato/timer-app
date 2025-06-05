@@ -1,4 +1,5 @@
 import { PrismaClient } from "../../../generated/prisma";
+import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { UserPostParams, UserUpdateParams } from "../../types/user";
 import { devLog } from "../../utils/dev/devLog";
 
@@ -28,15 +29,50 @@ export const getUserByEmail = async(prisma: PrismaClient, email: string) => {
   return user;
 }
 
-export const createUser = async(prisma: PrismaClient, params: UserPostParams) => {
+export const getUserWithRelation = async(
+  prisma: PrismaClient,
+  queryInfo: {
+    userId: string,
+    setting?: boolean,
+    todos?: boolean,
+    records?: boolean,
+}) => {
+  const { userId, setting, todos, records } = queryInfo;
+  const user = await prisma.user.findUnique({
+    select: {
+      name: true,
+      email: true,
+      setting,
+      todos,
+      records,
+    },
+    where: {
+      id: userId,
+    }
+  })
+  devLog('DB: 認証完了したUser:', user)
+  return user;
+}
+
+export const createUserWithSetting = async(prisma: PrismaClient, params: UserPostParams) => {
   // 作成処理
-  await prisma.user.create({ data: params });
+  await prisma.user.create({
+    data: {
+      ...params,
+      setting: {
+        create: {
+          ...defaultSetting
+        }
+      }
+    }
+  });
   // 作成したレコードを返す
   const newRecords = await prisma.user.findUnique({ where: params });
   return newRecords;
 }
 
-export const updateUser = async(prisma: PrismaClient, userUpdateParams: UserUpdateParams, userId: string) => {
+export const updateUser = async(prisma: PrismaClient, queryInfo: { userUpdateParams: UserUpdateParams, userId: string }) => {
+  const { userUpdateParams, userId } = queryInfo
   prisma.user.update({
     where: { id: userId },
     data: userUpdateParams,
