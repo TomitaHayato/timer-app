@@ -77,6 +77,22 @@ export const signup = createAsyncThunk<
   }
 })
 
+export const signout = createAsyncThunk<
+  undefined,
+  undefined,
+  { rejectValue: string }
+>('session/signout', async(_, thunkAPI) => {
+  try {
+    await clientCredentials.get('/auth/signout');
+    // 他のStateをリセット
+    thunkAPI.dispatch(replaceSetting(defaultSetting))
+    thunkAPI.dispatch(replaceRecords(defaultRecords))
+    thunkAPI.dispatch(replaceTodos(defaultTodos))
+  } catch {
+    return thunkAPI.rejectWithValue('Signoutに失敗しました')
+  }
+})
+
 const sessionSlice = createSlice({
   name: 'session',
   initialState,
@@ -90,7 +106,7 @@ const sessionSlice = createSlice({
       .addCase(signin.fulfilled, (state, action: PayloadAction<User>) => {
         state.loading = false;
         const name = action.payload?.name
-        const email = action.payload?.name
+        const email = action.payload?.email
         if(!name || !email) return
         state.user = { name, email }
         state.isAuthenticated = true
@@ -113,6 +129,20 @@ const sessionSlice = createSlice({
         state.isAuthenticated = true
       })
       .addCase(signup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unexpected error';
+      })
+      //ログアウト
+      .addCase(signout.pending, state => {
+        state.loading = true;
+        state.error = null
+      })
+      .addCase(signout.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(signout.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Unexpected error';
       })
