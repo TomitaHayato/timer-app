@@ -14,3 +14,10 @@ export type signinParams = {
   email: string,
   password: string,
 }
+
+export type SignupParams = {
+  name: string,
+  email: string,
+  password: string,
+  passwordConfirmation: string,
+}

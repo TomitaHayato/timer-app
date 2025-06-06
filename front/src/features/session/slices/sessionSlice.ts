@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../../reduxStore/store";
-import type { SessionState, signinParams, User } from "../types/session";
+import type { SessionState, signinParams, SignupParams, User } from "../types/session";
 import { clientCredentials } from "../../../utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { replaceSetting } from "../../setting/Slices/settingSlice";
@@ -43,12 +43,39 @@ export const signin = createAsyncThunk<
         name: userDataSet.name,
       }
     } catch(err) {
-      // TODO: エラーをrejectedのactions.payloadに渡すには？？
       console.log(err)
       return thunkAPI.rejectWithValue('SignInに失敗しました')
     }
   }
 )
+
+export const signup = createAsyncThunk<
+  User,
+  SignupParams,
+  { rejectValue: string }
+>('session/signup', async(params, thunkAPI) => {
+  try {
+    const res = await clientCredentials.post('/auth/signup', params);
+    const { userDataSet, recordsData } = res.data;
+    if (!userDataSet)  return thunkAPI.rejectWithValue('userDataSet is null');
+
+    // 各スライスにデータを配分
+    const setting = userDataSet.setting || defaultSetting;
+    const records = recordsData || defaultRecords;
+    const todos = userDataSet.todos || defaultTodos
+
+    thunkAPI.dispatch(replaceSetting(setting))
+    thunkAPI.dispatch(replaceRecords(records))
+    thunkAPI.dispatch(replaceTodos(todos))
+
+    return {
+      email: userDataSet.email,
+      name: userDataSet.name,
+    }
+  } catch {
+    return thunkAPI.rejectWithValue('SignUpに失敗しました')
+  }
+})
 
 const sessionSlice = createSlice({
   name: 'session',
@@ -62,14 +89,30 @@ const sessionSlice = createSlice({
       })
       .addCase(signin.fulfilled, (state, action: PayloadAction<User>) => {
         state.loading = false;
-
         const name = action.payload?.name
         const email = action.payload?.name
         if(!name || !email) return
-
         state.user = { name, email }
+        state.isAuthenticated = true
       })
       .addCase(signin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unexpected error';
+      })
+      // Sign Up
+      .addCase(signup.pending, state => {
+        state.loading = true;
+        state.error = null
+      })
+      .addCase(signup.fulfilled, (state, action: PayloadAction<User>) => {
+        state.loading = false;
+        const name = action.payload?.name;
+        const email = action.payload?.email;
+        if(!name || !email) return
+        state.user = { name, email }
+        state.isAuthenticated = true
+      })
+      .addCase(signup.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Unexpected error';
       })
