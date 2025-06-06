@@ -3,3 +3,10 @@ export const defaultRecord = {
   workCount: 0,
   selfReview: 0,
 }
+
+export const defaultRecords = {
+  todayRecord: defaultRecord,
+  weeklyRecord: defaultRecord,
+  monthlyRecord: defaultRecord,
+  totalRecord: defaultRecord,
+}

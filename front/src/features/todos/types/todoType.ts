@@ -1,12 +1,12 @@
 export type Todo = {
   title: string,
-  expire?: Date,
+  deadline?: Date,
   status: boolean,
 }
 
 export type TodoAdd = {
   title: string,
-  expire?: Date,
+  deadline?: Date,
 }
 
 export type Todos = Todo[]

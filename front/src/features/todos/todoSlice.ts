@@ -1,21 +1,9 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Todo, TodoAdd, Todos, TodosState } from './types/todoType'
 import type { RootState } from '../../reduxStore/store';
+import { defaultTodos } from './defaultTodos';
 
-const initialTodos: Todos = [
-  {
-    title: 'Todo1',
-    status: false,
-  },
-  {
-    title: 'Todo2',
-    status: false,
-  },
-  {
-    title: 'Todo3',
-    status: true,
-  },
-]
+const initialTodos: Todos = defaultTodos;
 
 const initialState: TodosState = {
   todos: initialTodos,

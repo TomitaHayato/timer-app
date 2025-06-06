@@ -6,6 +6,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { replaceSetting } from "../../setting/Slices/settingSlice";
 import { replaceRecords } from "../../records/recordsSlice";
 import { replaceTodos } from "../../todos/todoSlice";
+import { defaultSetting } from "../../setting/defaultSetting";
+import { defaultRecords } from "../../records/defaultRecords";
+import { defaultTodos } from "../../todos/defaultTodos";
 
 const initialState: SessionState = {
   user: null,
@@ -27,10 +30,9 @@ export const signin = createAsyncThunk<
       if (!userDataSet)  return thunkAPI.rejectWithValue('userDataSet is null');
 
       // 各スライスにデータを配分
-      const setting = userDataSet.setting;
-      const records = recordsData;
-      const todos = userDataSet.todos;
-      if(!setting || !records || !todos) return thunkAPI.rejectWithValue('SignInに失敗しました');
+      const setting = userDataSet.setting || defaultSetting;
+      const records = recordsData || defaultRecords;
+      const todos = userDataSet.todos || defaultTodos
 
       thunkAPI.dispatch(replaceSetting(setting))
       thunkAPI.dispatch(replaceRecords(records))

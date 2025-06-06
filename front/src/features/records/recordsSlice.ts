@@ -1,15 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { defaultRecord } from "./defaultRecords";
+import { defaultRecords } from "./defaultRecords";
 import type { RecordsState, TermsRecords } from "./types/records";
 import type { RootState } from "../../reduxStore/store";
 
 const initialState: RecordsState = {
-  records: {
-    todayRecord: defaultRecord,
-    weeklyRecord: defaultRecord,
-    monthlyRecord: defaultRecord,
-    totalRecord: defaultRecord,
-  },
+  records: defaultRecords,
   loading: false,
   error: null,
 }
