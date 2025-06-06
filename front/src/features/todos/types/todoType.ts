@@ -1,5 +1,4 @@
 export type Todo = {
-  id: number,
   title: string,
   expire?: Date,
   status: boolean,
@@ -11,3 +10,9 @@ export type TodoAdd = {
 }
 
 export type Todos = Todo[]
+
+export type TodosState = {
+  todos: Todo[],
+  loading: boolean,
+  error: string | null,
+}

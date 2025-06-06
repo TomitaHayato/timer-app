@@ -1,6 +1,7 @@
-export type Setting = {
+export type SettingState = {
   workSec:  number,
   restSec:  number,
-  longRest: number,
+  longRestSec: number,
+  volume: number,
   isMuted: boolean,
 }

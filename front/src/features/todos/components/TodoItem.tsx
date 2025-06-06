@@ -1,5 +1,3 @@
-import { useAppDispatch } from "../../../reduxStore/hooks"
-import { completeTodo } from "../todoSlice";
 import type { Todo } from "../types/todoType"
 
 type Props ={
@@ -8,11 +6,6 @@ type Props ={
 }
 
 export default function TodoItem({ todo, index, }: Props) {
-  const dispatch = useAppDispatch();
-
-  function hundleComplete() {
-    dispatch(completeTodo(todo.id));
-  }
 
   return(
     <>
@@ -24,8 +17,8 @@ export default function TodoItem({ todo, index, }: Props) {
 
         {
           todo.status
-            ? <button className="btn btn-sm btn-info btn-circle"    onClick={hundleComplete}>↩︎</button>
-            : <button className="btn btn-sm btn-success btn-circle" onClick={hundleComplete}>✔︎</button>
+            ? <button className="btn btn-sm btn-info btn-circle">↩︎</button>
+            : <button className="btn btn-sm btn-success btn-circle">✔︎</button>
         }
 
         <button className="btn btn-sm btn-outline btn-square">

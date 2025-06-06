@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppSelector } from "../../../reduxStore/hooks";
-import { bgSide, rightDrawer } from "../../../utils/class";
+import { rightDrawer } from "../../../utils/class";
 import { selectTodosUncompleted } from "../todoSlice";
 import TodoCreateForm from "./TodoCreateForm";
 import TodoList from "./TodoList";
