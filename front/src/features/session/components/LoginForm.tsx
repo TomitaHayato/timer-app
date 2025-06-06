@@ -3,6 +3,7 @@ import FormErrorText from "./FormErrorText"
 import type { SigninParams } from "../types/session";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { selectAuthStatus, selectSessionError, selectSessionLoading, signin } from "../slices/sessionSlice";
+import { LoadingSpans } from "../../../components/btn/loadingSpans";
 
 export function LoginForm() {
   // form
@@ -42,7 +43,7 @@ export function LoginForm() {
 
           {
             loading
-            ? <button className="btn btn-success btn-block mt-4"><span className="loading loading-spinner"></span></button>
+            ? <button className="btn btn-success btn-block mt-4"><LoadingSpans /></button>
             : <input type="submit" className="btn btn-success btn-block mt-4" value={"ログイン"} /> 
           }
         </form>

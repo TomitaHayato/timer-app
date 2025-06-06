@@ -3,6 +3,7 @@ import FormErrorText from "./FormErrorText"
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { selectAuthStatus, selectSessionError, selectSessionLoading, signup } from "../slices/sessionSlice";
 import type { SignupParams } from "../types/session";
+import { LoadingSpans } from "../../../components/btn/loadingSpans";
 
 export function SignupForm() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<SignupParams>();
@@ -63,7 +64,7 @@ export function SignupForm() {
 
           {
             loading
-            ? <button className="btn btn-success btn-block mt-4"><span className="loading loading-spinner"></span></button>
+            ? <button className="btn btn-info btn-block mt-4"><LoadingSpans /></button>
             : <input type="submit" className="btn btn-info btn-block mt-4" value={"新規登録"}/>
           }
         </form>
