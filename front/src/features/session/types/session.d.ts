@@ -10,7 +10,7 @@ export type SessionState = {
   error: string | null,
 }
 
-export type signinParams = {
+export type SigninParams = {
   email: string,
   password: string,
 }

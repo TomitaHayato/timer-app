@@ -1,28 +1,23 @@
 import { useForm } from "react-hook-form"
 import FormErrorText from "./FormErrorText"
-import { clientCredentials } from "../../../utils/axios"
-import { useState } from "react";
-
-type FormParams = {
-  email: string,
-  password: string,
-}
+import type { SigninParams } from "../types/session";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { selectAuthStatus, selectSessionError, selectSessionLoading, signin } from "../slices/sessionSlice";
 
 export function LoginForm() {
-  const { register, handleSubmit, formState: { errors }, } = useForm<FormParams>();
-  // ログインに成功したかどうか
-  const [ isFailed, setIsFailed ] = useState<boolean>(false);
+  // form
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<SigninParams>();
+  // redux
+  const dispatch = useAppDispatch();
+  const sessionError: string | null = useAppSelector(selectSessionError);
+  const loading: boolean = useAppSelector(selectSessionLoading);
+  const isAuth: boolean = useAppSelector(selectAuthStatus)
   
-  const onSubmit = async (data: FormParams) => {
-    console.log('送信データ：', data);
-    try {
-      const res = await clientCredentials.post('/auth/signin', data);
-      console.log('レスポンス：', res.data);
-      setIsFailed(false);
-    } catch {
-      console.error('ログインに失敗しました');
-      setIsFailed(true);
-    }
+  const onSubmit = async (data: SigninParams) => {
+    if (loading) return
+    console.log('Signin Formデータ：', data);
+    await dispatch(signin(data));
+    if (isAuth) reset();
   }
 
   return(
@@ -31,7 +26,7 @@ export function LoginForm() {
         <legend className="fieldset-legend text-2xl">Login</legend>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          { isFailed && <p className="text-error text-center text-lg font-semibold">ログインに失敗しました</p> }
+          { sessionError && <p className="text-error text-center text-lg font-semibold">{sessionError}</p> }
 
           <label className="label">Email</label>
           <FormErrorText errorText={ errors.email?.message }/>
@@ -45,7 +40,11 @@ export function LoginForm() {
             {...register('password', {required: '！パスワードを入力してください'})}
             />
 
-          <input type="submit" className="btn btn-success btn-block mt-4" value={"ログイン"} />
+          {
+            loading
+            ? <button className="btn btn-success btn-block mt-4"><span className="loading loading-spinner"></span></button>
+            : <input type="submit" className="btn btn-success btn-block mt-4" value={"ログイン"} /> 
+          }
         </form>
       </fieldset>
     </>

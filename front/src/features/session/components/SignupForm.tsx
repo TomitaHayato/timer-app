@@ -1,30 +1,21 @@
 import { useForm } from "react-hook-form"
 import FormErrorText from "./FormErrorText"
-import { clientCredentials } from "../../../utils/axios"
-import { useState } from "react";
-
-type FormParams = {
-  name: string,
-  email: string,
-  password: string,
-  passwordConfirmation: string,
-}
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { selectAuthStatus, selectSessionError, selectSessionLoading, signup } from "../slices/sessionSlice";
+import type { SignupParams } from "../types/session";
 
 export function SignupForm() {
-  const { register, handleSubmit, formState: { errors }, } = useForm<FormParams>();
-  // ログインに成功したかどうか
-  const [ isFailed, setIsFailed ] = useState<boolean>(false);
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<SignupParams>();
+  // redux
+  const dispatch = useAppDispatch();
+  const sessionError: string | null = useAppSelector(selectSessionError);
+  const loading: boolean = useAppSelector(selectSessionLoading);
+  const isAuth: boolean = useAppSelector(selectAuthStatus)
 
-  const onSubmit = async (data: FormParams) => {
-    try {
-      console.log('送信データ', data);
-      const res = await clientCredentials.post('/auth/signup', data);
-      console.log('レスポンスデータ', res.data);
-      setIsFailed(false);
-    } catch {
-      setIsFailed(true);
-      console.log('新規登録に失敗しました');
-    }
+  const onSubmit = async (data: SignupParams) => {
+    console.log('Signup Formデータ', data);
+    await dispatch(signup(data));
+    if (isAuth) reset();
   }
 
   return(
@@ -33,7 +24,7 @@ export function SignupForm() {
         <legend className="fieldset-legend text-2xl">Signup</legend>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          { isFailed && <p className="text-error text-center text-lg font-semibold">新規登録に失敗しました</p>  }
+          { sessionError && <p className="text-error text-center text-lg font-semibold">{sessionError}</p>  }
           <label className="label">Name</label>
           <FormErrorText errorText={ errors.name?.message }/>
           <input type="text" className="input w-full" placeholder="name"
@@ -70,7 +61,11 @@ export function SignupForm() {
             })}
             />
 
-          <input type="submit" className="btn btn-info btn-block mt-4" value={"新規登録"}/>
+          {
+            loading
+            ? <button className="btn btn-success btn-block mt-4"><span className="loading loading-spinner"></span></button>
+            : <input type="submit" className="btn btn-info btn-block mt-4" value={"新規登録"}/>
+          }
         </form>
       </fieldset>
     </>

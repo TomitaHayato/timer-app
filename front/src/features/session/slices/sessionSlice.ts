@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../../reduxStore/store";
-import type { SessionState, signinParams, SignupParams, User } from "../types/session";
+import type { SessionState, SigninParams, SignupParams, User } from "../types/session";
 import { clientCredentials } from "../../../utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { replaceSetting } from "../../setting/Slices/settingSlice";
@@ -9,6 +9,7 @@ import { replaceTodos } from "../../todos/todoSlice";
 import { defaultSetting } from "../../setting/defaultSetting";
 import { defaultRecords } from "../../records/defaultRecords";
 import { defaultTodos } from "../../todos/defaultTodos";
+import { devLog } from "../../../utils/logDev";
 
 const initialState: SessionState = {
   user: null,
@@ -19,32 +20,33 @@ const initialState: SessionState = {
 
 export const signin = createAsyncThunk<
   User,
-  signinParams,
+  SigninParams,
   { rejectValue: string }
 >(
   'session/signin',
   async(params, thunkAPI) => {
     try {
       const res = await clientCredentials.post('/auth/signin', params);
-      const { userDataSet, recordsData } = res.data;
-      if (!userDataSet)  return thunkAPI.rejectWithValue('userDataSet is null');
+      devLog('signinのres.data: ', res.data);
+      const { userData, recordsData } = res.data;
+      if (!userData)  return thunkAPI.rejectWithValue('userData is null');
 
       // 各スライスにデータを配分
-      const setting = userDataSet.setting || defaultSetting;
+      const setting = userData.setting || defaultSetting;
       const records = recordsData || defaultRecords;
-      const todos = userDataSet.todos || defaultTodos
+      const todos = userData.todos || defaultTodos
 
       thunkAPI.dispatch(replaceSetting(setting))
       thunkAPI.dispatch(replaceRecords(records))
       thunkAPI.dispatch(replaceTodos(todos))
 
       return {
-        email: userDataSet.email,
-        name: userDataSet.name,
+        email: userData.email,
+        name: userData.name,
       }
     } catch(err) {
       console.log(err)
-      return thunkAPI.rejectWithValue('SignInに失敗しました')
+      return thunkAPI.rejectWithValue('サインインに失敗しました')
     }
   }
 )
@@ -56,24 +58,24 @@ export const signup = createAsyncThunk<
 >('session/signup', async(params, thunkAPI) => {
   try {
     const res = await clientCredentials.post('/auth/signup', params);
-    const { userDataSet, recordsData } = res.data;
-    if (!userDataSet)  return thunkAPI.rejectWithValue('userDataSet is null');
+    const { userData, recordsData } = res.data;
+    if (!userData)  return thunkAPI.rejectWithValue('userData is null');
 
     // 各スライスにデータを配分
-    const setting = userDataSet.setting || defaultSetting;
+    const setting = userData.setting || defaultSetting;
     const records = recordsData || defaultRecords;
-    const todos = userDataSet.todos || defaultTodos
+    const todos = userData.todos || defaultTodos
 
     thunkAPI.dispatch(replaceSetting(setting))
     thunkAPI.dispatch(replaceRecords(records))
     thunkAPI.dispatch(replaceTodos(todos))
 
     return {
-      email: userDataSet.email,
-      name: userDataSet.name,
+      email: userData.email,
+      name: userData.name,
     }
   } catch {
-    return thunkAPI.rejectWithValue('SignUpに失敗しました')
+    return thunkAPI.rejectWithValue('サインアップに失敗しました')
   }
 })
 
@@ -89,7 +91,7 @@ export const signout = createAsyncThunk<
     thunkAPI.dispatch(replaceRecords(defaultRecords))
     thunkAPI.dispatch(replaceTodos(defaultTodos))
   } catch {
-    return thunkAPI.rejectWithValue('Signoutに失敗しました')
+    return thunkAPI.rejectWithValue('ログアウトに失敗しました')
   }
 })
 
@@ -149,6 +151,9 @@ const sessionSlice = createSlice({
   }
 });
 
+export const selectSessionError = (state: RootState) => state.session.error
+export const selectSessionLoading = (state: RootState) => state.session.loading
 export const selectUser = (state: RootState) => state.session;
+export const selectAuthStatus = (state: RootState) => state.session.isAuthenticated
 
 export const sessionReducer = sessionSlice.reducer;
