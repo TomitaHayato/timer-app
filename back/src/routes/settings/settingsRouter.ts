@@ -8,6 +8,6 @@ router.use(authCheckMiddleware);
 
 // router.get('/', getSetting);
 router.post('/', postSetting);
-router.put('/:id', putSetting);
+router.put('/', putSetting);
 
 export default router;

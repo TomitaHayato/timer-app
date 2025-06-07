@@ -30,12 +30,11 @@ export const getSettingByUserId = async(prisma: PrismaClient, userId: string) =>
   })
 }
 
-export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: string, settingId: string, params: UpdateSettingParams }) => {
-  const { userId, settingId, params } = queryInfo;
+export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: string, params: UpdateSettingParams }) => {
+  const { userId, params } = queryInfo;
 
   const newSettig = await prisma.setting.update({
     where: {
-      id: settingId,
       userId,
     },
     data: {
@@ -43,7 +42,19 @@ export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: st
     }
   })
   devLog('更新後の設定値：', newSettig);
-  return newSettig;
+  const setting = await prisma.setting.findUnique({
+    select: {
+      isMuted: true,
+      volume: true,
+      workSec: true,
+      restSec: true,
+      longRestSec: true,
+    },
+    where: {
+      userId,
+    }
+  })
+  return setting;
 }
 
 export const deleteSettingByUserId = async(prisma: PrismaClient, userId: string) => {
