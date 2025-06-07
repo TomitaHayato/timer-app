@@ -3,7 +3,7 @@ import FormErrorText from "./FormErrorText"
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { selectAuthStatus, selectSessionError, selectSessionLoading, signup } from "../slices/sessionSlice";
 import type { SignupParams } from "../types/session";
-import { LoadingSpans } from "../../../components/btn/loadingSpans";
+import { LoadingSpans } from "../../../components/btn/LoadingSpans";
 
 export function SignupForm() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<SignupParams>();

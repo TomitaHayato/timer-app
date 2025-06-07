@@ -1,16 +1,12 @@
-import { Modal } from "../../../components/Modal";
 import OnlyDev from "../../../components/OnlyDev";
-import { LoginForm } from "../../session/components/LoginForm";
-import { SignupForm } from "../../session/components/SignupForm";
+import { useAppSelector } from "../../../reduxStore/hooks";
+import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { LoginFormBtn } from "./LoginFormBtn";
+import { LogoutBtn } from "./LogoutBtn";
 import MobileDropDown from "./MobileDropDown";
 
-type dialogOrNull = HTMLDialogElement | null;
-
 export default function Header() {
-  function openModal(id: string) {
-    const dialogHtml = document.getElementById(id) as dialogOrNull;
-    dialogHtml?.showModal();
-  }
+  const isAuthenticated = useAppSelector(selectAuthStatus);
 
   return(
     <>
@@ -40,16 +36,11 @@ export default function Header() {
         </div>
 
         <div className="navbar-end">
-          <button className="btn btn-sm btn-outline" onClick={() => openModal('login-form')}>
-            Login / Signup
-          </button>
-
-          <Modal modalId={'login-form'}>
-            <div className="flex flex-col gap-8">
-              <LoginForm />
-              <SignupForm />
-            </div>
-          </Modal>
+          {
+            isAuthenticated
+            ? <LogoutBtn />
+            : <LoginFormBtn /> 
+          }
         </div>
       </div>
     </>
