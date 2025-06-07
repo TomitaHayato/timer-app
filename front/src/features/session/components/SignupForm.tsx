@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form"
 import FormErrorText from "./FormErrorText"
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
-import { selectAuthStatus, selectSessionError, selectSessionLoading, signup } from "../slices/sessionSlice";
+import { selectSessionError, selectSessionLoading, signup } from "../slices/sessionSlice";
 import type { SignupParams } from "../types/session";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
+import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 
 export function SignupForm() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<SignupParams>();
@@ -11,12 +12,16 @@ export function SignupForm() {
   const dispatch = useAppDispatch();
   const sessionError: string | null = useAppSelector(selectSessionError);
   const loading: boolean = useAppSelector(selectSessionLoading);
-  const isAuth: boolean = useAppSelector(selectAuthStatus)
 
   const onSubmit = async (data: SignupParams) => {
     console.log('Signup Formデータ', data);
-    await dispatch(signup(data));
-    if (isAuth) reset();
+    try{
+      await dispatch(signup(data)).unwrap;
+      reset();
+      toastSuccessRB('新規登録 完了しました')
+     } catch {
+      toastErrorRB('新規登録に失敗しました')
+     }
   }
 
   return(

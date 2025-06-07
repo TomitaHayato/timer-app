@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form"
 import FormErrorText from "./FormErrorText"
 import type { SigninParams } from "../types/session";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
-import { selectAuthStatus, selectSessionError, selectSessionLoading, signin } from "../slices/sessionSlice";
+import { selectSessionError, selectSessionLoading, signin } from "../slices/sessionSlice";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
+import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 
 export function LoginForm() {
   // form
@@ -12,13 +13,18 @@ export function LoginForm() {
   const dispatch = useAppDispatch();
   const sessionError: string | null = useAppSelector(selectSessionError);
   const loading: boolean = useAppSelector(selectSessionLoading);
-  const isAuth: boolean = useAppSelector(selectAuthStatus)
   
   const onSubmit = async (data: SigninParams) => {
     if (loading) return
     console.log('Signin Formデータ：', data);
-    await dispatch(signin(data));
-    if (isAuth) reset();
+    try {
+      // unwrapでAsynkThunkの成功・失敗をキャッチ
+      await dispatch(signin(data)).unwrap();
+      reset();
+      toastSuccessRB('ログインしました')
+    } catch {
+      toastErrorRB('ログイン失敗')
+    }
   }
 
   return(
