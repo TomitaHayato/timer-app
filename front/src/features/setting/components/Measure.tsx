@@ -1,4 +1,5 @@
-import { useState } from "react"
+import type { UseFormRegister, UseFormWatch } from "react-hook-form";
+import type { settingItems, SettingParams } from "../types/settingType";
 
 type Props = {
   itemsNum: number,
@@ -6,9 +7,11 @@ type Props = {
   max: number,
   step: number,
   defaultVal: number,
-  measureId: string,
+  measureId: settingItems, // 設定項目名
   item: string,
-  unit: string
+  unit: string,
+  register: UseFormRegister<SettingParams>,
+  watch: UseFormWatch<SettingParams>,
 }
 
 export function Measure({
@@ -20,20 +23,18 @@ export function Measure({
   measureId,
   item,
   unit,
+  register,
+  watch,
 }: Props) {
 
-  const [val, setVal] = useState<number>(defaultVal);
-
-  function hundleChange(v: string) {
-    setVal(Number(v));
-  }
+  const itemValue = watch(measureId);
 
   return(
     <>
       <div className="w-full max-w-xs">
         <label htmlFor={`range-${measureId}`}>
           <span>{item}</span>
-          <span className="font-semibold text-gray-300">{` ＜${val}${unit}＞ `}</span>
+          <span className="font-semibold text-gray-300">{` ＜${itemValue}${unit}＞ `}</span>
         </label>
 
         <input
@@ -44,7 +45,9 @@ export function Measure({
           defaultValue={defaultVal}
           className="range range-xs"
           step={step}
-          onChange={e => hundleChange(e.target.value)} />
+          // onChange={e => hundleChange(e.target.value)}
+          { ...register(measureId) }
+          />
 
         <div className="flex justify-between px-2.5 mt-1 text-[0.5rem]">
           { [...Array(itemsNum)].map((_, i) => <span key={`separator-${i}-${measureId}`}>|</span>) }
