@@ -3,7 +3,7 @@ import type { Setting, SettingParams, SettingState } from '../types/settingType'
 import type { RootState } from '../../../reduxStore/store'
 import { clientCredentials } from '../../../utils/axios'
 import { defaultSetting } from '../defaultSetting'
-import { checkAxiosErrorStatus } from '../../../utils/errorHandler/axiosError'
+import { getAxiosErrorMessageFromStatusCode } from '../../../utils/errorHandler/axiosError'
 import { devLog } from '../../../utils/logDev'
 
 const initialState: SettingState = {
@@ -30,8 +30,7 @@ export const updateSetting = createAsyncThunk<
     devLog('Setting更新成功：', res.data);
     return res.data
   } catch(err) {
-    let errorMessage = '設定の更新に失敗しました'
-    if (checkAxiosErrorStatus(401, err)) errorMessage = 'ログインが必要です';
+    const errorMessage: string = getAxiosErrorMessageFromStatusCode(err, '設定の更新に失敗しました')
     return thunkAPI.rejectWithValue(errorMessage)
   }
 })

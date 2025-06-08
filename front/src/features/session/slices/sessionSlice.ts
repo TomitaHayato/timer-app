@@ -10,6 +10,7 @@ import { defaultSetting } from "../../setting/defaultSetting";
 import { defaultRecords } from "../../records/defaultRecords";
 import { defaultTodos } from "../../todos/defaultTodos";
 import { devLog } from "../../../utils/logDev";
+import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
 
 const initialState: SessionState = {
   user: null,
@@ -46,8 +47,8 @@ export const signin = createAsyncThunk<
         name: userData.name,
       }
     } catch(err) {
-      console.log(err)
-      return thunkAPI.rejectWithValue('サインインに失敗しました')
+      const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログインに失敗しました');
+      return thunkAPI.rejectWithValue(errorMessage)
     }
   }
 )
@@ -76,8 +77,9 @@ export const signup = createAsyncThunk<
       email: userData.email,
       name: userData.name,
     }
-  } catch {
-    return thunkAPI.rejectWithValue('サインアップに失敗しました')
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サインアップに失敗しました');
+    return thunkAPI.rejectWithValue(errorMessage)
   }
 })
 
@@ -92,8 +94,9 @@ export const signout = createAsyncThunk<
     thunkAPI.dispatch(replaceSetting(defaultSetting))
     thunkAPI.dispatch(replaceRecords(defaultRecords))
     thunkAPI.dispatch(replaceTodos(defaultTodos))
-  } catch {
-    return thunkAPI.rejectWithValue('ログアウトに失敗しました')
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
+    return thunkAPI.rejectWithValue(errorMessage);
   }
 })
 
