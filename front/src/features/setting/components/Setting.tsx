@@ -1,9 +1,13 @@
 import { useForm } from "react-hook-form";
 import { Measure } from "./Measure";
 import type { SettingParams } from "../types/settingType";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { selectSettingError, updateSetting } from "../Slices/settingSlice";
 
 export function Setting() {
-  const { register, reset, watch, handleSubmit } = useForm<SettingParams>()
+  const { register, watch, handleSubmit } = useForm<SettingParams>()
+  const dispatch = useAppDispatch();
+  const settingError = useAppSelector(selectSettingError);
 
   const onSubmit = async(data: SettingParams) => {
     const postSettingParams: SettingParams = {
@@ -13,12 +17,15 @@ export function Setting() {
       longRestSec: data.longRestSec * 60,
     }
     console.log('送信データ', postSettingParams);
+    dispatch(updateSetting(postSettingParams)).unwrap();
   }
 
   return(
     <>
       <div>
         <h3 className="text-center text-2xl font-semibold mb-8">設定</h3>
+
+        { settingError && <p className="text-center text-error">{settingError}</p> }
 
         {/* フォーム */}
         <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>

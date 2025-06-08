@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { defaultRecords } from "./defaultRecords";
 import type { RecordsState, TermsRecords } from "./types/records";
 import type { RootState } from "../../reduxStore/store";
+import { devLog } from "../../utils/logDev";
 
 const initialState: RecordsState = {
   records: defaultRecords,
@@ -14,10 +15,14 @@ const recordsSlice = createSlice({
   initialState,
   reducers: {
     replaceRecords: (state: RecordsState, action: PayloadAction<TermsRecords>) => {
-      const { todayRecord, weeklyRecord, monthlyRecord, totalRecord } = action.payload;
-      if (!todayRecord || !weeklyRecord || !monthlyRecord || !totalRecord) return
+      const { dailyRecord, weeklyRecord, monthlyRecord, totalRecord } = action.payload;
+      if (!dailyRecord || !weeklyRecord || !monthlyRecord || !totalRecord) {
+        devLog('不正なRecordがactionに渡されています', action.payload)
+        return
+      }
 
-      state.records.todayRecord = todayRecord;
+      devLog('records更新:', state.records)
+      state.records.dailyRecord = dailyRecord;
       state.records.weeklyRecord = weeklyRecord
       state.records.monthlyRecord = monthlyRecord
       state.records.totalRecord = totalRecord;

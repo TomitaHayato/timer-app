@@ -5,7 +5,7 @@ export const defaultRecord = {
 }
 
 export const defaultRecords = {
-  todayRecord: defaultRecord,
+  dailyRecord: defaultRecord,
   weeklyRecord: defaultRecord,
   monthlyRecord: defaultRecord,
   totalRecord: defaultRecord,

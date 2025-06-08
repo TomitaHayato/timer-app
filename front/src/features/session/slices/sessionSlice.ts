@@ -30,6 +30,7 @@ export const signin = createAsyncThunk<
       devLog('signinのres.data: ', res.data);
       const { userData, recordsData } = res.data;
       if (!userData)  return thunkAPI.rejectWithValue('userData is null');
+      devLog('UserData:' , userData);
 
       // 各スライスにデータを配分
       const setting = userData.setting || defaultSetting;
@@ -61,6 +62,7 @@ export const signup = createAsyncThunk<
     const { userData, recordsData } = res.data;
     if (!userData)  return thunkAPI.rejectWithValue('userData is null');
 
+    devLog('UserData:', userData)
     // 各スライスにデータを配分
     const setting = userData.setting || defaultSetting;
     const records = recordsData || defaultRecords;

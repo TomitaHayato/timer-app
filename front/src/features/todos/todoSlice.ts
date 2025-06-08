@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Todo, TodoAdd, Todos, TodosState } from './types/todoType'
 import type { RootState } from '../../reduxStore/store';
 import { defaultTodos } from './defaultTodos';
+import { devLog } from '../../utils/logDev';
 
 const initialTodos: Todos = defaultTodos;
 
@@ -18,7 +19,7 @@ const todosSlice = createSlice({
     replaceTodos: (state: TodosState, action: PayloadAction<Todos>) => {
       const todos: Todos = action.payload;
       if(!todos) return;
-
+      devLog('todos更新:', state.todos)
       state.todos = todos;
     },
     add: (state: TodosState, action: PayloadAction<TodoAdd>) => {

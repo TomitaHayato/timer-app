@@ -11,7 +11,7 @@ export type RecordsState = {
 }
 
 export type TermsRecords = {
-  todayRecord: Record,
+  dailyRecord: Record,
   weeklyRecord: Record,
   monthlyRecord: Record,
   totalRecord: Record,
