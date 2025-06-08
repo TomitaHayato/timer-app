@@ -5,6 +5,7 @@ import { isEmptyObj } from "../../utils/object";
 import { PostSettingParams } from "../../types/setting";
 import { getUserIdFromRequest } from "../utils/getUserId";
 import { getIdFromRequestParams } from "../utils/getIdFromRequestParams";
+import { devLog } from "../../utils/dev/devLog";
 
 export const getSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
@@ -44,7 +45,11 @@ export const putSetting = async(req: Request, res: Response, next: NextFunction)
   }
 
   try {
+    devLog('パラメータ:', params)
     const setting = await dbQueryHandler(updateSetting, { userId, params });
     res.status(200).json(setting);
-  } catch(err) { next(err) }
+  } catch(err) { 
+    next(err)
+    devLog('エラー：', err)
+  }
 }

@@ -2,6 +2,7 @@ import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { UserPostParams, UserUpdateParams } from "../../types/user";
 import { devLog } from "../../utils/dev/devLog";
+import { selectRecordColumns, selectSettingColumns } from "../utils/selectColumns";
 
 export const getAllUser = async(prisma: PrismaClient) => {
   const allUsers = await prisma.user.findMany();
@@ -42,9 +43,13 @@ export const getUserWithRelation = async(
     select: {
       name: true,
       email: true,
-      setting,
+      ...(setting && {
+        setting: { select: selectSettingColumns }
+      }),
+      ...(records && {
+        records: { select: selectRecordColumns }
+      }),
       todos,
-      records,
     },
     where: {
       id: userId,
