@@ -29,8 +29,8 @@ export const signin = createAsyncThunk<
       const res = await clientCredentials.post('/auth/signin', params);
       devLog('signinのres.data: ', res.data);
       const { userData, recordsData } = res.data;
-      if (!userData)  return thunkAPI.rejectWithValue('userData is null');
-      devLog('UserData:' , userData);
+      if (!userData) return thunkAPI.rejectWithValue('userData is null');
+      devLog('UserData:', userData);
 
       // 各スライスにデータを配分
       const setting = userData.setting || defaultSetting;

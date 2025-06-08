@@ -27,6 +27,7 @@ export const updateSetting = createAsyncThunk<
   }
   try {
     const res = await clientCredentials.put('/settings', safeParams);
+    devLog('Setting更新成功：', res.data);
     return res.data
   } catch(err) {
     let errorMessage = '設定の更新に失敗しました'
@@ -45,7 +46,7 @@ const settingSlice = createSlice({
       if (!workSec || !restSec || !longRestSec || !volume || isMuted === null || isMuted === undefined) {
         return;
       }
-      devLog('setting更新:', state.setting)
+      devLog('setting更新:', state.setting.workSec)
       state.setting.workSec = workSec
       state.setting.restSec = restSec
       state.setting.longRestSec = longRestSec
@@ -62,7 +63,7 @@ const settingSlice = createSlice({
       .addCase(updateSetting.fulfilled, (state, action: PayloadAction<Setting>) => {
         state.loading = false;
         const { workSec, restSec, longRestSec, volume, isMuted } = action.payload;
-        if (!workSec || !restSec || !longRestSec || !volume || !isMuted) return;
+        if (!workSec || !restSec || !longRestSec || !volume || isMuted === null || isMuted === undefined) return;
 
         state.setting.workSec = workSec
         state.setting.restSec = restSec
