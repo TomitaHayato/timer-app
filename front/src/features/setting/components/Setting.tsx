@@ -2,14 +2,19 @@ import { useForm } from "react-hook-form";
 import { Measure } from "./Measure";
 import type { SettingParams } from "../types/settingType";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
-import { selectSettingError, updateSetting } from "../Slices/settingSlice";
+import { replaceSetting, selectSettingError, updateSetting } from "../Slices/settingSlice";
+import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 
 export function Setting() {
-  const { register, watch, handleSubmit } = useForm<SettingParams>()
+  const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
+
+  const isAuth = useAppSelector(selectAuthStatus);
   const dispatch = useAppDispatch();
   const settingError = useAppSelector(selectSettingError);
 
   const onSubmit = async(data: SettingParams) => {
+    // 入力値の秒数を分数に変更
     const postSettingParams: SettingParams = {
       ...data,
       workSec: data.workSec * 60,
@@ -17,7 +22,19 @@ export function Setting() {
       longRestSec: data.longRestSec * 60,
     }
     console.log('送信データ', postSettingParams);
-    dispatch(updateSetting(postSettingParams)).unwrap();
+
+    try {
+      // TODO: 設定変更後、引き出しを閉じたい
+      if(isAuth) {
+        dispatch(updateSetting(postSettingParams));
+      } else {
+        dispatch(replaceSetting(postSettingParams));
+      }
+      toastSuccessRB('設定を更新しました');
+    } catch {
+      toastErrorRB('設定の更新に失敗しました')
+    }
+
   }
 
   return(
@@ -33,59 +50,65 @@ export function Setting() {
             itemsNum={11}
             min={10}
             max={60}
-            defaultVal={25}
             step={5}
             measureId={'workSec'}
             item="作業時間"
             unit="分"
             register={register}
-            watch={watch}/>
+            watch={watch}
+            setValue={setValue}/>
 
           <Measure
             itemsNum={10}
             min={1}
             max={10}
-            defaultVal={5}
             step={1}
             measureId={'restSec'}
             item="休憩時間"
             unit="分"
             register={register}
-            watch={watch}/>
+            watch={watch}
+            setValue={setValue}/>
           
           <Measure
             itemsNum={12}
             min={5}
             max={60}
-            defaultVal={15}
             step={5}
             measureId={'longRestSec'}
             item="長期休憩"
             unit="分"
             register={register}
-            watch={watch}/>
+            watch={watch}
+            setValue={setValue}/>
 
           <Measure
             itemsNum={11}
             min={0}
             max={100}
-            defaultVal={50}
             step={10}
             measureId={'volume'}
             item="音量"
             unit=""
             register={register}
-            watch={watch}/>
+            watch={watch}
+            setValue={setValue}/>
 
-          <label className="label font-semibold text-gray-300">
-            ミュート
-            <input
-              type="checkbox"
-              className="checkbox mx-4"
-              {...register('isMuted')}/>
-          </label>
+          <div>
+            <label className="label font-semibold text-gray-300 mb-1">
+              ミュート
+              <input
+                type="checkbox"
+                className="checkbox mx-4"
+                {...register('isMuted')}/>
+            </label>
+            <p className="text-[0.65rem] text-gray-400">※ 保存ボタンを押すと反映されます</p>
+          </div>
 
-          <input type="submit" className="btn btn-info"/>
+          <div className="text-center ">
+            <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '反映する'} />
+            {/* { !isAuth && <p className="text-sm text-red-400">ログイン後に保存できます</p> } */}
+          </div>
         </form>
       </div>
     </>

@@ -20,4 +20,4 @@ export type SettingParams = {
   isMuted: boolean,
 }
 
-export type settingItems = 'workSec' | 'restSec' | 'longRestSec' | 'volume' | 'isMuted'
+export type settingItems = 'workSec' | 'restSec' | 'longRestSec' | 'volume'
