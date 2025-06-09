@@ -100,6 +100,37 @@ export const signout = createAsyncThunk<
   }
 })
 
+export const checkAuthToken = createAsyncThunk<
+  User,
+  undefined,
+  { rejectValue: string }
+>('session/check', async(_, thunkAPI) => {
+  try {
+    const res = await clientCredentials.get('/auth/check');
+    const { userData, recordsData } = res.data;
+    if (!userData) return thunkAPI.rejectWithValue('userData is null');
+
+    devLog('UserData:', userData)
+    // 各スライスにデータを配分
+    const setting = userData.setting || defaultSetting;
+    const records = recordsData || defaultRecords;
+    const todos = userData.todos || defaultTodos
+
+    thunkAPI.dispatch(replaceSetting(setting))
+    thunkAPI.dispatch(replaceRecords(records))
+    thunkAPI.dispatch(replaceTodos(todos))
+
+    return {
+      email: userData.email,
+      name: userData.name,
+    }
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サーバとの通信に失敗しました');
+    devLog(errorMessage);
+    return thunkAPI.rejectWithValue(errorMessage)
+  }
+})
+
 const sessionSlice = createSlice({
   name: 'session',
   initialState,
@@ -152,6 +183,20 @@ const sessionSlice = createSlice({
       .addCase(signout.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Unexpected error';
+      })
+      // 認証確認
+      .addCase(checkAuthToken.pending, state => {
+        state.loading = true;
+        state.error = null
+      })
+      .addCase(checkAuthToken.fulfilled, (state, action:PayloadAction<User>) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+      })
+      .addCase(checkAuthToken.rejected, (state) => {
+        state.loading = false;
+        state.isAuthenticated = false
       })
   }
 });
