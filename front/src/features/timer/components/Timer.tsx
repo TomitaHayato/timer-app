@@ -1,17 +1,20 @@
 import { secToHMS } from "../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useEffect, useState } from "react";
-import { modeChange, selectCurrentSec } from "../timerSlice";
+import { modeChange, selectTimer, switchTimer } from "../timerSlice";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { createExpiryTimestamp } from "../utils/expiryTimestamp";
+import { selectSetting } from "../../setting/Slices/settingSlice";
+import { getModeSec } from "../utils/getModeSec";
 
 export default function Timer() {
-  const sec = useAppSelector(selectCurrentSec);
+  const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
+  const timerStatus = useAppSelector(selectTimer);
   const dispatch = useAppDispatch()
 
   // 初めてタイマーをスタートしたかどうか
-  const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true)
-  
+  const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true);
+
   // react-timer-hookから Timer情報を取得
   const {
     totalSeconds,
@@ -21,33 +24,46 @@ export default function Timer() {
     resume,
     restart,
   } = useTimer({
-    expiryTimestamp: createExpiryTimestamp(sec),
+    expiryTimestamp: createExpiryTimestamp(getModeSec(timerStatus.mode, { workSec, restSec, longRestSec })),
     autoStart: false,
     onExpire: () => {
       dispatch(modeChange());
     },
   });
 
-  // 秒数更新後、タイマーをリスタート
+  // isRunningをステートに反映
   useEffect(() => {
-    if (isFirstStart) return;
-    restart(createExpiryTimestamp(sec))
-  }, [isFirstStart, restart, sec])
+    dispatch(switchTimer(isRunning));
+  }, [dispatch, isRunning])
 
-  function hundleReset() {
-    // const confirm = window.confirm('タイマーの記録がリセットされます。よろしいですか？');
-    // if (!confirm) return;
-    restart(createExpiryTimestamp(sec));
+
+  // 秒数更新後、タイマーをリスタート
+  // 問題点：
+    // 1: 更新後すぐにカウントが反映されてしまうこと
+    // 2: 更新後スタートしてしまうこと
+    // 3: 更新後にpauseしようとすると、Mode切り替え後もPauseしてしまうこと
+  useEffect(() => {
+    if (isFirstStart) return; // 初回レンダリング時は何もしない
+    restart(createExpiryTimestamp(getModeSec(timerStatus.mode, { workSec, restSec, longRestSec })))
+  }, [isFirstStart, longRestSec, restSec, restart, timerStatus.mode, workSec])
+
+
+  function handleReset() {
+    restart(createExpiryTimestamp(getModeSec(timerStatus.mode, { workSec, restSec, longRestSec })));
     pause();
   }
 
-  function hundleStart() {
+  function handleStart() {
     if (!isFirstStart) {
       resume();
       return;
     }
     setIsFirstStart(false);
     start();
+  }
+
+  function handlePause() {
+    pause();
   }
 
   return(
@@ -71,10 +87,10 @@ export default function Timer() {
           <div>
             <div className="flex justify-center items-center gap-8 mb-8">
               { isRunning
-                ? <button className="btn btn-success btn-lg" onClick={pause}>ストップ</button>
-                : <button className="btn btn-success btn-lg" onClick={hundleStart}>スタート</button>
+                ? <button className="btn btn-success btn-lg" onClick={handlePause}>ストップ</button>
+                : <button className="btn btn-success btn-lg" onClick={handleStart}>スタート</button>
               }
-              <button className="btn btn-success btn-lg" onClick={hundleReset}>リセット</button>
+              <button className="btn btn-success btn-lg" onClick={handleReset}>リセット</button>
             </div>
             <div className="flex justify-center">
               <button className="btn btn-success btn-lg">ここまでの作業時間を記録</button>

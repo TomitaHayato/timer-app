@@ -26,16 +26,6 @@ export default function OnlyDev() {
     }
   }
 
-  // TODOSにアクセス
-  const reqTodosAPI = async() => {
-    try {
-      const res = await clientCredentials.get('/todos');
-      console.log('レスポンスデータ：', res.data);
-    } catch(e) {
-      console.log('失敗', e)
-    }
-  }
-
   return(
     <>
       <button className="text-center btn btn-primary" onClick={
