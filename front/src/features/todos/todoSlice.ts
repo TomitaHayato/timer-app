@@ -40,12 +40,6 @@ const todosSlice = createSlice({
       devLog('todos更新:', state.todos)
       state.todos = todos;
     },
-    add: (state: TodosState, action: PayloadAction<TodoAddParams>) => {
-      state.todos.push({
-        ...action.payload,
-        status: false,
-      });
-    },
   },
   extraReducers: builder => {
     builder
@@ -73,7 +67,6 @@ export const selectTodosUncompleted = (state: RootState) => {
 }
 
 export const {
-  add,
   replaceTodos
 } = todosSlice.actions;
 
