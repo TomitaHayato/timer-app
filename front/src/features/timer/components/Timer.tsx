@@ -1,4 +1,4 @@
-import { secToHMS, secToJpFormat } from "../../../utils/secFormat";
+import { secToHMS } from "../../../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useEffect, useState } from "react";
 import { modeChange, selectTimer, switchTimer } from "../timerSlice";
@@ -6,11 +6,13 @@ import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { createExpiryTimestamp } from "../utils/expiryTimestamp";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 import { getModeSec } from "../utils/getModeSec";
-import { devLog } from "../../../utils/logDev";
+import { modeText } from "../utils/modeText";
+import { modeBorderColor, modeTextColor } from "../utils/class";
+import { toastSuccessRB } from "../../../utils/toast";
 
 export default function Timer() {
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
-  const timerStatus = useAppSelector(selectTimer);
+  const { mode } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch()
 
   // 初めてタイマーをスタートしたかどうか
@@ -25,7 +27,7 @@ export default function Timer() {
     resume,
     restart,
   } = useTimer({
-    expiryTimestamp: createExpiryTimestamp(getModeSec(timerStatus.mode, { workSec, restSec, longRestSec })),
+    expiryTimestamp: createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })),
     autoStart: false,
     onExpire: () => {
       dispatch(modeChange(workSec));
@@ -45,16 +47,18 @@ export default function Timer() {
     // 3: 更新後にpauseしようとすると、Mode切り替え後もPauseしてしまうこと
   useEffect(() => {
     if (isFirstStart) return; // 初回レンダリング時は何もしない
-    restart(createExpiryTimestamp(getModeSec(timerStatus.mode, { workSec, restSec, longRestSec })))
-  }, [isFirstStart, longRestSec, restSec, restart, timerStatus.mode, workSec])
+    restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })))
+  }, [isFirstStart, longRestSec, restSec, restart, mode, workSec])
 
 
   function handleReset() {
-    restart(createExpiryTimestamp(getModeSec(timerStatus.mode, { workSec, restSec, longRestSec })));
+    restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })));
     pause();
+    toastSuccessRB('タイマー リセット', { autoClose: 1500 })
   }
 
   function handleStart() {
+    toastSuccessRB('タイマー スタート', { autoClose: 1500 })
     if (!isFirstStart) {
       resume();
       return;
@@ -64,12 +68,9 @@ export default function Timer() {
   }
 
   function handlePause() {
+    toastSuccessRB('タイマー ストップ', { autoClose: 1500 })
     pause();
   }
-
-  useEffect(() => {
-    if (timerStatus.mode === 'work') devLog(secToJpFormat(totalSeconds))
-  }, [timerStatus.mode, totalSeconds])
 
   return(
     <>
@@ -83,8 +84,9 @@ export default function Timer() {
           </div>
           
           {/* 円状のコンテナ */}
-          <div className="border-2 border-indigo-600 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex items-center justify-center mb-8">
-            <p className="text-6xl">
+          <div className={`border-2 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex flex-col items-center justify-center mb-8 ${modeBorderColor(mode)}`}>
+            <p className={modeTextColor(mode)}>{modeText(mode)}</p>
+            <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
               {secToHMS(totalSeconds)}
             </p>
           </div>

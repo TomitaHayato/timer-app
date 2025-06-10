@@ -5,14 +5,13 @@ import { selectTimer } from "../../timer/timerSlice";
 import { secToJpFormat } from "../../../utils/secFormat";
 
 export default function Records() {
-  const { count, totalSec } = useAppSelector(selectTimer);
+  const { totalSec } = useAppSelector(selectTimer);
   const todos = useAppSelector(selectTodosCompleted);
 
   return (
     <>
       <h3 className="text-lg font-semibold text-center mb-4">今日の記録</h3>
       <div className="text-center mb-12">
-        <p className="">完了済ポモドーロ: {count}</p>
         <p className="">合計集中時間：{secToJpFormat(totalSec)}</p>
       </div>
 
