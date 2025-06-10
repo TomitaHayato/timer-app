@@ -27,7 +27,7 @@ export function TodoCompleteBtn({ id }: Props) {
       {
         loading
         ? <LoadingBtnXs />
-        : <button className="btn btn-sm btn-success btn-circle" onClick={handleClick}>✔︎</button>
+        : <button className="btn btn-xs btn-success btn-circle" onClick={handleClick}>✔︎</button>
       }
     </>
   )

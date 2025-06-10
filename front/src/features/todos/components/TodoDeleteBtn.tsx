@@ -28,7 +28,7 @@ export function TodoDeleteBtn({ id }: Props) {
       {
         loading
         ? <LoadingBtnXs />
-        : <button className="btn btn-sm btn-outline btn-square" onClick={handleDelete}>🗑️</button>
+        : <button className="btn btn-xs btn-outline btn-square" onClick={handleDelete}>🗑️</button>
       }
     </>
   )

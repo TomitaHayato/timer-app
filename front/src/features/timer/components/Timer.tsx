@@ -46,9 +46,9 @@ export default function Timer() {
     // 2: 更新後スタートしてしまうこと
     // 3: 更新後にpauseしようとすると、Mode切り替え後もPauseしてしまうこと
   useEffect(() => {
-    if (isFirstStart) return; // 初回レンダリング時は何もしない
     restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })))
-  }, [isFirstStart, longRestSec, restSec, restart, mode, workSec])
+    if (isFirstStart) pause(); // 初回レンダリング時は何もしない
+  }, [isFirstStart, longRestSec, restSec, restart, mode, workSec, pause])
 
 
   function handleReset() {
