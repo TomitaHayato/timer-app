@@ -1,8 +1,10 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { Todo, TodoAdd, Todos, TodosState } from './types/todoType'
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import type { Todo, TodoAddParams, Todos, TodosState } from './types/todoType'
 import type { RootState } from '../../reduxStore/store';
 import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';
+import { clientCredentials } from '../../utils/axios';
+import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axiosError';
 
 const initialTodos: Todos = defaultTodos;
 
@@ -11,6 +13,22 @@ const initialState: TodosState = {
   loading: false,
   error: null,
 }
+
+export const createTodo = createAsyncThunk<
+  Todos,
+  TodoAddParams,
+  { rejectValue: string }
+>('todos/create', async(params, thunkAPI) => {
+  try {
+    const res = await clientCredentials.post('/todos', params);
+    const todos: Todos = res.data;
+    if (!todos) return thunkAPI.rejectWithValue('todosの取得に失敗しました');
+    return todos;
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'Todoの作成に失敗しました');
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+})
 
 const todosSlice = createSlice({
   name: 'todos',
@@ -22,13 +40,28 @@ const todosSlice = createSlice({
       devLog('todos更新:', state.todos)
       state.todos = todos;
     },
-    add: (state: TodosState, action: PayloadAction<TodoAdd>) => {
+    add: (state: TodosState, action: PayloadAction<TodoAddParams>) => {
       state.todos.push({
         ...action.payload,
         status: false,
       });
     },
   },
+  extraReducers: builder => {
+    builder
+    .addCase(createTodo.pending, (state) => {
+      state.loading = true;
+      state.error = null
+    })
+    .addCase(createTodo.fulfilled, (state, action: PayloadAction<Todos>) => {
+      state.loading = false;
+      state.todos = action.payload;
+    })
+    .addCase(createTodo.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || 'Todoの作成に失敗しました';
+    })
+  }
 })
 
 export const selectTodos = (state: RootState) => state.todos;

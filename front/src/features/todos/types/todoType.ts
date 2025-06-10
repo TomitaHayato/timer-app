@@ -4,7 +4,7 @@ export type Todo = {
   status: boolean,
 }
 
-export type TodoAdd = {
+export type TodoAddParams = {
   title: string,
   deadline?: Date,
 }
