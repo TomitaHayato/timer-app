@@ -44,6 +44,23 @@ export const deleteTodo = createAsyncThunk<
   }
 })
 
+export const updateTodoIsCompleted = createAsyncThunk<
+  Todos,
+  string,
+  { rejectValue: string }
+>('todos/isCompleted', async(todoId, thunkAPI) => {
+  try{
+    const res = await clientCredentials.put(`/todos/${todoId}/is_completed`);
+    const todos = res.data;
+    devLog('res.data', todos)
+    if (!todos) return thunkAPI.rejectWithValue('todosの更新に失敗しました');
+    return todos;
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'Todoの更新に失敗しました');
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+})
+
 const todosSlice = createSlice({
   name: 'todos',
   initialState,
@@ -81,15 +98,27 @@ const todosSlice = createSlice({
       state.loading = false;
       state.error = action.payload || 'Todoの削除に失敗しました';
     })
+    .addCase(updateTodoIsCompleted.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(updateTodoIsCompleted.fulfilled, (state, action: PayloadAction<Todos>) => {
+      state.loading = false;
+      state.todos = action.payload;
+    })
+    .addCase(updateTodoIsCompleted.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || 'Todoの更新に失敗しました';
+    })
   }
 })
 
 export const selectTodos = (state: RootState) => state.todos;
 export const selectTodosCompleted = (state: RootState) => {
-  return state.todos.todos.filter((todo: Todo) => todo.status)
+  return state.todos.todos.filter((todo: Todo) => todo.isCompleted)
 }
 export const selectTodosUncompleted = (state: RootState) => {
-  return state.todos.todos.filter((todo: Todo) => !todo.status)
+  return state.todos.todos.filter((todo: Todo) => !todo.isCompleted)
 }
 
 export const {

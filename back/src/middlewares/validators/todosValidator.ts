@@ -26,11 +26,3 @@ export const todosUpdateValidator = [
     .isDate()
     .toDate(),
 ]
-
-export const todosUpdateStatusValidator = [
-  body('isCompleted')
-    .exists({values: 'null'})
-    .notEmpty()
-    .isBoolean()
-    .toBoolean(),
-]

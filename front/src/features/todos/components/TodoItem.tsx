@@ -1,5 +1,7 @@
 import type { Todo } from "../types/todoType"
+import { TodoCompleteBtn } from "./TodoCompleteBtn";
 import { TodoDeleteBtn } from "./TodoDeleteBtn";
+import { TodoRebornBtn } from "./TodoRebornBtn";
 
 type Props ={
   todo: Todo,
@@ -15,9 +17,9 @@ export default function TodoItem({ todo }: Props) {
         </div>
 
         {
-          todo.status
-            ? <button className="btn btn-sm btn-info btn-circle">↩︎</button>
-            : <button className="btn btn-sm btn-success btn-circle">✔︎</button>
+          todo.isCompleted
+          ? <TodoRebornBtn   id={todo.id} />
+          : <TodoCompleteBtn id={todo.id} /> 
         }
 
         <TodoDeleteBtn id={todo.id} />

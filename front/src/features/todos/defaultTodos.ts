@@ -4,6 +4,6 @@ export const defaultTodos: Todos = [
   {
     id: 'default',
     title: 'Todo Sample',
-    status: false,
+    isCompleted: false,
   },
 ]

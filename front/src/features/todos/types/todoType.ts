@@ -2,7 +2,7 @@ export type Todo = {
   id: string,
   title: string,
   deadline?: Date,
-  status: boolean,
+  isCompleted: boolean,
 }
 
 export type TodoAddParams = {
