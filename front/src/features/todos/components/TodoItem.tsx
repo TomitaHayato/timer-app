@@ -1,16 +1,15 @@
 import type { Todo } from "../types/todoType"
+import { TodoDeleteBtn } from "./TodoDeleteBtn";
 
 type Props ={
   todo: Todo,
-  index: number,
 }
 
-export default function TodoItem({ todo, index, }: Props) {
-
+export default function TodoItem({ todo }: Props) {
   return(
     <>
       <li className="list-row items-center px-2">
-        <div className="text-xl font-thin opacity-30 tabular-nums">{index}</div>
+        <div className="text-xl font-thin opacity-30 tabular-nums">・</div>
         <div>
           <p>{todo.title}</p>
         </div>
@@ -21,10 +20,7 @@ export default function TodoItem({ todo, index, }: Props) {
             : <button className="btn btn-sm btn-success btn-circle">✔︎</button>
         }
 
-        <button className="btn btn-sm btn-outline btn-square">
-          🗑️
-        </button>
-        
+        <TodoDeleteBtn id={todo.id} />
       </li>
     </>
   )

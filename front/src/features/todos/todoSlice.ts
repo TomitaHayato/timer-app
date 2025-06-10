@@ -6,10 +6,8 @@ import { devLog } from '../../utils/logDev';
 import { clientCredentials } from '../../utils/axios';
 import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axiosError';
 
-const initialTodos: Todos = defaultTodos;
-
 const initialState: TodosState = {
-  todos: initialTodos,
+  todos: defaultTodos,
   loading: false,
   error: null,
 }
@@ -30,6 +28,22 @@ export const createTodo = createAsyncThunk<
   }
 })
 
+export const deleteTodo = createAsyncThunk<
+  Todos,
+  string,
+  { rejectValue: string }
+>('todos/delete', async(todoId, thunkAPI) => {
+  try{
+    const res = await clientCredentials.delete(`/todos/${todoId}`);
+    const todos = res.data;
+    if (!todos) return thunkAPI.rejectWithValue('todosの削除に失敗しました');
+    return todos;
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'Todoの削除に失敗しました');
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+})
+
 const todosSlice = createSlice({
   name: 'todos',
   initialState,
@@ -45,7 +59,7 @@ const todosSlice = createSlice({
     builder
     .addCase(createTodo.pending, (state) => {
       state.loading = true;
-      state.error = null
+      state.error = null;
     })
     .addCase(createTodo.fulfilled, (state, action: PayloadAction<Todos>) => {
       state.loading = false;
@@ -54,6 +68,18 @@ const todosSlice = createSlice({
     .addCase(createTodo.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || 'Todoの作成に失敗しました';
+    })
+    .addCase(deleteTodo.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(deleteTodo.fulfilled, (state, action: PayloadAction<Todos>) => {
+      state.loading = false;
+      state.todos = action.payload;
+    })
+    .addCase(deleteTodo.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || 'Todoの削除に失敗しました';
     })
   }
 })
