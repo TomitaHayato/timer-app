@@ -1,4 +1,4 @@
-import { secToHMS } from "../utils/secFormat";
+import { secToHMS, secToJpFormat } from "../../../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useEffect, useState } from "react";
 import { modeChange, selectTimer, switchTimer } from "../timerSlice";
@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { createExpiryTimestamp } from "../utils/expiryTimestamp";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 import { getModeSec } from "../utils/getModeSec";
+import { devLog } from "../../../utils/logDev";
 
 export default function Timer() {
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
@@ -27,7 +28,7 @@ export default function Timer() {
     expiryTimestamp: createExpiryTimestamp(getModeSec(timerStatus.mode, { workSec, restSec, longRestSec })),
     autoStart: false,
     onExpire: () => {
-      dispatch(modeChange());
+      dispatch(modeChange(workSec));
     },
   });
 
@@ -65,6 +66,10 @@ export default function Timer() {
   function handlePause() {
     pause();
   }
+
+  useEffect(() => {
+    if (timerStatus.mode === 'work') devLog(secToJpFormat(totalSeconds))
+  }, [timerStatus.mode, totalSeconds])
 
   return(
     <>

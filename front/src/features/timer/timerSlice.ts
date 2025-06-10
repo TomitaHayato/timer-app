@@ -7,6 +7,7 @@ const initialState: TimerState = {
   mode: 'work',
   count: 0,
   status: false,
+  totalSec: 0,
 }
 
 export const timerSlice = createSlice({
@@ -21,7 +22,8 @@ export const timerSlice = createSlice({
       state.count = initialState.count;
     },
     // タイマーが0になった時の処理
-    modeChange: (state: TimerState) => {
+    modeChange: (state: TimerState, action: PayloadAction<number>) => {
+      const workSec = action.payload
       // 休憩終了時
       if (state.mode === 'rest' || state.mode === 'longRest') {
         state.mode = 'work';
@@ -30,6 +32,7 @@ export const timerSlice = createSlice({
       }
       // 作業終了時
       state.count += 1
+      state.totalSec += workSec;
       if (state.count % 4 === 0) {
         state.mode = 'longRest'
       } else {

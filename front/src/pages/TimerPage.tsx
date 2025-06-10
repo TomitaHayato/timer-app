@@ -1,6 +1,6 @@
 import Drawer from "../components/Drawer";
 import { Setting } from "../features/setting/components/Setting";
-import Records from "../features/timer/components/Records";
+import Records from "../features/records/components/Records";
 import Timer from "../features/timer/components/Timer";
 import TodosIndexSide from "../features/todos/components/TodosIndexSide";
 

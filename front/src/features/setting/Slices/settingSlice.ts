@@ -7,7 +7,7 @@ import { getAxiosErrorMessageFromStatusCode } from '../../../utils/errorHandler/
 import { devLog } from '../../../utils/logDev'
 
 const initialState: SettingState = {
-  setting: defaultSetting,
+  setting: defaultSetting(),
   loading: false,
   error: null
 }

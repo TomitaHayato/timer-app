@@ -34,7 +34,7 @@ export const signin = createAsyncThunk<
       devLog('UserData:', userData);
 
       // 各スライスにデータを配分
-      const setting = userData.setting || defaultSetting;
+      const setting = userData.setting || defaultSetting();
       const records = recordsData || defaultRecords;
       const todos = userData.todos || defaultTodos
 
@@ -65,7 +65,7 @@ export const signup = createAsyncThunk<
 
     devLog('UserData:', userData)
     // 各スライスにデータを配分
-    const setting = userData.setting || defaultSetting;
+    const setting = userData.setting || defaultSetting();
     const records = recordsData || defaultRecords;
     const todos = userData.todos || defaultTodos
 
@@ -91,7 +91,7 @@ export const signout = createAsyncThunk<
   try {
     await clientCredentials.get('/auth/signout');
     // 他のStateをリセット
-    thunkAPI.dispatch(replaceSetting(defaultSetting))
+    thunkAPI.dispatch(replaceSetting(defaultSetting()))
     thunkAPI.dispatch(replaceRecords(defaultRecords))
     thunkAPI.dispatch(replaceTodos(defaultTodos))
   } catch(err) {
@@ -112,7 +112,7 @@ export const checkAuthToken = createAsyncThunk<
 
     devLog('UserData:', userData)
     // 各スライスにデータを配分
-    const setting = userData.setting || defaultSetting;
+    const setting = userData.setting || defaultSetting();
     const records = recordsData || defaultRecords;
     const todos = userData.todos || defaultTodos
 
