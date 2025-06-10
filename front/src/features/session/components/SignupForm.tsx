@@ -5,6 +5,7 @@ import { selectSessionError, selectSessionLoading, signup } from "../slices/sess
 import type { SignupParams } from "../types/session";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
+import { devLog } from "../../../utils/logDev";
 
 export function SignupForm() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<SignupParams>();
@@ -14,7 +15,7 @@ export function SignupForm() {
   const loading: boolean = useAppSelector(selectSessionLoading);
 
   const onSubmit = async (data: SignupParams) => {
-    console.log('Signup Formデータ', data);
+    devLog('Signup Formデータ', data);
     try{
       await dispatch(signup(data)).unwrap;
       reset();

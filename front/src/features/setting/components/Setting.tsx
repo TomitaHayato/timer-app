@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { replaceSetting, selectSettingError, updateSetting } from "../Slices/settingSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
+import { devLog } from "../../../utils/logDev";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
@@ -21,7 +22,7 @@ export function Setting() {
       restSec: data.restSec * 60,
       longRestSec: data.longRestSec * 60,
     }
-    console.log('送信データ', postSettingParams);
+    devLog('送信データ', postSettingParams);
 
     try {
       // TODO: 設定変更後、引き出しを閉じたい

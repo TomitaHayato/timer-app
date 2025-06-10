@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { TimerMode, TimerState } from './types/timerType'
 import type { RootState } from '../../reduxStore/store';
+import { devLog } from '../../utils/logDev';
 
 const initialState: TimerState = {
   mode: 'work',
@@ -24,7 +25,7 @@ export const timerSlice = createSlice({
       // 休憩終了時
       if (state.mode === 'rest' || state.mode === 'longRest') {
         state.mode = 'work';
-        console.log('modeChange', state.mode);
+        devLog('modeChange', state.mode);
         return;
       }
       // 作業終了時
@@ -34,7 +35,7 @@ export const timerSlice = createSlice({
       } else {
         state.mode = 'rest'
       }
-      console.log('modeChange', state.mode);
+      devLog('modeChange', state.mode);
     },
     // 強制的にモードを変更
     modeChangeForth: (state: TimerState, action: PayloadAction<TimerMode>) => {

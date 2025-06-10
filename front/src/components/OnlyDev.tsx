@@ -1,6 +1,7 @@
 import { clientCredentials } from "../utils/axios";
 import { useAppSelector } from "../reduxStore/hooks";
 import { selectAuthStatus } from "../features/session/slices/sessionSlice";
+import { devLog } from "../utils/logDev";
 
 export default function OnlyDev() {
   const isAuth = useAppSelector(selectAuthStatus);
@@ -11,18 +12,18 @@ export default function OnlyDev() {
   const checkAuth = async() => {
     try {
       const res = await clientCredentials.get('/auth/check');
-      console.log('検証結果：', res.data);
+      devLog('検証結果：', res.data);
     } catch {
-      console.log('検証失敗')
+      devLog('検証失敗')
     }
   }
 
   const deleteUser = async() => {
     try {
       const res = await clientCredentials.delete(`/users`);
-      console.log('検証結果：', res.data);
+      devLog('検証結果：', res.data);
     } catch {
-      console.log('検証失敗')
+      devLog('検証失敗')
     }
   }
 

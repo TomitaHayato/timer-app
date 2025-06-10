@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { selectSessionError, selectSessionLoading, signin } from "../slices/sessionSlice";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
+import { devLog } from "../../../utils/logDev";
 
 export function LoginForm() {
   // form
@@ -16,7 +17,7 @@ export function LoginForm() {
   
   const onSubmit = async (data: SigninParams) => {
     if (loading) return
-    console.log('Signin Formデータ：', data);
+    devLog('Signin Formデータ：', data);
     try {
       // unwrapでAsynkThunkの成功・失敗をキャッチ
       await dispatch(signin(data)).unwrap();
