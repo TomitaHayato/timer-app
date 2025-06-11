@@ -13,7 +13,7 @@ export function Modal({ children, modalId, }: Props) {
           {children}
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn">Close</button>
+              <button className="btn" id={`close-${modalId}`}>Close</button>
             </form>
           </div>
         </div>

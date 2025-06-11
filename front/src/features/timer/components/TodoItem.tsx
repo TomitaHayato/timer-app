@@ -1,6 +1,7 @@
 import dayjs from "dayjs"
 import type { Todo } from "../../todos/types/todoType"
 import { deadlineColor } from "../../../utils/class";
+import { closeModal } from "../../../utils/modelCtl";
 
 type Props = {
   todo: Todo,
@@ -10,11 +11,12 @@ type Props = {
 export function TodoItem({ todo, setTodo }: Props) {
   function handleClick() {
     setTodo(todo);
+    closeModal('todoSelector');
   }
 
   return(
     <>
-      <button className="btn bg-gray-700 w-full flex flex-col gap-0" onClick={handleClick}>
+      <button className="w-11/12 mx-auto bg-gray-700 flex flex-col my-1 px-4 py-2 text-start rounded-xl hover:border-1" onClick={handleClick}>
         <p>{todo.title}</p>
         {
           !todo.isCompleted && todo.deadline

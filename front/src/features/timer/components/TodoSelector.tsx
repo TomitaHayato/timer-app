@@ -22,6 +22,7 @@ export function TodoSelector() {
       </div>
 
       <Modal modalId={'todoSelector'}>
+        <p className="text-center mb-2">Todoを選択してください</p>
         {
           todos.length === 0
           ? <p className="text-center text-lg">Todoがありません</p>
