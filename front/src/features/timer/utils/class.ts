@@ -17,3 +17,12 @@ export function modeBorderColor(mode: TimerMode) {
       return 'border-yellow-200'
   }
 }
+
+export function modeBarColor(mode: TimerMode) {
+  switch (mode) {
+    case 'work':
+      return 'text-primary'
+    default:
+      return 'text-yellow-600'
+  }
+}

@@ -7,7 +7,7 @@ import { createExpiryTimestamp } from "../utils/expiryTimestamp";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 import { getModeSec } from "../utils/getModeSec";
 import { modeText } from "../utils/modeText";
-import { modeBorderColor, modeTextColor } from "../utils/class";
+import { modeBarColor, modeTextColor } from "../utils/class";
 import { toastSuccessRB } from "../../../utils/toast";
 import { TodoSelector } from "./TodoSelector";
 
@@ -82,11 +82,13 @@ export default function Timer() {
           <TodoSelector />
 
           {/* 円状のコンテナ */}
-          <div className={`border-2 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex flex-col items-center justify-center mb-8 ${modeBorderColor(mode)}`}>
-            <p className={modeTextColor(mode)}>{modeText(mode)}</p>
-            <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
-              {secToHMS(totalSeconds)}
-            </p>
+          <div className='flex items-center justify-center my-4'>
+            <div className={`radial-progress ${modeBarColor(mode)}`} style={{"--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100,  "--size": "20rem", "--thickness": "2px"} as React.CSSProperties } aria-valuenow={100} role="progressbar">
+              <p className={`${modeTextColor(mode)} text-center`}>{modeText(mode)}</p>
+              <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
+                {secToHMS(totalSeconds)}
+              </p>
+            </div>
           </div>
           {/* タイマー操作ボタン */}
           <div>
