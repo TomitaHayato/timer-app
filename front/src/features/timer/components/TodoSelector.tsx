@@ -2,13 +2,13 @@ import { useState } from "react"
 import type { Todo } from "../../todos/types/todoType"
 import { Modal } from "../../../components/Modal";
 import { openModal } from "../../../utils/modelCtl";
-import { selectTodos } from "../../todos/todoSlice";
+import { selectSortedTodos } from "../../todos/todoSlice";
 import { useAppSelector } from "../../../reduxStore/hooks";
 import { TodoItem } from "./TodoItem";
 import { SelectedTodo } from "./SelectedTodo";
 
 export function TodoSelector() {
-  const { todos } = useAppSelector(selectTodos);
+  const todos = useAppSelector(selectSortedTodos);
   const [ todo, setTodo ] = useState<Todo | null>(null);
 
   return(

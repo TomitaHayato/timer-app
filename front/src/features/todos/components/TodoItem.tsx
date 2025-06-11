@@ -3,6 +3,7 @@ import type { Todo } from "../types/todoType"
 import { TodoCompleteBtn } from "./TodoCompleteBtn";
 import { TodoDeleteBtn } from "./TodoDeleteBtn";
 import { TodoRebornBtn } from "./TodoRebornBtn";
+import { deadlineColor } from "../../../utils/class";
 
 type Props ={
   todo: Todo,
@@ -22,7 +23,7 @@ export default function TodoItem({ todo }: Props) {
           <p>{todo.title}</p>
           {
             !todo.isCompleted && todo.deadline
-            && <p className="text-warning text-xs">{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
+            && <p className={`${deadlineColor(todo.deadline)} text-xs`}>{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
           }
         </div>
 

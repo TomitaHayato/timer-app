@@ -5,6 +5,7 @@ import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';
 import { clientCredentials } from '../../utils/axios';
 import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axiosError';
+import { sortTodosByDeadline } from './utils/todosSort';
 
 const initialState: TodosState = {
   todos: defaultTodos,
@@ -114,12 +115,10 @@ const todosSlice = createSlice({
 })
 
 export const selectTodos = (state: RootState) => state.todos;
-export const selectTodosCompleted = (state: RootState) => {
-  return state.todos.todos.filter((todo: Todo) => todo.isCompleted)
-}
-export const selectTodosUncompleted = (state: RootState) => {
-  return state.todos.todos.filter((todo: Todo) => !todo.isCompleted)
-}
+// 期限順でtodosを取得
+export const selectSortedTodos = (state: RootState) => sortTodosByDeadline(state.todos.todos);
+export const selectTodosCompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => todo.isCompleted)
+export const selectTodosUncompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => !todo.isCompleted)
 
 export const {
   replaceTodos

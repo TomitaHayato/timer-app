@@ -3,6 +3,7 @@ import type { Todo } from "../../todos/types/todoType"
 import { openModal } from "../../../utils/modelCtl"
 import { useEffect } from "react"
 import { TodoCompleteBtn } from "./TodoCompleteBtn"
+import { deadlineColor } from "../../../utils/class"
 
 type Props = {
   todo: Todo,
@@ -17,14 +18,14 @@ export function SelectedTodo({ todo, setTodo }: Props) {
 
   return(
     <>
-      <div className="w-full flex justify-between items-center gap-4 py-2 px-8 border-b">
+      <div className="w-full flex justify-between items-center gap-4 py-2 px-8 shadow-2xl bg-gray-700 rounded-xl">
         <TodoCompleteBtn id={todo.id} setTodo={setTodo}/>
 
         <div>
           <p className="font-semibold text-lg">{todo.title}</p>
           {
             !todo.isCompleted && todo.deadline
-            && <p className="text-warning text-xs">{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
+            && <p className={`${deadlineColor(todo.deadline)} text-xs`}>{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
           }
         </div>
         

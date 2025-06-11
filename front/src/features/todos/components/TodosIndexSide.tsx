@@ -20,12 +20,12 @@ export default function TodosIndexSide() {
         Todo一覧
       </button>
 
-      <div className={`py-12 px-2 z-20 rounded-lg fixed right-0 top-14 min-h-11/12 w-80 bg-gray-500 transition duration-150 ${rightDrawer(todosSide)}`}>
+      <div className={`py-12 px-2 z-20 rounded-lg fixed right-0 top-14 h-11/12 w-96 bg-gray-500 transition duration-150 ${rightDrawer(todosSide)}`}>
         <div className="mb-4 mt-2 justify-center text-center">
           <TodoCreateForm />
         </div>
 
-        <div>
+        <div className="overflow-auto h-11/12">
           <TodoList todos={todos}/>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import dayjs from "dayjs"
 import type { Todo } from "../../todos/types/todoType"
+import { deadlineColor } from "../../../utils/class";
 
 type Props = {
   todo: Todo,
@@ -17,7 +18,7 @@ export function TodoItem({ todo, setTodo }: Props) {
         <p>{todo.title}</p>
         {
           !todo.isCompleted && todo.deadline
-          && <p className="text-warning text-xs">{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
+          && <p className={`${deadlineColor(todo.deadline)} text-xs`}>{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
         }
       </button>
     </>
