@@ -9,7 +9,7 @@ export function Modal({ children, modalId, }: Props) {
   return(
     <>
       <dialog id={modalId} className="modal z-20">
-        <div className={`modal-box bg-gray-600 overflow-y-auto h-7/12`}>
+        <div className={`modal-box bg-gray-600 overflow-y-auto max-h-7/12`}>
           {children}
           <div className="modal-action">
             <form method="dialog">

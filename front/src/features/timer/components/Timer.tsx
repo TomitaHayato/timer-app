@@ -9,6 +9,7 @@ import { getModeSec } from "../utils/getModeSec";
 import { modeText } from "../utils/modeText";
 import { modeBorderColor, modeTextColor } from "../utils/class";
 import { toastSuccessRB } from "../../../utils/toast";
+import { TodoSelector } from "./TodoSelector";
 
 export default function Timer() {
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
@@ -77,12 +78,9 @@ export default function Timer() {
       <div className="py-8">
         <div>
           {/* Todoを表示 */}
-          <div className="join flex gap-4 justify-center items-center mb-8">
-            <p>・</p>
-            <h3 className="text-3xl text-center">Typescript演習</h3>
-            <button className="btn btn-sm btn-success rounded-full">✔︎</button>
-          </div>
-          
+          {/* <div className="join flex gap-4 justify-center items-center mb-8 border w-1/3 mx-auto"></div> */}
+          <TodoSelector />
+
           {/* 円状のコンテナ */}
           <div className={`border-2 rounded-full shadow-lg w-80 h-80 aspect-square mx-auto flex flex-col items-center justify-center mb-8 ${modeBorderColor(mode)}`}>
             <p className={modeTextColor(mode)}>{modeText(mode)}</p>
