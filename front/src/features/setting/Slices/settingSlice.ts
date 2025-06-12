@@ -41,7 +41,7 @@ const settingSlice = createSlice({
   reducers: {
     // ステートを更新
     replaceSetting: (state, action: PayloadAction<Setting>) => {
-      const { workSec, restSec, longRestSec, volume, isMuted } = action.payload;
+      const { workSec, restSec, longRestSec, volume, isMuted, workingSound } = action.payload;
       if (!workSec || !restSec || !longRestSec || !volume || isMuted === null || isMuted === undefined) {
         return;
       }
@@ -51,6 +51,7 @@ const settingSlice = createSlice({
       state.setting.longRestSec = longRestSec
       state.setting.volume = volume
       state.setting.isMuted= isMuted
+      if (workingSound) state.setting.workingSound = workingSound
     }
   },
   extraReducers: builder => {
@@ -61,7 +62,7 @@ const settingSlice = createSlice({
       })
       .addCase(updateSetting.fulfilled, (state, action: PayloadAction<Setting>) => {
         state.loading = false;
-        const { workSec, restSec, longRestSec, volume, isMuted } = action.payload;
+        const { workSec, restSec, longRestSec, volume, isMuted, workingSound } = action.payload;
         if (!workSec || !restSec || !longRestSec || !volume || isMuted === null || isMuted === undefined) return;
 
         state.setting.workSec = workSec
@@ -69,6 +70,7 @@ const settingSlice = createSlice({
         state.setting.longRestSec = longRestSec
         state.setting.volume = volume
         state.setting.isMuted= isMuted
+        if (workingSound) state.setting.workingSound = workingSound
       })
       .addCase(updateSetting.rejected, (state, action) => {
         state.loading = false;
