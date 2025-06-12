@@ -48,6 +48,7 @@ model Setting {
   workSec     Int       @default(1500)
   restSec     Int       @default(300)
   longRestSec Int       @default(900)
+  workingSound String?
   user        User      @relation(fields: [userId], references: [id])
   userId      String    @unique
 }
