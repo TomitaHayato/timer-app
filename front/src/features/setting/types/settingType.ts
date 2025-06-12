@@ -4,6 +4,7 @@ export type Setting= {
   longRestSec: number,
   volume: number,
   isMuted: boolean,
+  workingSound?: string,
 }
 
 export type SettingState = {
@@ -18,6 +19,7 @@ export type SettingParams = {
   longRestSec: number,
   volume: number,
   isMuted: boolean,
+  workingSound?: string,
 }
 
 export type settingItems = 'workSec' | 'restSec' | 'longRestSec' | 'volume'

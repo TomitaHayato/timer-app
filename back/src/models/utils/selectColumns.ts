@@ -5,6 +5,7 @@ export const selectSettingColumns = {
   workSec: true,
   restSec: true,
   longRestSec: true,
+  workingSound: true,
 }
 
 export const selectUserColumns = {
