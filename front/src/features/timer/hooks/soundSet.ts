@@ -6,17 +6,19 @@ import { useAppSelector } from "../../../reduxStore/hooks";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 
 export function useSoundHowls() {
-  const { workingSound, volume } = useAppSelector(selectSetting);
+  const { workingSound, volume, isMuted } = useAppSelector(selectSetting);
   const volumeOption = volume / 100
 
   const soundBtn = useRef<Howl>(new Howl({
     src: ['ice.mp3'],
     volume: volumeOption,
+    mute: isMuted,
   }))
 
   const soundRest = useRef<Howl>(new Howl({
     src: ['btn.mp3'],
     volume: volumeOption,
+    mute: isMuted,
   }))
 
   const soundWork = useRef<Howl | null>(null);
@@ -27,16 +29,18 @@ export function useSoundHowls() {
     soundBtn.current.unload();
     soundRest.current.unload();
 
-    soundWork.current = _createNewHowl(volumeOption, workingSound);
+    soundWork.current = _createNewHowl(volumeOption, isMuted, workingSound);
 
     soundBtn.current = new Howl({
       src: ['ice.mp3'],
       volume: volumeOption,
+      mute: isMuted,
     })
 
     soundRest.current = new Howl({
       src: ['btn.mp3'],
       volume: volumeOption,
+      mute: isMuted,
     })
 
     return () => {
@@ -45,7 +49,7 @@ export function useSoundHowls() {
       soundRest.current.unload();
       devLog('Howlを解放しました');
     }
-  }, [workingSound, volumeOption]);
+  }, [workingSound, volumeOption, isMuted]);
 
   return {
     soundWork,
@@ -54,12 +58,13 @@ export function useSoundHowls() {
   }
 }
 
-function _createNewHowl(volume: number, filename?: string) {
+function _createNewHowl(volume: number, isMuted: boolean, filename?: string) {
   const soundFilepath = getWorkingSoundFilePath(filename);
 
   return new Howl({
     src: [soundFilepath],
     loop: true,
     volume,
+    mute: isMuted,
   })
 }

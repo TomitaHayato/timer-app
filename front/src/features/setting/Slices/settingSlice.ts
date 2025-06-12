@@ -45,7 +45,7 @@ const settingSlice = createSlice({
       if (!workSec || !restSec || !longRestSec || volume === undefined || isMuted === null || isMuted === undefined) {
         return;
       }
-      devLog('setting更新:', action.payload)
+      devLog('setting Replace:', action.payload)
       state.setting.workSec = workSec
       state.setting.restSec = restSec
       state.setting.longRestSec = longRestSec

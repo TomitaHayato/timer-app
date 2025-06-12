@@ -7,6 +7,7 @@ import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { devLog } from "../../../utils/logDev";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
+import { FormShortText } from "./formShortText";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
@@ -38,7 +39,6 @@ export function Setting() {
     } catch {
       toastErrorRB('設定の更新に失敗しました')
     }
-
   }
 
   return(
@@ -111,8 +111,13 @@ export function Setting() {
 
           <div>
             <label htmlFor="sound-select">集中時の音楽</label>
-            <p className="text-[0.65rem] text-gray-400">※ 保存ボタンを押すと反映されます</p>
-            <select id="sound-select" defaultValue={"default"} className="select select-primary" { ...register('workingSound') }>
+            <FormShortText />
+            <select
+              id="sound-select"
+              defaultValue="default"
+              className="select select-primary"
+              disabled={!isAuth}
+              { ...register('workingSound') }>
               <option value="default">蝉の声</option>
               <option value="wind_bell">風鈴</option>
             </select>
@@ -124,7 +129,6 @@ export function Setting() {
               ? <button type="button" className="btn btn-info btn-wide mb-1"><LoadingSpans /></button>
               : <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '適用する'} />
             }
-            {/* { !isAuth && <p className="text-sm text-red-400">ログイン後に保存できます</p> } */}
           </div>
         </form>
       </div>

@@ -4,6 +4,7 @@ import { useAppSelector } from "../../../reduxStore/hooks";
 import { selectSetting } from "../Slices/settingSlice";
 import { useEffect } from "react";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { FormShortText } from "./formShortText";
 
 type Props = {
   itemsNum: number,
@@ -53,7 +54,7 @@ export function Measure({
           <span>{item}</span>
           <span className="font-semibold text-gray-300">{` ＜${itemValue}${unit}＞ `}</span>
         </label>
-        <p className="text-[0.65rem] text-gray-400">※ 保存ボタンを押すと反映されます</p>
+        { !isVolume && <FormShortText /> }
         <input
           id={`range-${measureId}`}
           type="range"
