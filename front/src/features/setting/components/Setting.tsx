@@ -2,19 +2,22 @@ import { useForm } from "react-hook-form";
 import { Measure } from "./Measure";
 import type { SettingParams } from "../types/settingType";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
-import { replaceSetting, selectSettingError, updateSetting } from "../Slices/settingSlice";
+import { replaceSetting, selectSettingState, updateSetting } from "../Slices/settingSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { devLog } from "../../../utils/logDev";
+import { LoadingSpans } from "../../../components/btn/LoadingSpans";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
 
   const isAuth = useAppSelector(selectAuthStatus);
   const dispatch = useAppDispatch();
-  const settingError = useAppSelector(selectSettingError);
+  const { error, loading } = useAppSelector(selectSettingState);
 
   const onSubmit = async(data: SettingParams) => {
+    if (loading) return;
+
     // 入力値の秒数を分数に変更
     const postSettingParams: SettingParams = {
       ...data,
@@ -43,7 +46,7 @@ export function Setting() {
       <div>
         <h3 className="text-center text-2xl font-semibold mb-8">設定</h3>
 
-        { settingError && <p className="text-center text-error">{settingError}</p> }
+        { error && <p className="text-center text-error">{error}</p> }
 
         {/* フォーム */}
         <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
@@ -106,8 +109,21 @@ export function Setting() {
             <p className="text-[0.65rem] text-gray-400">※ 保存ボタンを押すと反映されます</p>
           </div>
 
-          <div className="text-center ">
-            <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '反映する'} />
+          <div>
+            <label htmlFor="sound-select">集中時の音楽</label>
+            <p className="text-[0.65rem] text-gray-400">※ 保存ボタンを押すと反映されます</p>
+            <select id="sound-select" defaultValue={"default"} className="select select-primary" { ...register('workingSound') }>
+              <option value="default">蝉の声</option>
+              <option value="wind_bell">風鈴</option>
+            </select>
+          </div>
+
+          <div className="text-center">
+            {
+              loading
+              ? <button type="button" className="btn btn-info btn-wide mb-1"><LoadingSpans /></button>
+              : <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '適用する'} />
+            }
             {/* { !isAuth && <p className="text-sm text-red-400">ログイン後に保存できます</p> } */}
           </div>
         </form>

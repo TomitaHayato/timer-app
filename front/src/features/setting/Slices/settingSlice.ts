@@ -83,6 +83,7 @@ export const {
   replaceSetting
 } = settingSlice.actions
 
+export const selectSettingState = (state: RootState): SettingState => state.setting;
 export const selectSetting = (state: RootState): Setting => state.setting.setting;
 export const selectSettingError = (state: RootState): string | null => state.setting.error;
 export const selectSettingLoading = (state: RootState): boolean => state.setting.loading
