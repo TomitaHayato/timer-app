@@ -10,11 +10,14 @@ import { modeText } from "../utils/modeText";
 import { modeBarColor, modeTextColor } from "../utils/class";
 import { toastSuccessRB } from "../../../utils/toast";
 import { TodoSelector } from "./TodoSelector";
+import { useSoundHowls } from "../hooks/soundSet";
 
 export default function Timer() {
-  const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
+  const { workSec, restSec, longRestSec, workingSound } = useAppSelector(selectSetting);
   const { mode } = useAppSelector(selectTimer);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+
+  const { soundWork, soundBtn, soundRest } = useSoundHowls(workingSound || 'default');
 
   // 初めてタイマーをスタートしたかどうか
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true);
@@ -32,6 +35,14 @@ export default function Timer() {
     autoStart: false,
     onExpire: () => {
       dispatch(modeChange(workSec));
+      soundWork?.current?.stop();
+      if(mode !== 'work') {
+        soundBtn.current.play()
+        soundWork?.current?.play();
+      } else {
+        toastSuccessRB('１ポモドーロ完了')
+        soundRest.current.play();
+      }
     },
   });
 
@@ -60,6 +71,8 @@ export default function Timer() {
 
   function handleStart() {
     toastSuccessRB('タイマー スタート', { autoClose: 1500 })
+    soundBtn.current.play();
+    soundWork?.current?.play()
     if (!isFirstStart) {
       resume();
       return;
@@ -69,6 +82,8 @@ export default function Timer() {
   }
 
   function handlePause() {
+    soundBtn.current.play();
+    soundWork?.current?.stop()
     toastSuccessRB('タイマー ストップ', { autoClose: 1500 })
     pause();
   }

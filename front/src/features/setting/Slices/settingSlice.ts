@@ -45,13 +45,13 @@ const settingSlice = createSlice({
       if (!workSec || !restSec || !longRestSec || !volume || isMuted === null || isMuted === undefined) {
         return;
       }
-      devLog('setting更新:', state.setting.workSec)
+      devLog('setting更新:', action.payload)
       state.setting.workSec = workSec
       state.setting.restSec = restSec
       state.setting.longRestSec = longRestSec
       state.setting.volume = volume
       state.setting.isMuted= isMuted
-      if (workingSound) state.setting.workingSound = workingSound
+      state.setting.workingSound = workingSound
     }
   },
   extraReducers: builder => {
@@ -70,7 +70,7 @@ const settingSlice = createSlice({
         state.setting.longRestSec = longRestSec
         state.setting.volume = volume
         state.setting.isMuted= isMuted
-        if (workingSound) state.setting.workingSound = workingSound
+        state.setting.workingSound = workingSound
       })
       .addCase(updateSetting.rejected, (state, action) => {
         state.loading = false;
