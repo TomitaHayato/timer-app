@@ -42,7 +42,7 @@ const settingSlice = createSlice({
     // ステートを更新
     replaceSetting: (state, action: PayloadAction<Setting>) => {
       const { workSec, restSec, longRestSec, volume, isMuted, workingSound } = action.payload;
-      if (!workSec || !restSec || !longRestSec || !volume || isMuted === null || isMuted === undefined) {
+      if (!workSec || !restSec || !longRestSec || volume === undefined || isMuted === null || isMuted === undefined) {
         return;
       }
       devLog('setting更新:', action.payload)
@@ -63,7 +63,7 @@ const settingSlice = createSlice({
       .addCase(updateSetting.fulfilled, (state, action: PayloadAction<Setting>) => {
         state.loading = false;
         const { workSec, restSec, longRestSec, volume, isMuted, workingSound } = action.payload;
-        if (!workSec || !restSec || !longRestSec || !volume || isMuted === null || isMuted === undefined) return;
+        if (!workSec || !restSec || !longRestSec || volume === undefined || isMuted === null || isMuted === undefined) return;
 
         state.setting.workSec = workSec
         state.setting.restSec = restSec

@@ -13,11 +13,11 @@ import { TodoSelector } from "./TodoSelector";
 import { useSoundHowls } from "../hooks/soundSet";
 
 export default function Timer() {
-  const { workSec, restSec, longRestSec, workingSound } = useAppSelector(selectSetting);
+  const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
   const { mode } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch();
 
-  const { soundWork, soundBtn, soundRest } = useSoundHowls(workingSound || 'default');
+  const { soundWork, soundBtn, soundRest } = useSoundHowls();
 
   // 初めてタイマーをスタートしたかどうか
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true);
