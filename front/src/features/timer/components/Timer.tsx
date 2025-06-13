@@ -114,9 +114,6 @@ export default function Timer() {
               }
               <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleReset}>リセット</button>
             </div>
-            <div className="flex justify-center">
-              <button className="btn btn-outline text-indigo-300 btn-lg">ここまでの作業時間を記録</button>
-            </div>
           </div>
         </div>
       </div>
