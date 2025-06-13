@@ -8,11 +8,13 @@ import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { devLog } from "../../../utils/logDev";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
 import { FormShortText } from "./formShortText";
+import { selectTimer } from "../../timer/timerSlice";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
 
   const isAuth = useAppSelector(selectAuthStatus);
+  const timerStatus = useAppSelector(selectTimer).status;
   const dispatch = useAppDispatch();
   const { error, loading } = useAppSelector(selectSettingState);
 
@@ -124,10 +126,11 @@ export function Setting() {
           </div>
 
           <div className="text-center">
+            { timerStatus && <p className="text-sm text-error">タイマーを停止する必要があります</p> }
             {
               loading
               ? <button type="button" className="btn btn-info btn-wide mb-1"><LoadingSpans /></button>
-              : <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '適用する'} />
+              : <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '適用する'} disabled={timerStatus}/>
             }
           </div>
         </form>

@@ -90,14 +90,14 @@ export default function Timer() {
 
   return(
     <>
-      <div className="py-8">
+      <div className="py-4">
         <div>
           {/* Todoを表示 */}
           {/* <div className="join flex gap-4 justify-center items-center mb-8 border w-1/3 mx-auto"></div> */}
           <TodoSelector />
 
           {/* 円状のコンテナ */}
-          <div className='flex items-center justify-center my-4'>
+          <div className='flex items-center justify-center my-8'>
             <div className={`radial-progress ${modeBarColor(mode)}`} style={{"--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100,  "--size": "20rem", "--thickness": "2px"} as React.CSSProperties } aria-valuenow={100} role="progressbar">
               <p className={`${modeTextColor(mode)} text-center`}>{modeText(mode)}</p>
               <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
@@ -109,13 +109,13 @@ export default function Timer() {
           <div>
             <div className="flex justify-center items-center gap-8 mb-8">
               { isRunning
-                ? <button className="btn btn-success btn-lg" onClick={handlePause}>ストップ</button>
-                : <button className="btn btn-success btn-lg" onClick={handleStart}>スタート</button>
+                ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}>ストップ</button>
+                : <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleStart}>スタート</button>
               }
-              <button className="btn btn-success btn-lg" onClick={handleReset}>リセット</button>
+              <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleReset}>リセット</button>
             </div>
             <div className="flex justify-center">
-              <button className="btn btn-success btn-lg">ここまでの作業時間を記録</button>
+              <button className="btn btn-outline text-indigo-300 btn-lg">ここまでの作業時間を記録</button>
             </div>
           </div>
         </div>
