@@ -3,6 +3,8 @@ import { Setting } from "../features/setting/components/Setting";
 import Timer from "../features/timer/components/Timer";
 import TodosIndexSide from "../features/todos/components/TodosIndexSide";
 import CompletedTodos from "../features/todos/components/CompletedTodos";
+import { Records } from "../features/records/components/Records";
+import { TodayRecordStat } from "../features/records/components/TodayRecordStat";
 
 export default function TimerPage() {
   return(
@@ -11,6 +13,12 @@ export default function TimerPage() {
 
       <div>
         <Timer />
+
+        <div className="absolute top-28 left-12">
+          <TodayRecordStat />
+        </div>
+
+        <Records />
       </div>
 
       <div className="fixed left-4 bottom-8 flex flex-col gap-4 z-10">

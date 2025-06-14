@@ -31,6 +31,7 @@ const recordsSlice = createSlice({
 });
 
 export const selectRecords = (state: RootState) => state.records.records
+export const selectDailyRecords = (state: RootState) => state.records.records.dailyRecord;
 
 export const {
   replaceRecords
