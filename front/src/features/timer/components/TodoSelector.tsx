@@ -6,9 +6,11 @@ import { selectSortedTodos } from "../../todos/todoSlice";
 import { useAppSelector } from "../../../reduxStore/hooks";
 import { TodoItem } from "./TodoItem";
 import { SelectedTodo } from "./SelectedTodo";
+import { selectAuthStatus } from "../../session/slices/sessionSlice";
 
 export function TodoSelector() {
   const todos = useAppSelector(selectSortedTodos);
+  const isAuth = useAppSelector(selectAuthStatus);
   const [ todo, setTodo ] = useState<Todo | null>(null);
 
   return(
@@ -17,7 +19,7 @@ export function TodoSelector() {
         {
           todo
           ? <SelectedTodo todo={todo} setTodo={setTodo}/>
-          : <button className="btn btn-outline" onClick={() => openModal('todoSelector')}>Todoを選択してください</button>
+          : <button disabled={!isAuth} className="btn btn-outline" onClick={() => openModal('todoSelector')}>Todoを選択</button>
         }
       </div>
 

@@ -8,9 +8,11 @@ import { RecordStat } from "../features/records/components/RecordStat";
 import { useAppSelector } from "../reduxStore/hooks";
 import { selectRecords } from "../features/records/recordsSlice";
 import { todayDate } from "../utils/time";
+import { selectAuthStatus } from "../features/session/slices/sessionSlice";
 
 export default function TimerPage() {
   const { dailyRecord } = useAppSelector(selectRecords);
+  const isAuth = useAppSelector(selectAuthStatus);
 
   return(
     <>
@@ -21,7 +23,11 @@ export default function TimerPage() {
 
         <div className="absolute top-28 left-12">
           <h3 className="text-center text-gray-400 font-semibold mb-2">今日の記録 {todayDate()}</h3>
-          <RecordStat record={dailyRecord} />
+          {
+            isAuth
+            ? <RecordStat record={dailyRecord} />
+            : <p className="text-gray-500">ログイン後に表示されます</p>
+          }
         </div>
 
         <Records />

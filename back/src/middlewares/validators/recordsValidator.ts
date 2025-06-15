@@ -12,8 +12,7 @@ export const recordsPostValidator = [
     .isInt({ min: 0 })
     .toInt(),
   body('selfReview')
-    .exists({values: 'null'})
-    .notEmpty()
+    .optional({ values: 'null' })
     .isInt({ min: 0, max: 5 })
     .toInt(),
 ]

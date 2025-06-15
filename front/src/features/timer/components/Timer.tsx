@@ -8,11 +8,16 @@ import { selectSetting } from "../../setting/Slices/settingSlice";
 import { getModeSec } from "../utils/getModeSec";
 import { modeText } from "../utils/modeText";
 import { modeBarColor, modeTextColor } from "../utils/class";
-import { toastSuccessRB } from "../../../utils/toast";
+import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { TodoSelector } from "./TodoSelector";
 import { useSoundHowls } from "../hooks/soundSet";
+import { devLog } from "../../../utils/logDev";
+import { createRecord } from "../../records/recordsSlice";
+import type { PostRecordParams } from "../../records/types/records";
+import { selectAuthStatus } from "../../session/slices/sessionSlice";
 
 export default function Timer() {
+  const isAuth = useAppSelector(selectAuthStatus);
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
   const { mode } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch();
@@ -37,11 +42,12 @@ export default function Timer() {
       dispatch(modeChange(workSec));
       soundWork?.current?.stop();
       if(mode !== 'work') {
-        soundBtn.current.play()
+        soundBtn.current.play();
         soundWork?.current?.play();
       } else {
         toastSuccessRB('１ポモドーロ完了')
         soundRest.current.play();
+        postRecord();
       }
     },
   });
@@ -61,6 +67,22 @@ export default function Timer() {
     restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })))
     if (isFirstStart) pause(); // 初回レンダリング時は何もしない
   }, [isFirstStart, longRestSec, restSec, restart, mode, workSec, pause])
+
+  const postRecord = async() => {
+    if (!isAuth) return;
+    try {
+      const params: PostRecordParams = {
+        workTime: workSec,
+        workCount: 1,
+      }
+      devLog('記録作成params：', params);
+      await dispatch(createRecord(params));
+      toastSuccessRB('記録しました');
+    } catch(err) {
+      devLog('postRecordのエラー：', err);
+      toastErrorRB('記録の保存に失敗しました', { autoClose: 2000 })
+    }
+  }
 
 
   function handleReset() {
@@ -93,7 +115,6 @@ export default function Timer() {
       <div className="py-4">
         <div>
           {/* Todoを表示 */}
-          {/* <div className="join flex gap-4 justify-center items-center mb-8 border w-1/3 mx-auto"></div> */}
           <TodoSelector />
 
           {/* 円状のコンテナ */}
@@ -105,10 +126,12 @@ export default function Timer() {
               </p>
             </div>
           </div>
+
           {/* タイマー操作ボタン */}
           <div>
             <div className="flex justify-center items-center gap-8 mb-8">
-              { isRunning
+              {
+                isRunning
                 ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}>ストップ</button>
                 : <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleStart}>スタート</button>
               }
