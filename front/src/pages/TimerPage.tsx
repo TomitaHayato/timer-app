@@ -4,9 +4,14 @@ import Timer from "../features/timer/components/Timer";
 import TodosIndexSide from "../features/todos/components/TodosIndexSide";
 import CompletedTodos from "../features/todos/components/CompletedTodos";
 import { Records } from "../features/records/components/Records";
-import { TodayRecordStat } from "../features/records/components/TodayRecordStat";
+import { RecordStat } from "../features/records/components/RecordStat";
+import { useAppSelector } from "../reduxStore/hooks";
+import { selectRecords } from "../features/records/recordsSlice";
+import { todayDate } from "../utils/time";
 
 export default function TimerPage() {
+  const { dailyRecord } = useAppSelector(selectRecords);
+
   return(
     <>
       <TodosIndexSide />
@@ -15,7 +20,8 @@ export default function TimerPage() {
         <Timer />
 
         <div className="absolute top-28 left-12">
-          <TodayRecordStat />
+          <h3 className="text-center text-gray-400 font-semibold mb-2">今日の記録 {todayDate()}</h3>
+          <RecordStat record={dailyRecord} />
         </div>
 
         <Records />
