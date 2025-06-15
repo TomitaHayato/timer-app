@@ -7,9 +7,8 @@ import { createExpiryTimestamp } from "../utils/expiryTimestamp";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 import { getModeSec } from "../utils/getModeSec";
 import { modeText } from "../utils/modeText";
-import { modeBarColor, modeTextColor } from "../utils/class";
+import { modeBarColor, modeTextColor, sceneTimerBgColor } from "../utils/class";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
-import { TodoSelector } from "./TodoSelector";
 import { useSoundHowls } from "../hooks/soundSet";
 import { devLog } from "../../../utils/logDev";
 import { createRecord } from "../../records/recordsSlice";
@@ -112,14 +111,11 @@ export default function Timer() {
 
   return(
     <>
-      <div className="py-4">
+      <div className="">
         <div>
-          {/* Todoを表示 */}
-          <TodoSelector />
-
           {/* 円状のコンテナ */}
           <div className='flex items-center justify-center my-8'>
-            <div className={`radial-progress ${modeBarColor(mode)}`} style={{"--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100,  "--size": "20rem", "--thickness": "2px"} as React.CSSProperties } aria-valuenow={100} role="progressbar">
+            <div className={`radial-progress ${sceneTimerBgColor('')} ${modeBarColor(mode)}`} style={{"--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100,  "--size": "20rem", "--thickness": "6px"} as React.CSSProperties } aria-valuenow={100} role="progressbar">
               <p className={`${modeTextColor(mode)} text-center`}>{modeText(mode)}</p>
               <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
                 {secToHMS(totalSeconds)}
@@ -133,7 +129,7 @@ export default function Timer() {
               {
                 isRunning
                 ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}>ストップ</button>
-                : <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleStart}>スタート</button>
+                : <button className="btn btn-primary btn-lg" onClick={handleStart}>スタート</button>
               }
               <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleReset}>リセット</button>
             </div>

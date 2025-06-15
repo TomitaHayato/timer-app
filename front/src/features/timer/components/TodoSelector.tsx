@@ -15,11 +15,11 @@ export function TodoSelector() {
 
   return(
     <>
-      <div className="max-w-1/3 text-center mx-auto mb-4">
+      <div className="max-w-1/3 text-center mx-auto my-4">
         {
           todo
           ? <SelectedTodo todo={todo} setTodo={setTodo}/>
-          : <button disabled={!isAuth} className="btn btn-outline" onClick={() => openModal('todoSelector')}>Todoを選択</button>
+          : <button disabled={!isAuth} className="btn btn-outline text-indigo-300" onClick={() => openModal('todoSelector')}>Todoを選択</button>
         }
       </div>
 

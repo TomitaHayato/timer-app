@@ -9,6 +9,7 @@ import { useAppSelector } from "../reduxStore/hooks";
 import { selectRecords } from "../features/records/recordsSlice";
 import { todayDate } from "../utils/time";
 import { selectAuthStatus } from "../features/session/slices/sessionSlice";
+import { TodoSelector } from "../features/timer/components/TodoSelector";
 
 export default function TimerPage() {
   const { dailyRecord } = useAppSelector(selectRecords);
@@ -18,7 +19,10 @@ export default function TimerPage() {
     <>
       <TodosIndexSide />
 
-      <div>
+      <div className="bg-[url(/image/wind_sbell.png)] bg-cover">
+        {/* Todoを表示 */}
+        <TodoSelector />
+
         <Timer />
 
         <div className="absolute top-28 left-12">
