@@ -9,6 +9,7 @@ import { devLog } from "../../../utils/logDev";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
 import { FormShortText } from "./formShortText";
 import { selectTimer } from "../../timer/timerSlice";
+import { UserDeleteBtn } from "./UserDeletebtn";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
@@ -134,6 +135,11 @@ export function Setting() {
             }
           </div>
         </form>
+
+        <div className="text-center my-8">
+          <p className="text-gray-400">ユーザー削除</p>
+          <UserDeleteBtn />
+        </div>
       </div>
     </>
   )

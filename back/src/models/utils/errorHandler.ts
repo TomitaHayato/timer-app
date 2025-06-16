@@ -1,4 +1,5 @@
 import { PrismaClient } from "../../../generated/prisma";
+import { devLog } from "../../utils/dev/devLog";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ export const dbQueryHandler = async < T, ArgsObject extends object | string | un
   try {
     return await queryFn(prisma, args);
   } catch(err) {
-    // console.error(err)
+    devLog(err)
     throw err;
   } finally {
     await prisma.$disconnect()

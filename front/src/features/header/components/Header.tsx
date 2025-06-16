@@ -1,4 +1,3 @@
-import OnlyDev from "../../../components/OnlyDev";
 import { useAppSelector } from "../../../reduxStore/hooks";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { LoginFormBtn } from "./LoginFormBtn";
@@ -19,19 +18,6 @@ export default function Header() {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li><a>Item 1</a></li>
-            <li>
-              <details>
-                <summary>Parent</summary>
-                <ul className="p-2">
-                  <li><a>Submenu 1</a></li>
-                  <li><a>Submenu 2</a></li>
-                </ul>
-              </details>
-            </li>
-            <li>
-              {/* 後で消す */}
-              { import.meta.env.DEV && <OnlyDev /> }
-            </li>
           </ul>
         </div>
 
