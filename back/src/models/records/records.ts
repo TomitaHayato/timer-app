@@ -19,7 +19,6 @@ export const createRecord = async(prisma: PrismaClient, queryInfo: { userId: str
 export const getTotalRecords = async(prisma: PrismaClient, userId: string) => {
   const records = await prisma.record.findMany({
     select: {
-      selfReview: true,
       workCount: true,
       workTime: true,
     },
@@ -33,7 +32,6 @@ export const getTotalRecords = async(prisma: PrismaClient, userId: string) => {
 const getRecordsByTerms = async(prisma: PrismaClient, userId: string, start: Date, end: Date) => {
   const records = await prisma.record.findMany({
     select: {
-      selfReview: true,
       workCount: true,
       workTime: true,
     },

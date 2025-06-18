@@ -14,7 +14,6 @@ export const selectUserColumns = {
 }
 
 export const selectRecordColumns = {
-  selfReview: true,
   workCount: true,
   workTime: true,
 }

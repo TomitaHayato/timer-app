@@ -11,8 +11,4 @@ export const recordsPostValidator = [
     .notEmpty()
     .isInt({ min: 0 })
     .toInt(),
-  body('selfReview')
-    .optional({ values: 'null' })
-    .isInt({ min: 0, max: 5 })
-    .toInt(),
 ]
