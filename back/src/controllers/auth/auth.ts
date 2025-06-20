@@ -6,9 +6,9 @@ import bcrypt from 'bcrypt'
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";
-import { getRefreshToken, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
+import { createRefreshToken, getRefreshToken, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
 import { checkExpire } from "../../models/authRefreshToken/utils/checkExpire";
-import { createRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
+import { makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 
@@ -19,7 +19,7 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
   try {
     // パスワードをハッシュ化
     const hashedPassword = await dataHash(password);
-    // DBに保存
+    // 新しいユーザーと関連レコードをDBに追加
     const newUser = await dbQueryHandler(createUserWithSetting, {
       name,
       email,
@@ -27,16 +27,22 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
     })
     devLog('作成されたUser：', newUser);
 
-    if (newUser) {
-      setJwtInCookie(res, newUser.id);
-      const userDataSet = await getUserDataSet(newUser.id);
-      res.status(200).json(userDataSet);
-    } else { throw new Error }
+    if(!newUser) throw new Error()
+
+    // refreshTokenを生成
+    const authRefreshToken = await dbQueryHandler(createRefreshToken, { userId: newUser.id });
+    // リフレッシュトークンとアクセストークンをCookieにセット
+    setRefreshTokenInCookie(res, authRefreshToken.token);
+    setJwtInCookie(res, newUser.id);
+    // DBから作成したユーザーと関連レコードを取得
+    const userDataSet = await getUserDataSet(newUser.id);
+    res.status(200).json(userDataSet);
   } catch (err) {
     devLog('Signup処理のエラー：', err);
     next(err);
   }
 }
+// TODO:EX: 現状、ユーザーと関連データの情報だけがDBに生成され、リフレッシュトークンの作成処理のみが失敗する可能性がある。この場合、DBに情報は保存されているのにエラーがクライアントに返される。改善のために、ユーザー、関連レコード、リフレッシュトークンの作成処理を1つのトランザクションで管理する
 
 export const signIn = async(req: Request, res: Response, next: NextFunction) => {
   // クライアントからの入力値を取得
@@ -45,11 +51,16 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     // DBからemailを持つUserを取得
     const user = await dbQueryHandler(getUserByEmail, email);
     if(!user) {
-      res.status(402).json('メールアドレスが登録されていません' );
+      res.status(401).json('メールアドレスが登録されていません' );
       return
     }
+
     // hashedPasswordカラムとpasswordのハッシュを比較
     if (await bcrypt.compare(password, user.hashedPassword)) {
+      // refreshTokenを生成
+      const authRefreshToken = await dbQueryHandler(createRefreshToken, { userId: user.id });
+      // リフレッシュトークンとアクセストークンをCookieにセット
+      setRefreshTokenInCookie(res, authRefreshToken.token);
       setJwtInCookie(res, user.id);
       const userDataSet = await getUserDataSet(user.id);
       res.status(200).json(userDataSet);
@@ -123,7 +134,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return res.status(401).json(INVALID_TOKEN_ERROR);
     }
     // リフレッシュトークン生成 => DB更新 => set-Cookieに付加
-    const newRefreshToken = createRefreshToken();
+    const newRefreshToken = makeRefreshToken();
     await dbQueryHandler(updateRefreshToken, { userId, newToken: newRefreshToken })
     setRefreshTokenInCookie(res, newRefreshToken);
     // JWTを再度生=> JWTをSet-cookieに付加

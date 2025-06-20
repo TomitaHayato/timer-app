@@ -3,7 +3,7 @@ import { Response } from "express";
 
 const COOKIE_NAME = "refresh_token"
 
-export const createRefreshToken = () => {
+export const makeRefreshToken = () => {
   return randomUUID();
 }
 
