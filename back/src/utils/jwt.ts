@@ -5,8 +5,13 @@ import { Response } from 'express';
 const SECRET_KEY: string = process.env.JWT_SECRET_KEY || 'flabkdfafkadkvjkavv3d23adkjv'
 const COOKIE_NAME: string = 'jwt_token'
 
+export const decodeJwt = (token: string) => {
+  const decoded = jwt.decode(token, { json: true });
+  return decoded;
+}
+
 export const createJwt = (payload: jwtPayload): string => {
-  const token: string = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
+  const token: string = jwt.sign(payload, SECRET_KEY, { expiresIn: "10s" });
   return token;
 }
 
@@ -15,7 +20,7 @@ export const setJwtInCookie = (res: Response, userId: string): void => {
   const token = createJwt(payload);
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    maxAge: 7200000,
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14days
     secure: process.env.NODE_ENV === 'production',
   });
 }
