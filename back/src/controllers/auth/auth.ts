@@ -135,27 +135,35 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
   // リフレッシュトークンをCookieから検証（存在, 期限）
   const jwtToken = req.cookies?.jwt_token;
   const refreshToken = req.cookies?.refresh_token;
-  if (!jwtToken || !refreshToken) return res.status(401).json(INVALID_TOKEN_ERROR);
+  if (!jwtToken || !refreshToken) {
+    res.status(401).json(INVALID_TOKEN_ERROR);
+    return
+  }
 
   // DB: RefreshTokenテーブルから、userIdがこのユーザーと一致するレコードを取得する。ない場合はエラー
   try {
     // JWTからUserIDを取得
     const decodedJwtToken = decodeJwt(jwtToken);
     const userId = decodedJwtToken?.userId
-    if(!userId) return res.status(401).json(INVALID_TOKEN_ERROR);
+    if(!userId) {
+      res.status(401).json(INVALID_TOKEN_ERROR);
+      return
+    }
     // DBからリフレッシュトークンの状態を取得
     const refreshTokenInDB = await dbQueryHandler(getRefreshToken, { userId, token: refreshToken });
     // リフレッシュトークンがDBにあるかどうか
     if (!refreshTokenInDB) {
       devLog('tokensRefreshコントローラ', 'refreshTokenがDBにない');
-      return res.status(401).json(INVALID_TOKEN_ERROR);
+      res.status(401).json(INVALID_TOKEN_ERROR);
+      return
     }
     // refreshToken期限切れの場合、DB, Cookieから削除
     if (checkExpire(refreshTokenInDB)) {
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
       clearRefreshTokenFromCookie(res);
       await dbQueryHandler(deleteRefreshToken, { userId });
-      return res.status(401).json(INVALID_TOKEN_ERROR);
+      res.status(401).json(INVALID_TOKEN_ERROR);
+      return
     }
     // リフレッシュトークン生成 => DB更新 => set-Cookieに付加
     const newRefreshToken = makeRefreshToken();
