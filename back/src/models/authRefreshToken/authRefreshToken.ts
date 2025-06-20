@@ -48,3 +48,10 @@ export const updateRefreshToken = async(prisma: PrismaClient, queryInfo: { userI
   devLog('model:update後のrefreshToken', updatedToken);
   return updatedToken;
 }
+
+export const deleteRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: string }) => {
+  const { userId } = queryInfo;
+  await prisma.authRefreshToken.delete({
+    where: { userId },
+  });
+}
