@@ -122,7 +122,7 @@ export const tokenCheck = async (req: Request, res: Response) => {
   } catch(err: unknown) {
     // 期限切れエラーの場合、特徴的なレスポンスを返す
     if (err instanceof TokenExpiredError) {
-      devLog('認証トークンの期限切れ');
+      devLog('認証トークンの期限切れ', ACCESS_TOKEN_EXPIRE_ERROR);
       res.status(401).json(ACCESS_TOKEN_EXPIRE_ERROR)
       return
     }
@@ -136,6 +136,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
   const jwtToken = req.cookies?.jwt_token;
   const refreshToken = req.cookies?.refresh_token;
   if (!jwtToken || !refreshToken) {
+    devLog('tokensRefreshエラー：', 'jwtまたはrefreshTokenがない')
     res.status(401).json(INVALID_TOKEN_ERROR);
     return
   }
@@ -146,6 +147,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
     const decodedJwtToken = decodeJwt(jwtToken);
     const userId = decodedJwtToken?.userId
     if(!userId) {
+      devLog('tokensRefreshエラー：', 'userIdがない')
       res.status(401).json(INVALID_TOKEN_ERROR);
       return
     }

@@ -11,6 +11,7 @@ import { defaultRecords } from "../../records/defaultRecords";
 import { defaultTodos } from "../../todos/defaultTodos";
 import { devLog } from "../../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
+import { fetchWithTokenRefresh } from "../../../utils/asyncFetch/fetchWithTokenRefresh";
 
 const initialState: SessionState = {
   user: null,
@@ -106,7 +107,8 @@ export const checkAuthToken = createAsyncThunk<
   { rejectValue: string }
 >('session/check', async(_, thunkAPI) => {
   try {
-    const res = await clientCredentials.get('/auth/check');
+    const res = await fetchWithTokenRefresh('/auth/check', 'get');
+
     const { userData, recordsData } = res.data;
     if (!userData) return thunkAPI.rejectWithValue('userData is null');
 

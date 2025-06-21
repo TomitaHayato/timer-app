@@ -9,7 +9,9 @@ import { checkAuthToken } from "./features/session/slices/sessionSlice";
 function App() {
   const dispatch = useAppDispatch();
 
-  useEffect(() => { dispatch(checkAuthToken()) }, [dispatch])
+  useEffect(() => {
+    dispatch(checkAuthToken());
+  }, [dispatch])
 
   return (
     <>
