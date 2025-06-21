@@ -131,7 +131,7 @@ export function Setting() {
             {
               loading
               ? <button type="button" className="btn btn-info btn-wide mb-1"><LoadingSpans /></button>
-              : <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '適用する'} disabled={timerStatus}/>
+              : <input type="submit" className="btn btn-info btn-wide mb-1" value={isAuth ? '保存' : '適用'} disabled={timerStatus}/>
             }
           </div>
         </form>

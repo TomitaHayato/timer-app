@@ -24,7 +24,7 @@ export function UserDeleteBtn() {
 
   return(
     <>
-      <button className="btn btn-wide btn-error" onClick={handleClick}>
+      <button className="btn btn-wide btn-error" onClick={handleClick} disabled={!isAuth}>
         ユーザー情報削除
       </button>
     </>
