@@ -133,6 +133,7 @@ export const tokenCheck = async (req: Request, res: Response) => {
 // RefreshTokenによるトークン更新
 export const tokensRefresh = async(req: Request, res: Response, next: NextFunction) => {
   // リフレッシュトークンをCookieから検証（存在, 期限）
+  devLog('cookieの内容', req.cookies)
   const jwtToken = req.cookies?.jwt_token;
   const refreshToken = req.cookies?.refresh_token;
   if (!jwtToken || !refreshToken) {
@@ -160,7 +161,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return
     }
     // refreshToken期限切れの場合、DB, Cookieから削除
-    if (checkExpire(refreshTokenInDB)) {
+    if (!checkExpire(refreshTokenInDB)) {
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
       clearRefreshTokenFromCookie(res);
       await dbQueryHandler(deleteRefreshToken, { userId });

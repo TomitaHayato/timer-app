@@ -127,6 +127,7 @@ export const checkAuthToken = createAsyncThunk<
       name: userData.name,
     }
   } catch(err) {
+    devLog('session/checkのエラー：', err)
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サーバとの通信に失敗しました');
     devLog(errorMessage);
     return thunkAPI.rejectWithValue(errorMessage)
