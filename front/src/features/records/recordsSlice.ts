@@ -4,7 +4,7 @@ import type { PostRecordParams, RecordsState, TermsRecords } from "./types/recor
 import type { RootState } from "../../reduxStore/store";
 import { devLog } from "../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../utils/errorHandler/axiosError";
-import { clientCredentials } from "../../utils/axios";
+import { fetchWithTokenRefresh } from "../../utils/asyncFetch/fetchWithTokenRefresh";
 
 const initialState: RecordsState = {
   records: defaultRecords,
@@ -21,7 +21,7 @@ export const createRecord = createAsyncThunk<
   }
 >('records/create', async(params, thunkAPI) => {
   try {
-    const res = await clientCredentials.post('/records', params);
+    const res = await fetchWithTokenRefresh('/records', 'post', params);
     const records = res.data;
 
     if (!records.dailyRecord || !records.weeklyRecord || !records.monthlyRecord || !records.totalRecord) {

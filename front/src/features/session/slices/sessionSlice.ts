@@ -90,7 +90,7 @@ export const signout = createAsyncThunk<
   { rejectValue: string }
 >('session/signout', async(_, thunkAPI) => {
   try {
-    await clientCredentials.get('/auth/signout');
+    await fetchWithTokenRefresh('/auth/signout', 'get');
     // 他のStateをリセット
     thunkAPI.dispatch(replaceSetting(defaultSetting()))
     thunkAPI.dispatch(replaceRecords(defaultRecords))

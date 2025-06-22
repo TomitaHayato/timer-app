@@ -4,6 +4,7 @@ import { devLog } from "../logDev";
 import { ACCESS_TOKEN_EXPIRE_ERROR } from "../apiErrors/errorMessages";
 import type { httpMethod } from "../../types/http";
 
+// 認可が必要なエンドポイントにリクエストする際、期限切れのJWTに対して認証トークンのリフレッシュを行う
 export const fetchWithTokenRefresh = async(url: string, method: httpMethod, data?: object, option?: object) => {
   try {
     const res = await clientCredentials.request({

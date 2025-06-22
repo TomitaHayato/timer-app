@@ -3,9 +3,9 @@ import type { Todo, TodoAddParams, Todos, TodosState } from './types/todoType'
 import type { RootState } from '../../reduxStore/store';
 import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';
-import { clientCredentials } from '../../utils/axios';
 import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axiosError';
 import { sortTodosByDeadline } from './utils/todosSort';
+import { fetchWithTokenRefresh } from '../../utils/asyncFetch/fetchWithTokenRefresh';
 
 const initialState: TodosState = {
   todos: defaultTodos,
@@ -19,7 +19,7 @@ export const createTodo = createAsyncThunk<
   { rejectValue: string }
 >('todos/create', async(params, thunkAPI) => {
   try {
-    const res = await clientCredentials.post('/todos', params);
+    const res = await fetchWithTokenRefresh('/todos', 'post', params);
     const todos: Todos = res.data;
     if (!todos) return thunkAPI.rejectWithValue('todosの取得に失敗しました');
     return todos;
@@ -35,7 +35,7 @@ export const deleteTodo = createAsyncThunk<
   { rejectValue: string }
 >('todos/delete', async(todoId, thunkAPI) => {
   try{
-    const res = await clientCredentials.delete(`/todos/${todoId}`);
+    const res = await fetchWithTokenRefresh(`/todos/${todoId}`, 'delete');
     const todos = res.data;
     if (!todos) return thunkAPI.rejectWithValue('todosの削除に失敗しました');
     return todos;
@@ -50,8 +50,8 @@ export const updateTodoIsCompleted = createAsyncThunk<
   string,
   { rejectValue: string }
 >('todos/isCompleted', async(todoId, thunkAPI) => {
-  try{
-    const res = await clientCredentials.put(`/todos/${todoId}/is_completed`);
+  try {
+    const res = await fetchWithTokenRefresh(`/todos/${todoId}/is_completed`, 'put');
     const todos = res.data;
     devLog('res.data', todos)
     if (!todos) return thunkAPI.rejectWithValue('todosの更新に失敗しました');

@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Setting, SettingParams, SettingState } from '../types/settingType'
 import type { RootState } from '../../../reduxStore/store'
-import { clientCredentials } from '../../../utils/axios'
 import { defaultSetting } from '../defaultSetting'
 import { getAxiosErrorMessageFromStatusCode } from '../../../utils/errorHandler/axiosError'
 import { devLog } from '../../../utils/logDev'
+import { fetchWithTokenRefresh } from '../../../utils/asyncFetch/fetchWithTokenRefresh'
 
 const initialState: SettingState = {
   setting: defaultSetting(),
@@ -26,7 +26,7 @@ export const updateSetting = createAsyncThunk<
     volume: Number(params.volume),
   }
   try {
-    const res = await clientCredentials.put('/settings', safeParams);
+    const res = await fetchWithTokenRefresh('/settings', 'put', safeParams);
     devLog('Setting更新成功：', res.data);
     return res.data
   } catch(err) {
