@@ -36,7 +36,7 @@ model Todo {
   title       String
   isCompleted Boolean   @default(false)
   deadline    DateTime?
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
 
@@ -50,7 +50,7 @@ model Setting {
   restSec     Int       @default(300)
   longRestSec Int       @default(900)
   workingSound String?
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String    @unique
 }
 
@@ -60,7 +60,7 @@ model Record {
   updatedAt   DateTime  @updatedAt
   workTime    Int       @default(0)
   workCount   Int       @default(0)
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
 
@@ -70,5 +70,5 @@ model AuthRefreshToken {
   token     String   @unique
   expiresAt DateTime
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
