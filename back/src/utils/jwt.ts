@@ -11,7 +11,7 @@ export const decodeJwt = (token: string) => {
 }
 
 export const createJwt = (payload: jwtPayload): string => {
-  const token: string = jwt.sign(payload, SECRET_KEY, { expiresIn: "10s" });
+  const token: string = jwt.sign(payload, SECRET_KEY, { expiresIn: "30m" });
   return token;
 }
 
@@ -20,7 +20,7 @@ export const setJwtInCookie = (res: Response, userId: string): void => {
   const token = createJwt(payload);
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    maxAge: 14 * 24 * 60 * 60 * 1000, // 14days
+    maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days (refreshTokenの有効期限より1週間長い)
     secure: process.env.NODE_ENV === 'production',
   });
 }

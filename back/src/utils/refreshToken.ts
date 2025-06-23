@@ -13,7 +13,7 @@ export const setRefreshTokenInCookie = (res: Response, refreshToken: string) => 
     httpOnly: true,
     maxAge: 14 * 24 * 60 * 60 * 1000, // 14days
     secure: process.env.NODE_ENV === 'production',
-    // path: COOKIE_SCOPE,
+    path: COOKIE_SCOPE,
   });
 }
 
@@ -22,6 +22,6 @@ export const clearRefreshTokenFromCookie = (res: Response): void => {
     httpOnly: true,
     expires: new Date(0),
     secure: process.env.NODE_ENV === 'production',
-    // path: COOKIE_SCOPE,
+    path: COOKIE_SCOPE,
   });
 }

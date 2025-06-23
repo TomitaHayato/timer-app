@@ -17,6 +17,18 @@ export const getRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: 
   return refreshToken;
 }
 
+// userIdとtokenからレコードを取得
+export const getRefreshTokenByUserId = async(prisma: PrismaClient, queryInfo: { userId: string }) => {
+  const { userId } = queryInfo;
+  const refreshToken = prisma.authRefreshToken.findUnique({
+    select: authRefreshTokenSelect(),
+    where: {
+      userId
+    },
+  })
+  return refreshToken;
+}
+
 export const createRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: string }) => {
   const { userId } = queryInfo;
   const token = randomUUID();
@@ -30,6 +42,23 @@ export const createRefreshToken = async(prisma: PrismaClient, queryInfo: { userI
   });
   devLog('model: createしたauthRefreshToken', newToken);
   return newToken;
+}
+
+// 既存のレコードがあれば更新、なければ作成
+export const createOrUpdateRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: string }) => {
+  const { userId } = queryInfo;
+  const tokenNow = await getRefreshTokenByUserId(prisma, { userId });
+
+  if(!tokenNow) {
+    // 既存のトークンがない場合、作成
+    const token = await createRefreshToken(prisma, { userId })
+    return token;
+  } else {
+    // 既存のトークンがある場合、更新
+    const newToken = randomUUID();
+    const token = await updateRefreshToken(prisma, { userId, newToken });
+    return token;
+  }
 }
 
 // userIdで指定したrefreshTokenのtoken, expiresAtを更新

@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt'
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";
-import { createRefreshToken, deleteRefreshToken, getRefreshToken, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
+import { createOrUpdateRefreshToken, createRefreshToken, deleteRefreshToken, getRefreshToken, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
 import { checkExpire } from "../../models/authRefreshToken/utils/checkExpire";
 import { clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
@@ -58,7 +58,7 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     // hashedPasswordカラムとpasswordのハッシュを比較
     if (await bcrypt.compare(password, user.hashedPassword)) {
       // refreshTokenを生成
-      const authRefreshToken = await dbQueryHandler(createRefreshToken, { userId: user.id });
+      const authRefreshToken = await dbQueryHandler(createOrUpdateRefreshToken, { userId: user.id });
       // リフレッシュトークンとアクセストークンをCookieにセット
       setRefreshTokenInCookie(res, authRefreshToken.token);
       setJwtInCookie(res, user.id);
