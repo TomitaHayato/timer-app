@@ -61,6 +61,7 @@ export const signup = createAsyncThunk<
 >('session/signup', async(params, thunkAPI) => {
   try {
     const res = await clientCredentials.post('/auth/signup', params);
+    devLog('signupのres:', res);
     const { userData, recordsData } = res.data;
     if (!userData)  return thunkAPI.rejectWithValue('userData is null');
 

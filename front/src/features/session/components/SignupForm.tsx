@@ -17,7 +17,7 @@ export function SignupForm() {
   const onSubmit = async (data: SignupParams) => {
     devLog('Signup Formデータ', data);
     try{
-      await dispatch(signup(data)).unwrap;
+      await dispatch(signup(data)).unwrap();
       reset();
       toastSuccessRB('新規登録 完了しました')
      } catch {
