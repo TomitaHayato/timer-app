@@ -10,13 +10,13 @@ export function useSoundHowls() {
   const volumeOption = volume / 100
 
   const soundBtn = useRef<Howl>(new Howl({
-    src: ['ice.mp3'],
+    src: ['sound/ice.mp3'],
     volume: volumeOption,
     mute: isMuted,
   }))
 
   const soundRest = useRef<Howl>(new Howl({
-    src: ['btn.mp3'],
+    src: ['sound/btn.mp3'],
     volume: volumeOption,
     mute: isMuted,
   }))
@@ -32,13 +32,13 @@ export function useSoundHowls() {
     soundWork.current = _createNewHowl(volumeOption, isMuted, workingSound);
 
     soundBtn.current = new Howl({
-      src: ['ice.mp3'],
+      src: ['sound/ice.mp3'],
       volume: volumeOption,
       mute: isMuted,
     })
 
     soundRest.current = new Howl({
-      src: ['btn.mp3'],
+      src: ['sound/btn.mp3'],
       volume: volumeOption,
       mute: isMuted,
     })

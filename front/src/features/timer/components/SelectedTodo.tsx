@@ -18,7 +18,7 @@ export function SelectedTodo({ todo, setTodo }: Props) {
 
   return(
     <>
-      <div className="w-full flex justify-between items-center gap-4 py-2 px-8 shadow-2xl bg-gray-700 rounded-xl">
+      <div className="w-full flex justify-between items-center gap-4 pt-8 pb-2 px-4 shadow-2xl bg-gray-700 rounded-xl relative">
         <TodoCompleteBtn id={todo.id} setTodo={setTodo}/>
 
         <div>
@@ -28,10 +28,16 @@ export function SelectedTodo({ todo, setTodo }: Props) {
             && <p className={`${deadlineColor(todo.deadline)} text-xs`}>{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
           }
         </div>
-        
+
         <button className="btn btn-sm btn-primary" onClick={() => openModal('todoSelector')}>
           変更
         </button>
+
+        <div className="absolute top-1 right-1">
+          <button className="btn btn-sm btn-ghost" onClick={() => setTodo(null)}>
+            ×
+          </button>
+        </div>
       </div>
     </>
   )
