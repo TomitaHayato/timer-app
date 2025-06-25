@@ -1,8 +1,10 @@
+import { randomUUID } from "crypto";
 import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { UserPostParams, UserUpdateParams } from "../../types/user";
 import { devLog } from "../../utils/dev/devLog";
 import { selectRecordColumns, selectSettingColumns } from "../utils/selectColumns";
+import dayjs from "dayjs";
 
 export const getAllUser = async(prisma: PrismaClient) => {
   const allUsers = await prisma.user.findMany();
@@ -59,19 +61,29 @@ export const getUserWithRelation = async(
   return user;
 }
 
-export const createUserWithSetting = async(prisma: PrismaClient, params: UserPostParams) => {
+export const createUserWithRelation = async(prisma: PrismaClient, params: UserPostParams) => {
+  // refreshToken用の値
+  const token = randomUUID();
+  const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定
   // 作成処理
-  await prisma.user.create({
+  const newRecord = await prisma.user.create({
     data: {
       ...params,
       setting: {
         create: {
           ...defaultSetting
         }
+      },
+      authRefreshToken: {
+        create: {
+          token,
+          expiresAt,
+        }
       }
     }
   });
   // 作成したレコードを返す
+  devLog('作成されたUserと関連:', newRecord);
   const newRecords = await prisma.user.findUnique({ where: params });
   return newRecords;
 }

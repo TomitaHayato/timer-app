@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express"
-import { createUserWithSetting, getUserByEmail, getUserWithRelation } from "../../models/users/users";
+import { createUserWithRelation, getUserByEmail, getUserWithRelation } from "../../models/users/users";
 import { dataHash } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/errorHandler";
 import bcrypt from 'bcrypt'
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";
-import { createOrUpdateRefreshToken, createRefreshToken, deleteRefreshToken, getRefreshToken, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
+import { createOrUpdateRefreshToken, createRefreshToken, deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
 import { checkExpire } from "../../models/authRefreshToken/utils/checkExpire";
 import { clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
@@ -20,17 +20,17 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
     // パスワードをハッシュ化
     const hashedPassword = await dataHash(password);
     // 新しいユーザーと関連レコードをDBに追加
-    const newUser = await dbQueryHandler(createUserWithSetting, {
+    const newUser = await dbQueryHandler(createUserWithRelation, {
       name,
       email,
       hashedPassword,
     })
     devLog('作成されたUser：', newUser);
+    if(!newUser) throw new Error();
+    // 作成したリフレッシュトークンを取得
+    const authRefreshToken = await dbQueryHandler(getRefreshTokenByUserId, { userId: newUser.id });
+    if(!authRefreshToken) throw new Error();
 
-    if(!newUser) throw new Error()
-
-    // refreshTokenを生成
-    const authRefreshToken = await dbQueryHandler(createRefreshToken, { userId: newUser.id });
     // リフレッシュトークンとアクセストークンをCookieにセット
     setRefreshTokenInCookie(res, authRefreshToken.token);
     setJwtInCookie(res, newUser.id);
