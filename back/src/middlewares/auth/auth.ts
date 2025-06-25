@@ -14,9 +14,8 @@ export const authCheckMiddleware = async (req: Request, res: Response, next: Nex
   }
 
   try {
-    // Token検証
-    const payload = verifyJwt(token);
-    req.decodedJwtPayload = payload;
+    const payload = verifyJwt(token); // Token検証
+    req.decodedJwtPayload = payload;  // デコードしたpaloadをreqに格納
     next();
   } catch(err: unknown) {
     if (err instanceof TokenExpiredError) {

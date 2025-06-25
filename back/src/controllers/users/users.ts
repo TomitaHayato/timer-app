@@ -8,7 +8,7 @@ import { devLog } from "../../utils/dev/devLog";
 
 export const deleteUser = async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = await getUserIdFromRequest(req, res);
+    const userId = getUserIdFromRequest(req, res);
     // User削除
     await dbQueryHandler(deleteUserById, userId);
     // 認証トークン失効 (DBからの削除はdeleteUserByIdで実行済)
