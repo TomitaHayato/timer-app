@@ -123,8 +123,8 @@ export default function Timer() {
             </div>
           </div>
 
-          {/* タイマー操作ボタン */}
           <div>
+            {/* タイマー操作ボタン */}
             <div className="flex justify-center items-center gap-8 mb-8">
               {
                 isRunning

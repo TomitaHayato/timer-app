@@ -4,6 +4,7 @@ import { todosReducer } from '../features/todos/todoSlice'
 import { settingReducer } from '../features/setting/Slices/settingSlice'
 import { sessionReducer } from '../features/session/slices/sessionSlice'
 import { recordsReducer } from '../features/records/recordsSlice'
+import { visibleReducer } from '../features/display/visibleSlice'
 
 export const store =  configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store =  configureStore({
     setting: settingReducer,
     session: sessionReducer,
     records: recordsReducer,
+    visible: visibleReducer,
   }
 })
 
