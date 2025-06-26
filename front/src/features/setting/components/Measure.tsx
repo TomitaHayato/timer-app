@@ -60,13 +60,10 @@ export function Measure({
           type="range"
           min={min}
           max={max}
-          defaultValue={valueInStore}
           className="range range-xs"
           step={step}
-          // onChange={e => hundleChange(e.target.value)}
           { ...register(measureId) }
-            disabled={!isVolume && !isAuth}
-          />
+          disabled={!isVolume && !isAuth}/>
 
         <div className="flex justify-between px-2.5 mt-1 text-[0.5rem]">
           { [...Array(itemsNum)].map((_, i) => <span key={`separator-${i}-${measureId}`}>|</span>) }

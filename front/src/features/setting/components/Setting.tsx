@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { Measure } from "./Measure";
 import type { SettingParams } from "../types/settingType";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
-import { replaceSetting, selectSettingState, updateSetting } from "../Slices/settingSlice";
+import { replaceSetting, selectSetting, selectSettingState, updateSetting } from "../Slices/settingSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { devLog } from "../../../utils/logDev";
@@ -10,6 +10,7 @@ import { LoadingSpans } from "../../../components/btn/LoadingSpans";
 import { FormShortText } from "./formShortText";
 import { selectTimer } from "../../timer/timerSlice";
 import { UserDeleteBtn } from "./UserDeletebtn";
+import { useEffect } from "react";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
@@ -18,6 +19,7 @@ export function Setting() {
   const timerStatus = useAppSelector(selectTimer).status;
   const dispatch = useAppDispatch();
   const { error, loading } = useAppSelector(selectSettingState);
+  const { isMuted, workingSound } = useAppSelector(selectSetting);
 
   const onSubmit = async(data: SettingParams) => {
     if (loading) return;
@@ -43,6 +45,12 @@ export function Setting() {
       toastErrorRB('設定の更新に失敗しました')
     }
   }
+
+  // APIから設定取得後、isMutedとworkingSoundのフォームの変化をUIに反映
+  useEffect(() => {
+    setValue('isMuted', isMuted);
+    setValue('workingSound', workingSound);
+  }, [isMuted, setValue, workingSound]);
 
   return(
     <>
@@ -117,7 +125,6 @@ export function Setting() {
             <FormShortText />
             <select
               id="sound-select"
-              defaultValue="default"
               className="select select-primary"
               disabled={!isAuth}
               { ...register('workingSound') }>
