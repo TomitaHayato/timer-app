@@ -14,12 +14,14 @@ import { devLog } from "../../../utils/logDev";
 import { createRecord } from "../../records/recordsSlice";
 import type { PostRecordParams } from "../../records/types/records";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { selectVisibleClass } from "../../display/visibleSlice";
 
 export default function Timer() {
   const isAuth = useAppSelector(selectAuthStatus);
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
   const { mode } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch();
+  const visibleCalss = useAppSelector(selectVisibleClass);
 
   const { soundWork, soundBtn, soundRest } = useSoundHowls();
 
@@ -111,11 +113,16 @@ export default function Timer() {
 
   return(
     <>
-      <div className="">
+      <div>
         <div>
           {/* 円状のコンテナ */}
           <div className='flex items-center justify-center my-8'>
-            <div className={`radial-progress ${sceneTimerBgColor('')} ${modeBarColor(mode)}`} style={{"--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100,  "--size": "20rem", "--thickness": "6px"} as React.CSSProperties } aria-valuenow={100} role="progressbar">
+            <div
+              className={`radial-progress ${sceneTimerBgColor('')} ${modeBarColor(mode)}`}
+              style={{"--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100,  "--size": "20rem", "--thickness": "6px"} as React.CSSProperties }
+              aria-valuenow={100}
+              role="progressbar"
+            >
               <p className={`${modeTextColor(mode)} text-center`}>{modeText(mode)}</p>
               <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
                 {secToHMS(totalSeconds)}
@@ -123,7 +130,7 @@ export default function Timer() {
             </div>
           </div>
 
-          <div>
+          <div className={visibleCalss}>
             {/* タイマー操作ボタン */}
             <div className="flex justify-center items-center gap-8 mb-8">
               {

@@ -1,4 +1,5 @@
-import { useAppSelector } from "../../../reduxStore/hooks";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { changeVisible } from "../../display/visibleSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { LoginFormBtn } from "./LoginFormBtn";
 import { LogoutBtn } from "./LogoutBtn";
@@ -6,6 +7,11 @@ import MobileDropDown from "./MobileDropDown";
 
 export default function Header() {
   const isAuthenticated = useAppSelector(selectAuthStatus);
+  const dispatch = useAppDispatch();
+
+  function handleVisibleClick() {
+    dispatch(changeVisible(false));
+  }
 
   return(
     <>
@@ -17,7 +23,9 @@ export default function Header() {
 
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
-            <li><a>Item 1</a></li>
+            <li>
+              <button className="border" onClick={handleVisibleClick}>時間以外を非表示</button>
+            </li>
           </ul>
         </div>
 

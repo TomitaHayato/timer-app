@@ -10,22 +10,28 @@ import { selectRecords } from "../features/records/recordsSlice";
 import { todayDate } from "../utils/time";
 import { selectAuthStatus } from "../features/session/slices/sessionSlice";
 import { TodoSelector } from "../features/timer/components/TodoSelector";
+import { selectVisibleClass } from "../features/display/visibleSlice";
 
 export default function TimerPage() {
   const { dailyRecord } = useAppSelector(selectRecords);
   const isAuth = useAppSelector(selectAuthStatus);
+  const visibleClass = useAppSelector(selectVisibleClass); // 要素の表示非表示を管理するclass
 
   return(
     <>
-      <TodosIndexSide />
+      <div className={visibleClass}>
+        <TodosIndexSide />
+      </div>
 
       <div className="bg-[url(/image/wind_sbell.png)] bg-cover">
         {/* Todoを表示 */}
-        <TodoSelector />
+        <div className={visibleClass}>
+          <TodoSelector />
+        </div>        
 
         <Timer />
 
-        <div className="absolute top-28 left-12">
+        <div className={`absolute top-28 left-12 ${visibleClass}`}>
           <h3 className="text-center text-gray-400 font-semibold mb-2">今日の記録 {todayDate()}</h3>
           {
             isAuth
@@ -33,11 +39,13 @@ export default function TimerPage() {
             : <p className="text-gray-500">ログイン後に表示されます</p>
           }
         </div>
-
-        <Records />
+        
+        <div className={visibleClass}>
+          <Records />
+        </div>
       </div>
 
-      <div className="fixed left-4 bottom-8 flex flex-col gap-4 z-10">
+      <div className={`fixed left-4 bottom-8 flex flex-col gap-4 z-10 ${visibleClass}`}>
         <div className="indicator">
           <span className="indicator-item status status-success animate-pulse"></span>
           <Drawer btnText={'完了済 Todo'}>
