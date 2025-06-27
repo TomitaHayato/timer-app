@@ -48,6 +48,7 @@ export function ProfileEditForm({ setIsEdit }: Props) {
             <input
               type="text"
               className="input"
+              defaultValue={user.name}
               {...register('name', { required: '名前を入力してください' })}/>
           </div>
           {/* メールアドレス */}
@@ -57,6 +58,7 @@ export function ProfileEditForm({ setIsEdit }: Props) {
             <input
               type="email"
               className="input"
+              defaultValue={user.email}
               {...register('email', { required: 'メールアドレスを入力してください' })}/>
           </div>
           <div>

@@ -139,13 +139,12 @@ export const updateUser = createAsyncThunk<
   User,
   User,
   { rejectValue: string }
->('session/updateUser.pending', async(params, thunkAPI) => {
+>('session/updateUser', async(params, thunkAPI) => {
   try {
     const res = await fetchWithTokenRefresh('/users', 'put', params);
-    devLog('PUT:/usersのResponse:', res);
     return res.data;
   } catch(err) {
-    devLog('session/updateUser.pending, (stateの => {エラー：', err)
+    devLog('session/updateUserのエラー：', err)
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サーバとの通信に失敗しました');
     devLog(errorMessage);
     return thunkAPI.rejectWithValue(errorMessage);

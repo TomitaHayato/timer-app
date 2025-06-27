@@ -90,10 +90,15 @@ export const createUserWithRelation = async(prisma: PrismaClient, params: UserPo
 
 export const updateUser = async(prisma: PrismaClient, queryInfo: { params: UserUpdateParams, userId: string }) => {
   const { params, userId } = queryInfo;
-  prisma.user.update({
+  const user = await prisma.user.update({
+    select: {
+      name: true,
+      email: true
+    },
     where: { id: userId },
     data: params,
   })
+  return user
 }
 
 export const deleteUserById = async(prisma: PrismaClient, userId: string) => {
