@@ -60,10 +60,6 @@ export default function Timer() {
 
 
   // 秒数更新後、タイマーをリスタート
-  // 問題点：
-    // 1: 更新後すぐにカウントが反映されてしまうこと
-    // 2: 更新後スタートしてしまうこと
-    // 3: 更新後にpauseしようとすると、Mode切り替え後もPauseしてしまうこと
   useEffect(() => {
     restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })))
     if (isFirstStart) pause(); // 初回レンダリング時は何もしない
@@ -132,11 +128,11 @@ export default function Timer() {
 
           <div className={visibleCalss}>
             {/* タイマー操作ボタン */}
-            <div className="flex justify-center items-center gap-8 mb-8">
+            <div className="flex flex-col justify-center items-center gap-8 mb-8">
               {
                 isRunning
-                ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}>ストップ</button>
-                : <button className="btn btn-primary btn-lg" onClick={handleStart}>スタート</button>
+                ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}><span className="icon-[weui--pause-outlined] size-8"></span></button>
+                : <button className="btn btn-outline btn-primary btn-lg" onClick={handleStart}><span className="icon-[weui--play-filled] size-8"></span></button>
               }
               <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleReset}>リセット</button>
             </div>

@@ -4,6 +4,7 @@ import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { LoginFormBtn } from "./LoginFormBtn";
 import { LogoutBtn } from "./LogoutBtn";
 import MobileDropDown from "./MobileDropDown";
+import { ProfileIconBtn } from "./PrifileIconBtn";
 
 export default function Header() {
   const isAuthenticated = useAppSelector(selectAuthStatus);
@@ -30,11 +31,14 @@ export default function Header() {
         </div>
 
         <div className="navbar-end">
-          {
-            isAuthenticated
-            ? <LogoutBtn />
-            : <LoginFormBtn /> 
-          }
+          <div className="flex gap-4">
+            { isAuthenticated && <ProfileIconBtn /> }
+            {
+              isAuthenticated
+              ? <LogoutBtn />
+              : <LoginFormBtn /> 
+            }
+          </div>
         </div>
       </div>
     </>

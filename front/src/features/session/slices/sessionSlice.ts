@@ -128,17 +128,40 @@ export const checkAuthToken = createAsyncThunk<
       name: userData.name,
     }
   } catch(err) {
-    devLog('session/checkのエラー：', err)
+    devLog('session/checkのエラー：', err);
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サーバとの通信に失敗しました');
     devLog(errorMessage);
     return thunkAPI.rejectWithValue(errorMessage)
   }
 })
 
+export const updateUser = createAsyncThunk<
+  User,
+  User,
+  { rejectValue: string }
+>('session/updateUser.pending', async(params, thunkAPI) => {
+  try {
+    const res = await fetchWithTokenRefresh('/users', 'put', params);
+    devLog('PUT:/usersのResponse:', res);
+    return res.data;
+  } catch(err) {
+    devLog('session/updateUser.pending, (stateの => {エラー：', err)
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サーバとの通信に失敗しました');
+    devLog(errorMessage);
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+});
+
 const sessionSlice = createSlice({
   name: 'session',
   initialState,
-  reducers: {},
+  reducers: {
+    // トークンの有効期限切れの際にdispatch
+    deleteSessionInfo: state => {
+      state.user = null;
+      state.isAuthenticated = false;
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(signin.pending, state => {
@@ -202,12 +225,29 @@ const sessionSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false
       })
+      // User情報更新
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action: PayloadAction<User>) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unexpected error';
+      })
   }
 });
 
 export const selectSessionError = (state: RootState) => state.session.error
 export const selectSessionLoading = (state: RootState) => state.session.loading
-export const selectUser = (state: RootState) => state.session;
+export const selectUser = (state: RootState) => state.session.user;
 export const selectAuthStatus = (state: RootState) => state.session.isAuthenticated
+
+export const {
+  deleteSessionInfo,
+} = sessionSlice.actions;
 
 export const sessionReducer = sessionSlice.reducer;
