@@ -5,7 +5,7 @@ import { createTodoParams, updateTodoParams } from "../../types/todo";
 import { isEmptyObj } from "../../utils/object";
 import { getUserIdFromRequest } from "../utils/getUserId";
 import { getIdFromRequestParams } from "../utils/getIdFromRequestParams";
-import { devLog } from "../../utils/dev/devLog";
+import { getRequestBody } from "../utils/getRequestBody";
 
 // Todosを全件取得
 export const todosIndex = async(req: Request, res: Response, next: NextFunction) => {
@@ -22,12 +22,7 @@ export const todosIndex = async(req: Request, res: Response, next: NextFunction)
 // Todoを新規作成
 export const postTodos = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
-
-  const params: createTodoParams = req.body;
-  if (isEmptyObj(params)) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const params = getRequestBody<createTodoParams>(req, res);
 
   try {
     // 作成処理
@@ -69,11 +64,6 @@ export const updateTodoRecord= async(req: Request, res: Response, next: NextFunc
   const userId = getUserIdFromRequest(req, res);
 
   const todoId: string = getIdFromRequestParams(req, res);
-  if (!todoId) {
-    devLog('リクエストにtodoIdがない');
-    res.status(422).end();
-    return;
-  }
 
   const params: updateTodoParams =req.body;
   if(isEmptyObj(params)) {
@@ -95,11 +85,6 @@ export const deleteTodoRecord = async(req: Request, res: Response, next: NextFun
   const userId = getUserIdFromRequest(req, res);
 
   const todoId: string = getIdFromRequestParams(req, res);
-  if (!todoId) {
-    devLog('リクエストにtodoIdがない');
-    res.status(422).end();
-    return;
-  }
 
   try {
     // 削除処理

@@ -5,6 +5,7 @@ import { isEmptyObj } from "../../utils/object";
 import { PostSettingParams } from "../../types/setting";
 import { getUserIdFromRequest } from "../utils/getUserId";
 import { devLog } from "../../utils/dev/devLog";
+import { getRequestBody } from "../utils/getRequestBody";
 
 export const getSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
@@ -18,11 +19,7 @@ export const getSetting = async(req: Request, res: Response, next: NextFunction)
 export const postSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
 
-  const params: PostSettingParams = req.body;
-  if (isEmptyObj(params)) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const params = getRequestBody<PostSettingParams>(req, res);
 
   try {
     const setting = await dbQueryHandler(createSetting, { userId, params });
@@ -32,12 +29,7 @@ export const postSetting = async(req: Request, res: Response, next: NextFunction
 
 export const putSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
-
-  const params: PostSettingParams = req.body;
-  if (isEmptyObj(params)) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const params = getRequestBody<PostSettingParams>(req, res);
 
   try {
     devLog('パラメータ:', params)

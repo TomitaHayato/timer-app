@@ -88,11 +88,11 @@ export const createUserWithRelation = async(prisma: PrismaClient, params: UserPo
   return newRecords;
 }
 
-export const updateUser = async(prisma: PrismaClient, queryInfo: { userUpdateParams: UserUpdateParams, userId: string }) => {
-  const { userUpdateParams, userId } = queryInfo
+export const updateUser = async(prisma: PrismaClient, queryInfo: { params: UserUpdateParams, userId: string }) => {
+  const { params, userId } = queryInfo;
   prisma.user.update({
     where: { id: userId },
-    data: userUpdateParams,
+    data: params,
   })
 }
 

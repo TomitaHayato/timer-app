@@ -11,6 +11,8 @@ import { checkExpire } from "../../models/authRefreshToken/utils/checkExpire";
 import { clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
+import { getRequestBody } from "../utils/getRequestBody";
+import { signinParams } from "../../types/auth";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -45,8 +47,8 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
 // TODO:EX: 現状、ユーザーと関連データの情報だけがDBに生成され、リフレッシュトークンの作成処理のみが失敗する可能性がある。この場合、DBに情報は保存されているのにエラーがクライアントに返される。改善のために、ユーザー、関連レコード、リフレッシュトークンの作成処理を1つのトランザクションで管理する
 
 export const signIn = async(req: Request, res: Response, next: NextFunction) => {
-  // クライアントからの入力値を取得
-  const { email, password } = req.body;
+  const { email, password } = getRequestBody<signinParams>(req, res); // クライアントからの入力値を取得
+
   try {
     // DBからemailを持つUserを取得
     const user = await dbQueryHandler(getUserByEmail, email);
@@ -102,7 +104,7 @@ export const signOut = async(req: Request, res: Response, next: NextFunction) =>
 
 // 認証トークンの有無・有効期限を確認
 export const tokenCheck = async (req: Request, res: Response) => {
-  // リクエストのCookieからJWTを取得
+  // リクエストのCookieからJWTを取得（authCheckミドルウェアを介していないので、req.cookiesから取得し検証する）
   const token = req.cookies?.jwt_token;
   if (!token) {
     devLog('tokenCheckコントローラ：', '認証Tokenなし')

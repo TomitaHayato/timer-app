@@ -13,6 +13,6 @@ export type UserPostParams = {
 }
 
 export type UserUpdateParams = {
-  name?: string,
-  email?: string,
+  name: string,
+  email: string,
 }

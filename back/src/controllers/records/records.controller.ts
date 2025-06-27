@@ -29,14 +29,8 @@ export const recordsIndex = async(req: Request, res: Response, next: NextFunctio
 // 作成処理
 export const postRecord = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
-
   // リクエストからパラメータを取得
   const params = getRequestBody<postRecordParams>(req, res);
-  if (isEmptyObj(params)) {
-    devLog('postRecordコントローラのエラー：', 'リクエストボディが不正です');
-    res.status(422).json(INVALID_REQUEST_BODY);
-    return
-  }
 
   // 作成処理
   await dbQueryHandler(createRecord, { userId, params });
