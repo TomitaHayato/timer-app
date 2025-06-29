@@ -6,9 +6,8 @@ import bcrypt from 'bcrypt'
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";
-import { createOrUpdateRefreshToken, createRefreshToken, deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
-import { checkExpire } from "../../models/authRefreshToken/utils/checkExpire";
-import { clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
+import { createOrUpdateRefreshToken, deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
+import { checkExpire, clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_REFRESH_TOKEN, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 import { getRequestBody } from "../utils/getRequestBody";
