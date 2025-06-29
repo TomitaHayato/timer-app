@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { defaultRecords } from "./defaultRecords";
 import type { PostRecordParams, RecordsState, TermsRecords } from "./types/records";
-import type { RootState } from "../../reduxStore/store";
+import type { AppDispatch, RootState } from "../../reduxStore/store";
 import { devLog } from "../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../utils/errorHandler/axiosError";
 import { fetchWithTokenRefresh } from "../../utils/asyncFetch/fetchWithTokenRefresh";
+import { INVALID_REFRESH_TOKEN } from "../../utils/apiErrors/errorMessages";
+import { resetStateOfUser } from "../session/slices/sessionSlice";
 
 const initialState: RecordsState = {
   records: defaultRecords,
@@ -17,19 +19,22 @@ export const createRecord = createAsyncThunk<
   TermsRecords,
   PostRecordParams,
   {
-    rejectValue: string
+    rejectValue: string,
+    dispatch: AppDispatch,
   }
 >('records/create', async(params, thunkAPI) => {
   try {
     const res = await fetchWithTokenRefresh('/records', 'post', params);
     const records = res.data;
-
     if (!records.dailyRecord || !records.weeklyRecord || !records.monthlyRecord || !records.totalRecord) {
       return thunkAPI.rejectWithValue('Recordの取得に失敗しました');
     }
-
     return records;
   } catch(err) {
+    if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
+      // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
+      thunkAPI.dispatch(resetStateOfUser());
+    }
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'Recordの作成に失敗しました');
     return thunkAPI.rejectWithValue(errorMessage);
   }

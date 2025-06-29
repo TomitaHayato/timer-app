@@ -23,10 +23,16 @@ const initialState: SessionState = {
 
 // ログインユーザーに関するステートをリセットする同期Thunk
 export const resetStateOfUser = () => (dispatch: AppDispatch) => {
-  dispatch(resetSessionState());
-  dispatch(resetRecordsState());
-  dispatch(resetSettingState());
-  dispatch(resetTodosState());
+  devLog('ログインユーザーに関するステートを削除');
+  const resetThunks = [
+    resetSessionState(),
+    resetRecordsState(),
+    resetSettingState(),
+    resetTodosState(),
+  ]
+  resetThunks.forEach(thunk => {
+    dispatch(thunk);
+  });
   return;
 }
 
@@ -119,6 +125,7 @@ export const signout = createAsyncThunk<
   }
 })
 
+// AccessTokenの検証エンドポイント。トップページマウント時に実行
 export const checkAuthToken = createAsyncThunk<
   User,
   undefined,
@@ -152,16 +159,24 @@ export const checkAuthToken = createAsyncThunk<
   }
 })
 
+// プロフィール更新
 export const updateUser = createAsyncThunk<
   User,
   User,
-  { rejectValue: string }
+  {
+    rejectValue: string,
+    dispatch: AppDispatch,
+  }
 >('session/updateUser', async(params, thunkAPI) => {
   try {
     const res = await fetchWithTokenRefresh('/users', 'put', params);
     return res.data;
   } catch(err) {
-    devLog('session/updateUserのエラー：', err)
+    devLog('session/updateUserのエラー：', err);
+    if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
+      // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
+      thunkAPI.dispatch(resetStateOfUser());
+    }
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サーバとの通信に失敗しました');
     devLog(errorMessage);
     return thunkAPI.rejectWithValue(errorMessage);

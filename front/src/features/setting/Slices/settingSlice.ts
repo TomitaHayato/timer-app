@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Setting, SettingParams, SettingState } from '../types/settingType'
-import type { RootState } from '../../../reduxStore/store'
+import type { AppDispatch, RootState } from '../../../reduxStore/store'
 import { defaultSetting } from '../defaultSetting'
 import { getAxiosErrorMessageFromStatusCode } from '../../../utils/errorHandler/axiosError'
 import { devLog } from '../../../utils/logDev'
 import { fetchWithTokenRefresh } from '../../../utils/asyncFetch/fetchWithTokenRefresh'
+import { INVALID_REFRESH_TOKEN } from '../../../utils/apiErrors/errorMessages'
+import { resetStateOfUser } from '../../session/slices/sessionSlice'
 
 const initialState: SettingState = {
   setting: defaultSetting(),
@@ -15,7 +17,10 @@ const initialState: SettingState = {
 export const updateSetting = createAsyncThunk<
   SettingParams,
   SettingParams,
-  { rejectValue: string }
+  {
+    rejectValue: string,
+    dispatch: AppDispatch,
+  }
 >('setting/udpate', async(params, thunkAPI) => {
   // パラメータの数値の値を保証する
   const safeParams: SettingParams = {
@@ -30,6 +35,10 @@ export const updateSetting = createAsyncThunk<
     devLog('Setting更新成功：', res.data);
     return res.data
   } catch(err) {
+    if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
+      // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
+      thunkAPI.dispatch(resetStateOfUser());
+    }
     const errorMessage: string = getAxiosErrorMessageFromStatusCode(err, '設定の更新に失敗しました')
     return thunkAPI.rejectWithValue(errorMessage)
   }
