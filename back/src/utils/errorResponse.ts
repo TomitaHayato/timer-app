@@ -8,3 +8,4 @@ export const INVALID_TOKEN_ERROR = _createObjectWithError('InvalidToken')
 
 export const INVALID_REQUEST_BODY = _createObjectWithError('InvalidRequestBody');
 
+export const INVALID_REFRESH_TOKEN = _createObjectWithError('InvalidRefreshToken')

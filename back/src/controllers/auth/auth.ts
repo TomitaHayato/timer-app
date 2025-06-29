@@ -10,7 +10,7 @@ import { createOrUpdateRefreshToken, createRefreshToken, deleteRefreshToken, get
 import { checkExpire } from "../../models/authRefreshToken/utils/checkExpire";
 import { clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
-import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
+import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_REFRESH_TOKEN, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 import { getRequestBody } from "../utils/getRequestBody";
 import { signinParams } from "../../types/auth";
 
@@ -159,7 +159,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
     // リフレッシュトークンがDBにあるかどうか
     if (!refreshTokenInDB) {
       devLog('tokensRefreshコントローラ', 'refreshTokenがDBにない');
-      res.status(401).json(INVALID_TOKEN_ERROR);
+      res.status(401).json(INVALID_REFRESH_TOKEN);
       return
     }
     // refreshToken期限切れの場合、DB, Cookieから削除
@@ -167,7 +167,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
       clearRefreshTokenFromCookie(res);
       await dbQueryHandler(deleteRefreshToken, { userId });
-      res.status(401).json(INVALID_TOKEN_ERROR);
+      res.status(401).json(INVALID_REFRESH_TOKEN);
       return
     }
     // リフレッシュトークン生成 => DB更新 => set-Cookieに付加

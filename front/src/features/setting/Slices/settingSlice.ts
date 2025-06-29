@@ -52,7 +52,10 @@ const settingSlice = createSlice({
       state.setting.volume = volume
       state.setting.isMuted= isMuted
       state.setting.workingSound = workingSound
-    }
+    },
+    resetSettingState: (state: SettingState) => {
+      state.setting = defaultSetting();
+    },
   },
   extraReducers: builder => {
     builder
@@ -80,7 +83,8 @@ const settingSlice = createSlice({
 })
 
 export const {
-  replaceSetting
+  replaceSetting,
+  resetSettingState,
 } = settingSlice.actions
 
 export const selectSettingState = (state: RootState): SettingState => state.setting;

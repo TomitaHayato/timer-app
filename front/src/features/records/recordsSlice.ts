@@ -52,6 +52,9 @@ const recordsSlice = createSlice({
       state.records.monthlyRecord = monthlyRecord
       state.records.totalRecord = totalRecord;
     },
+    resetRecordsState: (state: RecordsState) => {
+      state.records = defaultRecords;
+    },
   },
   extraReducers(builder) {
     builder
@@ -77,7 +80,8 @@ export const selectRecords = (state: RootState) => state.records.records
 export const selectDailyRecords = (state: RootState) => state.records.records.dailyRecord;
 
 export const {
-  replaceRecords
+  replaceRecords,
+  resetRecordsState,
 } = recordsSlice.actions;
 
 export const recordsReducer = recordsSlice.reducer

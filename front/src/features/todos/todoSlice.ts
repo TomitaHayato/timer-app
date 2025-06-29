@@ -72,6 +72,9 @@ const todosSlice = createSlice({
       devLog('todos更新:', state.todos)
       state.todos = todos;
     },
+    resetTodosState: (state: TodosState) => {
+      state.todos = defaultTodos;
+    },
   },
   extraReducers: builder => {
     builder
@@ -121,7 +124,8 @@ export const selectTodosCompleted = (state: RootState) => sortTodosByDeadline(st
 export const selectTodosUncompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => !todo.isCompleted)
 
 export const {
-  replaceTodos
+  replaceTodos,
+  resetTodosState,
 } = todosSlice.actions;
 
 export const todosReducer = todosSlice.reducer;

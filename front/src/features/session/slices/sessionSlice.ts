@@ -1,23 +1,33 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../../reduxStore/store";
+import type { AppDispatch, RootState } from "../../../reduxStore/store";
 import type { SessionState, SigninParams, SignupParams, User } from "../types/session";
 import { clientCredentials } from "../../../utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { replaceSetting } from "../../setting/Slices/settingSlice";
-import { replaceRecords } from "../../records/recordsSlice";
-import { replaceTodos } from "../../todos/todoSlice";
+import { replaceSetting, resetSettingState } from "../../setting/Slices/settingSlice";
+import { replaceRecords, resetRecordsState } from "../../records/recordsSlice";
+import { replaceTodos, resetTodosState } from "../../todos/todoSlice";
 import { defaultSetting } from "../../setting/defaultSetting";
 import { defaultRecords } from "../../records/defaultRecords";
 import { defaultTodos } from "../../todos/defaultTodos";
 import { devLog } from "../../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
 import { fetchWithTokenRefresh } from "../../../utils/asyncFetch/fetchWithTokenRefresh";
+import { INVALID_REFRESH_TOKEN } from "../../../utils/apiErrors/errorMessages";
 
 const initialState: SessionState = {
   user: null,
   isAuthenticated: false,
   loading: false,
   error: null,
+}
+
+// ログインユーザーに関するステートをリセットする同期Thunk
+export const resetStateOfUser = () => (dispatch: AppDispatch) => {
+  dispatch(resetSessionState());
+  dispatch(resetRecordsState());
+  dispatch(resetSettingState());
+  dispatch(resetTodosState());
+  return;
 }
 
 export const signin = createAsyncThunk<
@@ -88,7 +98,10 @@ export const signup = createAsyncThunk<
 export const signout = createAsyncThunk<
   undefined,
   undefined,
-  { rejectValue: string }
+  {
+    rejectValue: string,
+    dispatch: AppDispatch,
+  }
 >('session/signout', async(_, thunkAPI) => {
   try {
     await fetchWithTokenRefresh('/auth/signout', 'get');
@@ -98,6 +111,10 @@ export const signout = createAsyncThunk<
     thunkAPI.dispatch(replaceTodos(defaultTodos))
   } catch(err) {
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
+    if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
+      // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
+      thunkAPI.dispatch(resetStateOfUser());
+    }
     return thunkAPI.rejectWithValue(errorMessage);
   }
 })
@@ -156,7 +173,7 @@ const sessionSlice = createSlice({
   initialState,
   reducers: {
     // トークンの有効期限切れの際にdispatch
-    deleteSessionInfo: state => {
+    resetSessionState: state => {
       state.user = null;
       state.isAuthenticated = false;
     },
@@ -246,7 +263,7 @@ export const selectUser = (state: RootState) => state.session.user;
 export const selectAuthStatus = (state: RootState) => state.session.isAuthenticated
 
 export const {
-  deleteSessionInfo,
+  resetSessionState,
 } = sessionSlice.actions;
 
 export const sessionReducer = sessionSlice.reducer;
