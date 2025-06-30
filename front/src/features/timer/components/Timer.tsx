@@ -115,13 +115,17 @@ export default function Timer() {
           <div className='flex items-center justify-center my-8'>
             <div
               className={`radial-progress ${sceneTimerBgColor('')} ${modeBarColor(mode)}`}
-              style={{"--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100,  "--size": "20rem", "--thickness": "6px"} as React.CSSProperties }
+              style={{
+                "--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100, 
+                "--size": "20rem",
+                "--thickness": "6px"
+              } as React.CSSProperties }
               aria-valuenow={100}
               role="progressbar"
             >
               <p className={`${modeTextColor(mode)} text-center`}>{modeText(mode)}</p>
               <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
-                {secToHMS(totalSeconds)}
+                { secToHMS(totalSeconds) }
               </p>
             </div>
           </div>

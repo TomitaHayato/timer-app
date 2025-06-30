@@ -12,12 +12,13 @@ function App() {
   const visibleCalss = useAppSelector(selectVisibleClass);
   const isVisible = useAppSelector(selectVisible);
 
-  // ページ上のどこかがクリックされた時に発火
+  // ページがクリックされた時に発火
   function handleClickAnywhere() {
     if (isVisible) return;
     dispatch(changeVisible(true));
   }
 
+  // マウント時に認証Check
   useEffect(() => {
     dispatch(checkAuthToken());
   }, [dispatch])
@@ -29,8 +30,10 @@ function App() {
           <div className={visibleCalss}>
             <Header/>
           </div>
+
           <TimerPage />
-          <ToastContainer autoClose={4000} draggable={false} />
+
+          <ToastContainer autoClose={3000} draggable={false} />
         </div>
       </div>
     </>

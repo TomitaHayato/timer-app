@@ -25,13 +25,17 @@ export default function Header() {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <button className="border" onClick={handleVisibleClick}>時間以外を非表示</button>
+              <div></div>
             </li>
           </ul>
         </div>
 
         <div className="navbar-end">
           <div className="flex gap-4">
+            <button className="btn btn-sm btn-outline" onClick={handleVisibleClick}>
+              <span className="icon-[weui--eyes-off-outlined] size-6"></span>
+              <p className="text-xs">集中</p>
+            </button>
             { isAuthenticated && <ProfileIconBtn /> }
             {
               isAuthenticated

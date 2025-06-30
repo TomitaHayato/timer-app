@@ -11,6 +11,7 @@ import { FormShortText } from "./formShortText";
 import { selectTimer } from "../../timer/timerSlice";
 import { UserDeleteBtn } from "./UserDeletebtn";
 import { useEffect } from "react";
+import { soundTypeName, soundTypes } from "../../../utils/soundFiles";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
@@ -127,9 +128,9 @@ export function Setting() {
               id="sound-select"
               className="select select-primary"
               disabled={!isAuth}
-              { ...register('workingSound') }>
-              <option value="default">蝉の声</option>
-              <option value="wind_bell">風鈴</option>
+              { ...register('workingSound') }
+            >
+              { soundTypes.map(soundType => <option key={soundType} value={soundType}>{soundTypeName(soundType)}</option>) }
             </select>
           </div>
 
@@ -143,7 +144,7 @@ export function Setting() {
           </div>
         </form>
 
-        <div className="text-center my-8">
+        <div className="text-center mt-16">
           <p className="text-gray-400">ユーザー削除</p>
           <UserDeleteBtn />
         </div>

@@ -4,7 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../reduxStore/store";
 
 const initialState: visibleState = {
-  visible: true,
+  visible: true, // Timer以外の要素をUIに表示するか
 }
 
 export const visibleSlice = createSlice({
