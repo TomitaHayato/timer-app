@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+// 今日の月日
 export function todayDate() {
   return dayjs().format('MM月DD日');
 }

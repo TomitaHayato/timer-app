@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+// tailwindのクラスを返す
 export function bgCustom() {
   return "bg-linear-to-tr from-black to-slate-500"
 }

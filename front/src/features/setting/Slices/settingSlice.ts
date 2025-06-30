@@ -4,7 +4,7 @@ import type { AppDispatch, RootState } from '../../../reduxStore/store'
 import { defaultSetting } from '../defaultSetting'
 import { getAxiosErrorMessageFromStatusCode } from '../../../utils/errorHandler/axiosError'
 import { devLog } from '../../../utils/logDev'
-import { fetchWithTokenRefresh } from '../../../utils/asyncFetch/fetchWithTokenRefresh'
+import { fetchWithTokenRefresh } from '../../../utils/fetch/fetchWithTokenRefresh'
 import { INVALID_REFRESH_TOKEN } from '../../../utils/apiErrors/errorMessages'
 import { resetStateOfUser } from '../../session/slices/sessionSlice'
 

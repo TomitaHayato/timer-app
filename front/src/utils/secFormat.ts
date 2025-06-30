@@ -1,3 +1,4 @@
+// 秒数を「x時間y分z秒」形式に変更
 export function secToJpFormat(sec: number) {
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
@@ -5,7 +6,7 @@ export function secToJpFormat(sec: number) {
   return _arrangeFormatJp(h, m, s)
 }
 
-// 秒数をHH ;MM：SSのフォーマットに変更
+// 秒数をHH：MM：SSのフォーマットに変更
 export function secToHMS(sec: number) {
   const m = Math.floor(sec / 60);
   const s = sec % 60;

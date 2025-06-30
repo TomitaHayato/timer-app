@@ -1,4 +1,4 @@
-// ステータスコードに対するエラーメッセージを返す
+// ステータスコードに対するエラーメッセージ
 export const errorMessageFromStatusCode = (code: number, defaultMessage: string) => {
   switch (code) {
     case 401:

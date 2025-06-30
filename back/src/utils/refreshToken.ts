@@ -5,11 +5,9 @@ import { authRefreshToken } from "../types/authRefreshToken";
 import { devLog } from "./dev/devLog";
 
 const COOKIE_NAME = "refresh_token"
-const COOKIE_SCOPE = '/api/auth/token_refresh';
+const COOKIE_SCOPE = '/api/auth/token_refresh'; // refresh_tokenがリクエストに付加されるpathを限定
 
-export const makeRefreshToken = () => {
-  return randomUUID();
-}
+export const makeRefreshToken = () => randomUUID();
 
 export const setRefreshTokenInCookie = (res: Response, refreshToken: string) => {
   res.cookie(COOKIE_NAME, refreshToken, {
@@ -20,6 +18,7 @@ export const setRefreshTokenInCookie = (res: Response, refreshToken: string) => 
   });
 }
 
+// Cookieを即時失効
 export const clearRefreshTokenFromCookie = (res: Response): void => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
@@ -35,5 +34,5 @@ export const checkExpire = (authRefreshToken: authRefreshToken) => {
   if (diff < 0) return false;
 
   devLog('リフレッシュトークンは有効：', authRefreshToken.expiresAt)
-  return true; // あとでtrueに直す
+  return true
 }

@@ -11,7 +11,7 @@ import { defaultRecords } from "../../records/defaultRecords";
 import { defaultTodos } from "../../todos/defaultTodos";
 import { devLog } from "../../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
-import { fetchWithTokenRefresh } from "../../../utils/asyncFetch/fetchWithTokenRefresh";
+import { fetchWithTokenRefresh } from "../../../utils/fetch/fetchWithTokenRefresh";
 import { INVALID_REFRESH_TOKEN } from "../../../utils/apiErrors/errorMessages";
 
 const initialState: SessionState = {

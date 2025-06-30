@@ -13,13 +13,9 @@ dotenv.config();
 const port = process.env.PORT;
 const app = express();
 
-// JSONボディをパースできるようにする
-app.use(express.json());
-// Cookieデータにアクセスできるようにする
-app.use(cookieParser());
-
-// CORS対策
-app.use(cors(corsOption));
+app.use(express.json());   // JSONボディをパース
+app.use(cookieParser());   // Cookieデータにアクセス
+app.use(cors(corsOption)); // CORS対策
 
 // DB接続
 initMysql();
@@ -31,7 +27,7 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send('終了');
 });
 
-app.use(errorHander);
+app.use(errorHander); // 共通のエラーハンドルMiddlewara
 
 app.listen(port, () => {
   devLog(`サーバ起動 port:${port}`)

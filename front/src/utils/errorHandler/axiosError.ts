@@ -1,7 +1,7 @@
 import axios from "axios";
 import { errorMessageFromStatusCode } from "./errorMessage";
 
-// 指定されたエラーがAxiosエラーで、かつStatusコードが正しいか
+// エラーがAxiosエラーで、Status Codeが正しいか
 export const checkAxiosErrorStatus = (status: number, error: unknown): boolean => {
   return axios.isAxiosError(error) && error.response?.status === status
 }
