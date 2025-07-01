@@ -1,7 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { selectTodos, updateTodoIsCompleted } from "../todoSlice";
-import { LoadingBtnXs } from "./LoadingBtnXs";
 
 type Props = {
   id: string,
@@ -24,11 +23,7 @@ export function TodoCompleteBtn({ id }: Props) {
 
   return(
     <>
-      {
-        loading
-        ? <LoadingBtnXs />
-        : <button className="btn btn-xs btn-success btn-circle" onClick={handleClick}>✔︎</button>
-      }
+      { <button className="btn btn-xs btn-success btn-circle" disabled={loading} onClick={handleClick}>✔︎</button> }
     </>
   )
 }

@@ -8,7 +8,7 @@ import TodoList from "./TodoList";
 export default function TodosIndexSide() {
   const todos = useAppSelector(selectTodosUncompleted);
 
-  const [todosSide, setTodosSide] = useState<boolean>(false);
+  const [todosSide, setTodosSide] = useState<boolean>(false); // TodoのDrawerが表示されているか
   
   function hundleTodoSide() {
     setTodosSide(prev => !prev);

@@ -36,7 +36,7 @@ export default function TodoCreateForm() {
 
   return(
     <>
-      { errors.title?.message && <p className="text-error">{errors.title.message}</p> }
+      { errors.title?.message && <p className="text-error text-start">{errors.title.message}</p> }
       { !isAuth && <p className="text-error">ログインが必要です</p> }
       <form className="join join-vertical w-full" onSubmit={ handleSubmit(onSubmit) }>
         <div className="join w-full">
@@ -45,11 +45,7 @@ export default function TodoCreateForm() {
             placeholder="Title"
             {...register('title', { required: '! Titleを入力してください' })}/>
 
-          {
-            loading
-            ? <button className="join-item btn btn-info rounded-r-xl"><span className="loading loading-dots loading-xs"></span></button>
-            : <input type="submit" value='作成' className="join-item btn btn-info rounded-r-xl" disabled={!isAuth}/>
-          }
+          { <input type="submit" value='作成' className="join-item btn btn-info rounded-r-xl" disabled={!isAuth || loading}/> }
         </div>
 
         {/* 期限を指定 */}

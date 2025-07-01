@@ -2,7 +2,6 @@ import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { devLog } from "../../../utils/logDev";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { deleteTodo, selectTodos } from "../todoSlice";
-import { LoadingBtnXs } from "./LoadingBtnXs";
 
 type Props = {
   id: string,
@@ -25,11 +24,9 @@ export function TodoDeleteBtn({ id }: Props) {
 
   return(
     <>
-      {
-        loading
-        ? <LoadingBtnXs />
-        : <button className="btn btn-xs btn-outline btn-square" onClick={handleDelete}>🗑️</button>
-      }
+      { <button className="btn btn-xs btn-outline btn-square" disabled={loading} onClick={handleDelete}>
+        <span className="icon-[weui--delete-outlined] size-5"></span>
+      </button> }
     </>
   )
 }

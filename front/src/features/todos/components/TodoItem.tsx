@@ -4,12 +4,13 @@ import { TodoCompleteBtn } from "./TodoCompleteBtn";
 import { TodoDeleteBtn } from "./TodoDeleteBtn";
 import { TodoRebornBtn } from "./TodoRebornBtn";
 import { deadlineColor } from "../../../utils/class";
+import { memo } from "react";
 
 type Props ={
   todo: Todo,
 }
 
-export default function TodoItem({ todo }: Props) {
+function TodoItem({ todo }: Props) {
   return(
     <>
       <li className="list-row items-center px-2 py-2 mb-1 text-sm bg-gray-600">
@@ -32,3 +33,5 @@ export default function TodoItem({ todo }: Props) {
     </>
   )
 }
+
+export default memo(TodoItem);
