@@ -7,6 +7,7 @@ import { corsOption } from './config/cors/cors'
 import cookieParser from 'cookie-parser'
 import { errorHander } from './middlewares/errorHandler/errorHandler'
 import { devLog } from './utils/dev/devLog'
+import { verifyEmailConnection } from './config/mailer/transporter'
 
 dotenv.config();
 
@@ -17,8 +18,8 @@ app.use(express.json());   // JSONボディをパース
 app.use(cookieParser());   // Cookieデータにアクセス
 app.use(cors(corsOption)); // CORS対策
 
-// DB接続
-initMysql();
+initMysql(); // DB接続
+verifyEmailConnection(); // メールサーバ接続
 
 app.use('/api', routers);
 
