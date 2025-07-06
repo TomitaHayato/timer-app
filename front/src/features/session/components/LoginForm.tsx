@@ -6,6 +6,9 @@ import { selectSessionError, selectSessionLoading, signin } from "../slices/sess
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { devLog } from "../../../utils/logDev";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";
+import { PasswordResetRequestForm } from "../../password_reset/components/PasswordResetRequestForm";
+import { Modal } from "../../../components/Modal";
+import { openModal } from "../../../utils/modelCtl";
 
 export function LoginForm() {
   // form
@@ -55,6 +58,14 @@ export function LoginForm() {
           }
         </form>
       </fieldset>
+      
+      <button className="link link-info" onClick={() => openModal('password-reset-form')}>
+        パスワードをお忘れの方
+      </button>
+
+      <Modal modalId={'password-reset-form'}>
+        <PasswordResetRequestForm />
+      </Modal>
     </>
   )
 }
