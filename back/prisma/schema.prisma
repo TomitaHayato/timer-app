@@ -26,6 +26,7 @@ model User {
   todos     Todo[]
   setting   Setting?
   records   Record[]
+  passwordResetTokens PasswordResetToken[]
   authRefreshToken AuthRefreshToken?
 }
 
@@ -71,4 +72,12 @@ model AuthRefreshToken {
   expiresAt DateTime
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id String @id @default(uuid())
+  hashedToken String
+  tokenExpiredIn DateTime
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
