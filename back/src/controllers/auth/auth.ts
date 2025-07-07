@@ -7,11 +7,12 @@ import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../util
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";
 import { createOrUpdateRefreshToken, deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
-import { checkExpire, clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
+import { clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_REFRESH_TOKEN, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 import { getRequestBody } from "../utils/getRequestBody";
 import { signinParams } from "../../types/auth";
+import { checkExpire } from "../../utils/date";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -162,7 +163,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return
     }
     // refreshToken期限切れの場合、DB, Cookieから削除
-    if (!checkExpire(refreshTokenInDB)) {
+    if (!checkExpire(refreshTokenInDB.expiresAt)) {
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
       clearRefreshTokenFromCookie(res);
       await dbQueryHandler(deleteRefreshToken, { userId });

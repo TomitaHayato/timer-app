@@ -27,12 +27,3 @@ export const clearRefreshTokenFromCookie = (res: Response): void => {
     path: COOKIE_SCOPE,
   });
 }
-
-// tokenの期限が有効かどうか
-export const checkExpire = (authRefreshToken: authRefreshToken) => {
-  const diff = dayjs(authRefreshToken.expiresAt).diff(dayjs());
-  if (diff < 0) return false;
-
-  devLog('リフレッシュトークンは有効：', authRefreshToken.expiresAt)
-  return true
-}
