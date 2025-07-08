@@ -5,6 +5,7 @@ import { settingReducer } from '../features/setting/Slices/settingSlice'
 import { sessionReducer } from '../features/session/slices/sessionSlice'
 import { recordsReducer } from '../features/records/recordsSlice'
 import { visibleReducer } from '../features/display/visibleSlice'
+import { passwordResetReducer } from '../features/password_reset/redux/passwordResetSlice'
 
 export const store =  configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store =  configureStore({
     session: sessionReducer,
     records: recordsReducer,
     visible: visibleReducer,
+    passwordReset: passwordResetReducer,
   }
 })
 

@@ -1,20 +1,27 @@
 import { useForm } from "react-hook-form"
-import { clientCredentials } from "../../../utils/axios";
-import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
+import { toastSuccessRB } from "../../../utils/toast";
 import { closeModal } from "../../../utils/modelCtl";
+import { devLog } from "../../../utils/logDev";
+import type { passwordForgetParams } from "../types/password_reset";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { fetchPasswordResetRequest, selectPasswordResetLoading } from "../redux/passwordResetSlice";
 
 export const PasswordResetRequestForm = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<{ email: string }>();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<passwordForgetParams>();
+  const dispatch = useAppDispatch();
+  const isLoading = useAppSelector(selectPasswordResetLoading);
 
-  const fetchResetRequest = async() => {
+  const fetchResetRequest = async(data: passwordForgetParams) => {
+    // パスワードの総当たりで登録メールアドレスを推測されないよう、成功・失敗に関わらず同じメッセージを表示
+    toastSuccessRB('パスワードリセット申請用メールを送信しました');
     try {
-      toastSuccessRB('パスワードリセット申請用メールを送信しました');
-      // await clientCredentials.get(''); // パスワードリセット申請メールの送信エンドポイント
+      await dispatch(fetchPasswordResetRequest(data));
+    } catch(err) {
+      devLog('パスワードリセットの申請に失敗しました', err);
+    } finally {
       closeModal('password-reset-form');
       closeModal('login-form');
       reset();
-    } catch {
-      toastErrorRB('パスワードリセットの申請に失敗しました')
     }
   }
 
@@ -40,7 +47,8 @@ export const PasswordResetRequestForm = () => {
 
         <input
           type="submit"
-          className="btn btn-primary"/>
+          className="btn btn-primary"
+          disabled={isLoading}/>
       </form>
     </div>
   )
