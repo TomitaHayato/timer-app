@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "scripts": {
     "build": "npx tsc",
-    "dev": "npx ts-node-dev --respawn --files ./src/index.ts"
+    "dev": "npx ts-node-dev --respawn --files ./src/index.ts",
+    "migrate:dev": "npx prisma migrate dev",
+    "generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",

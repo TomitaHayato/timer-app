@@ -3,11 +3,9 @@ import { dbQueryHandler } from "../../models/utils/errorHandler";
 import { createRecord } from "../../models/records/records";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserIdFromRequest } from "../utils/getUserId";
-import { isEmptyObj } from "../../utils/object";
 import { getRequestBody } from "../utils/getRequestBody";
 import { postRecordParams } from "../../types/record";
 import { getRecordsFromDB } from "../../services/records.service";
-import { INVALID_REQUEST_BODY } from "../../utils/errorResponse";
 
 // 期間ごとに集計したRecordsの配列を返す
 export const recordsIndex = async(req: Request, res: Response, next: NextFunction) => {

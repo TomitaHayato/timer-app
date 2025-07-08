@@ -3,7 +3,7 @@ import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { UserPostParams, UserUpdateParams } from "../../types/user";
 import { devLog } from "../../utils/dev/devLog";
-import { selectRecordColumns, selectSettingColumns } from "../utils/selectColumns";
+import { selectRecordColumns, selectSettingColumns, selectUserColumns } from "../utils/selectColumns";
 import dayjs from "dayjs";
 
 export const getAllUser = async(prisma: PrismaClient) => {
