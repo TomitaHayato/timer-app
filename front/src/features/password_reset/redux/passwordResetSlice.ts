@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { passwordForgetParams, passwordResetState } from "../types/password_reset";
+import type { passwordForgetParams, passwordResetState, passwordResetToken } from "../types/password_reset";
 import { clientCredentials } from "../../../utils/axios";
 import { devLog } from "../../../utils/logDev";
 import type { RootState } from "../../../reduxStore/store";
+import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
 
 const initialState: passwordResetState = {
-  token: null,
+  tokenStatus: 'idle',
   loading: false,
   error: null,
 }
@@ -21,17 +22,41 @@ export const fetchPasswordResetRequest = createAsyncThunk<
       await clientCredentials.post('/password_reset/send_mail', params, { timeout: 5000 });
     } catch(err) {
       devLog('fetchPasswordResetRequestのエラー:', err);
-      return thunkAPI.rejectWithValue('パスワードリセット申請に失敗しました');
+      const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'パスワードリセット申請に失敗しました')
+      return thunkAPI.rejectWithValue(errorMessage);
     }
   },
 );
 
+export const fetchCheckPasswordResetToken = createAsyncThunk<
+  undefined,
+  passwordResetToken,
+  { rejectValue: string }
+>(
+  'passowrd_reset/check_token', async(token, thunkAPI) => {
+    try {
+      const res = await clientCredentials.post('password_reset/token_check', { token });
+      devLog('password_reset/check_tokenのResponse:', res);
+      return;
+    } catch(err) {
+      devLog('fetchCheckPasswordResetTokenのエラー:', err);
+      const errorMessage = getAxiosErrorMessageFromStatusCode(err, '権限が確認できませんでした')
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+)
+
 const passwordResetSlice = createSlice({
   name: 'passwordReset',
   initialState,
-  reducers: {},
+  reducers: {
+    resetPasswordResetTokenStatus: (state) => {
+      state.tokenStatus = 'idle';
+    },
+  },
   extraReducers(builder) {
     builder
+    // パスワードリセット申請
     .addCase(fetchPasswordResetRequest.pending, (state) => {
       state.loading = true
       state.error = null
@@ -43,9 +68,29 @@ const passwordResetSlice = createSlice({
       state.loading = false
       state.error = action.payload || 'Unexpected error';
     })
+    // chack_token
+    .addCase(fetchCheckPasswordResetToken.pending, (state) => {
+      state.loading = true
+      state.tokenStatus = 'checking'
+      state.error = null
+    })
+    .addCase(fetchCheckPasswordResetToken.fulfilled, (state) => {
+      state.tokenStatus = 'valid'
+      state.loading = false
+    })
+    .addCase(fetchCheckPasswordResetToken.rejected, (state, action) => {
+      state.tokenStatus = 'invalid'
+      state.loading = false
+      state.error = action.payload || 'Unexpected error';
+    })
   },
 })
 
 export const selectPasswordResetLoading = (state: RootState) => state.passwordReset.loading;
+export const selectPasswordResetState = (state: RootState) => state.passwordReset;
+
+export const {
+  resetPasswordResetTokenStatus,
+} = passwordResetSlice.actions;
 
 export const passwordResetReducer = passwordResetSlice.reducer;
