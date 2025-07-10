@@ -5,7 +5,7 @@ import { dbQueryHandler } from "../../models/utils/errorHandler";
 import { getUserByEmail } from "../../models/users/users";
 import { randomUUID } from "crypto";
 import { dataHash } from "../../utils/dataHash";
-import { createPasswordResetTokenByUserId, getPasswordResetTokenByToken, verifyPasswordResetToken } from "../../models/passwordResetToken/passwordResetToken.model";
+import { createPasswordResetTokenByUserId, verifyPasswordResetToken } from "../../models/passwordResetToken/passwordResetToken.model";
 import { EmailInfo } from "../../config/mailer/mailer";
 import { passwordResetEmailBody } from "../../config/mailer/templates/password_reset/text_body.";
 import { passwordResetEmailHtmlBody } from "../../config/mailer/templates/password_reset/html_body";
@@ -30,14 +30,14 @@ export const sendEmailForPasswordReset = async(req: Request, res: Response, next
     // UserのPasswordResetTokenレコードを作成
     const token = randomUUID();
     const hashedToken = await dataHash(token);
-    await dbQueryHandler(createPasswordResetTokenByUserId, {
+    const tokenInDB = await dbQueryHandler(createPasswordResetTokenByUserId, {
       userId: user.id,
       hashedToken,
     });
 
     // メール送信
-    const queryParams = `/${token}`;
-    const resetLink = getEnvValue('CLIENT_ORIGIN') + getEnvValue('PASSWORD_RESET_PATH') + queryParams
+    const urlParams = `?token=${token}&id=${tokenInDB.id}`;
+    const resetLink = getEnvValue('CLIENT_ORIGIN') + getEnvValue('PASSWORD_RESET_PATH') + urlParams
     const emailInfo: EmailInfo = {
       to: user.email,
       subject: "[Timer] パスワードリセット申請",
@@ -55,11 +55,10 @@ export const sendEmailForPasswordReset = async(req: Request, res: Response, next
 
 // トークン検証
 export const tokenCheck = async(req: Request, res: Response, next: NextFunction) => {
-  const { token } = getRequestBody<passwordResetParams>(req, res);
-  const tokenHash = await dataHash(token);
+  const { id, token } = getRequestBody<passwordResetParams>(req, res);
 
   try {
-    const isTokenValid = await verifyPasswordResetToken(tokenHash);
+    const isTokenValid = await verifyPasswordResetToken(id, token); // トークンの検証
     if(!isTokenValid) {
       res.status(403).json(INVALID_TOKEN_ERROR);
       return;

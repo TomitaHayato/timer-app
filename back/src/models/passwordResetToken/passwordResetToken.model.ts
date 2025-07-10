@@ -3,6 +3,7 @@ import { PrismaClient } from "../../../generated/prisma"
 import { devLog } from "../../utils/dev/devLog";
 import { dbQueryHandler } from "../utils/errorHandler";
 import { checkExpire } from "../../utils/date";
+import { hashCompare } from "../../utils/dataHash";
 
 export const createPasswordResetTokenByUserId = async(prisma: PrismaClient, queryInfo: { userId: string, hashedToken: string }) => {
   const { userId, hashedToken } = queryInfo;
@@ -30,26 +31,37 @@ export const deletePasswordResetToken = async(prisma: PrismaClient, queryInfo: {
   devLog('passwordResetTokenを削除しました');
 }
 
-export const getPasswordResetTokenByToken = async(prisma: PrismaClient, hashedToken: string) => {
-  const token = await prisma.passwordResetToken.findFirst({
-    where: { hashedToken }
-  });
-
-  devLog('passwordResetTokenを取得：', token);
-  return token
+export const getPasswordResetTokenById = async(prisma: PrismaClient, id: string) => {
+  const record = await prisma.passwordResetToken.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      hashedToken: true,
+      tokenExpiredIn: true,
+    }
+  })
+  devLog('取得したPasswordResetTokenレコード:', record);
+  return record;
 }
 
-// 指定されたトークンが有効かどうか検証
-export const verifyPasswordResetToken = async(hashedToken: string) => {
+// 指定されたトークンが有効かどうか検証（DBに存在 + トークンの内容が一致 + 期限が有効）
+export const verifyPasswordResetToken = async(id: string, token: string) => {
   try {
-    const passwordResetToken = await dbQueryHandler(getPasswordResetTokenByToken, hashedToken);
-    if (!passwordResetToken) {
+    const passwordResetTokenInDB = await dbQueryHandler(getPasswordResetTokenById, id);
+    // DBに存在
+    if (!passwordResetTokenInDB) {
       devLog('passwordResetTokenが見つかりません');
       return false; // トークンが存在しない場合、false
     }
 
-    // トークンが失効している場合
-    if (!checkExpire(passwordResetToken.tokenExpiredIn)) {
+    // Tokenが一致するか
+    if (!hashCompare(token, passwordResetTokenInDB.hashedToken)) {
+      devLog('passwordResetTokenが異なります');
+      return false;
+    }
+
+    // Tokenの有効期限
+    if (!checkExpire(passwordResetTokenInDB.tokenExpiredIn)) {
       devLog('passwordResetTokenが失効しています');
       return false;
     }

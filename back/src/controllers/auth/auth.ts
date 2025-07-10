@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import { createUserWithRelation, getUserByEmail, getUserWithRelation } from "../../models/users/users";
-import { dataHash } from "../../utils/dataHash";
+import { dataHash, hashCompare } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/errorHandler";
-import bcrypt from 'bcrypt'
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";
@@ -58,7 +57,7 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     }
 
     // hashedPasswordカラムとpasswordのハッシュを比較
-    if (await bcrypt.compare(password, user.hashedPassword)) {
+    if (await hashCompare(password, user.hashedPassword)) {
       // refreshTokenを生成
       const authRefreshToken = await dbQueryHandler(createOrUpdateRefreshToken, { userId: user.id });
       // リフレッシュトークンとアクセストークンをCookieにセット
