@@ -13,7 +13,7 @@ function App() {
             index
             element={<TimerPage />}/>
           <Route
-            path="/password_reset/:token"
+            path="/password_reset"
             element={<PasswordResetPage />} />
         </Route>
       </Routes>

@@ -6,6 +6,11 @@ export type passwordResetState = {
 
 export type passwordResetToken = string
 
+export type tokenAndIdForPasswordReset = {
+  id: string,
+  token: string,
+}
+
 export type passwordForgetParams = {
   email: string,
 }

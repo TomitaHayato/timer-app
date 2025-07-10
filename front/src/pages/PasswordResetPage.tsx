@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
 import { toastErrorRB } from "../utils/toast";
 import { useEffect } from "react";
 import { devLog } from "../utils/logDev";
@@ -9,21 +9,23 @@ import { fetchCheckPasswordResetToken, selectPasswordResetState } from "../featu
 
 export function PasswordResetPage() {
   const dispatch = useAppDispatch();
-  const { token } = useParams(); // URLの動的セグメントからトークン取得
+  const [ paramsInUrl ] = useSearchParams(); // URLの動的セグメントからトークン取得
+  const token = paramsInUrl.get('token');
+  const id = paramsInUrl.get('id');
   const navi = useNavigate();
   const { tokenStatus, loading, error } = useAppSelector(selectPasswordResetState);
 
   useEffect(() => {
     // トークンがURLに存在しない => RootPathに遷移 + トーストメッセージを表示
-    devLog('URLのトークン部分:', token);
-    if (!token) {
+    devLog('URLのパラメータ:', 'token:', token, 'id:', id);
+    if (!token || !id) {
       navi('/');
       toastErrorRB('権限がありません');
       return;
     }
 
-    dispatch(fetchCheckPasswordResetToken(token)); // トークンをサーバで検証
-  }, [dispatch, navi, token]);
+    dispatch(fetchCheckPasswordResetToken({ id, token })); // トークンをサーバで検証
+  }, [dispatch, id, navi, token]);
 
   // トークンが無効な場合、'/'に遷移
   useEffect(() => {

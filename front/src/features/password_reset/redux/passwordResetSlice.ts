@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { passwordForgetParams, passwordResetState, passwordResetToken } from "../types/password_reset";
+import type { passwordForgetParams, passwordResetState, tokenAndIdForPasswordReset } from "../types/password_reset";
 import { clientCredentials } from "../../../utils/axios";
 import { devLog } from "../../../utils/logDev";
 import type { RootState } from "../../../reduxStore/store";
@@ -30,12 +30,13 @@ export const fetchPasswordResetRequest = createAsyncThunk<
 
 export const fetchCheckPasswordResetToken = createAsyncThunk<
   undefined,
-  passwordResetToken,
+  tokenAndIdForPasswordReset,
   { rejectValue: string }
 >(
-  'passowrd_reset/check_token', async(token, thunkAPI) => {
+  'passowrd_reset/check_token', async(data, thunkAPI) => {
+    const { id, token } = data;
     try {
-      const res = await clientCredentials.post('password_reset/token_check', { token });
+      const res = await clientCredentials.post('password_reset/token_check', { id, token });
       devLog('password_reset/check_tokenのResponse:', res);
       return;
     } catch(err) {
