@@ -5,6 +5,7 @@ import { UserPostParams, UserUpdateParams } from "../../types/user";
 import { devLog } from "../../utils/dev/devLog";
 import { selectRecordColumns, selectSettingColumns, selectUserColumns } from "../utils/selectColumns";
 import dayjs from "dayjs";
+import { dataHash } from "../../utils/dataHash";
 
 export const getAllUser = async(prisma: PrismaClient) => {
   const allUsers = await prisma.user.findMany();
@@ -99,6 +100,20 @@ export const updateUser = async(prisma: PrismaClient, queryInfo: { params: UserU
     data: params,
   })
   return user
+}
+
+export const updateUserPassword = async(prisma: PrismaClient, queryInfo: { password: string, userId: string }) => {
+  const { password, userId } = queryInfo;
+
+  const hashedPassword = await dataHash(password);
+
+  const newUser = await prisma.user.update({
+    where: { id: userId },
+    data: { hashedPassword },
+  });
+
+  devLog('更新済のUser:', newUser);
+  return;
 }
 
 export const deleteUserById = async(prisma: PrismaClient, userId: string) => {

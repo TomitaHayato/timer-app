@@ -5,5 +5,6 @@ export type emailForPasswordReset = {
 export type passwordResetParams = {
   id: string,
   token: string,
+  password: string,
 }
 

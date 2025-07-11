@@ -4,10 +4,11 @@ import { devLog } from "../../utils/dev/devLog";
 import { dbQueryHandler } from "../utils/errorHandler";
 import { checkExpire } from "../../utils/date";
 import { hashCompare } from "../../utils/dataHash";
+import { updateUserPassword } from "../users/users";
 
 export const createPasswordResetTokenByUserId = async(prisma: PrismaClient, queryInfo: { userId: string, hashedToken: string }) => {
   const { userId, hashedToken } = queryInfo;
-  const tokenExpiredIn = dayjs().add(30, 'minutes').toDate(); // 有効期限は1時間
+  const tokenExpiredIn = dayjs().add(30, 'minutes').toDate(); // 有効期限は30分
 
   const passwordResetToken = await prisma.passwordResetToken.create({
     data: {
@@ -38,6 +39,7 @@ export const getPasswordResetTokenById = async(prisma: PrismaClient, id: string)
       id: true,
       hashedToken: true,
       tokenExpiredIn: true,
+      userId: true,
     }
   })
   devLog('取得したPasswordResetTokenレコード:', record);
@@ -67,9 +69,22 @@ export const verifyPasswordResetToken = async(id: string, token: string) => {
     }
 
     devLog('passwordResetTokenは有効です');
-    return true;
+    return passwordResetTokenInDB;
   } catch(err) {
     devLog('verifyPasswordResetTokenのエラー', err);
     throw Error();
   }
+}
+
+// パスワードリセット => パスワードリセットTokenをDBから削除
+export const updateUserPasswordAndDeleteResetToken = async(prisma: PrismaClient, queryInfo: { userId: string, hashedPassword: string }) => {
+  const { userId, hashedPassword } = queryInfo;
+
+  await prisma.$transaction([
+    prisma.passwordResetToken.deleteMany({ where: { userId } }),
+    prisma.user.update({
+      where: { id: userId },
+      data: { hashedPassword },
+    }),
+  ]);
 }
