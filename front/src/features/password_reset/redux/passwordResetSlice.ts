@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { passwordForgetParams, passwordResetState, tokenAndIdForPasswordReset } from "../types/password_reset";
+import type { paramsForPasswordUpdate, passwordForgetParams, passwordResetState, tokenAndIdForPasswordReset } from "../types/password_reset";
 import { clientCredentials } from "../../../utils/axios";
 import { devLog } from "../../../utils/logDev";
 import type { RootState } from "../../../reduxStore/store";
@@ -28,6 +28,7 @@ export const fetchPasswordResetRequest = createAsyncThunk<
   },
 );
 
+// パスワードリセットトークンの検証APIにfetch
 export const fetchCheckPasswordResetToken = createAsyncThunk<
   undefined,
   tokenAndIdForPasswordReset,
@@ -41,6 +42,25 @@ export const fetchCheckPasswordResetToken = createAsyncThunk<
       return;
     } catch(err) {
       devLog('fetchCheckPasswordResetTokenのエラー:', err);
+      const errorMessage = getAxiosErrorMessageFromStatusCode(err, '権限が確認できませんでした')
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+)
+
+// パスワード更新リクエスト
+export const fetchUpdateUserPassword = createAsyncThunk<
+  undefined,
+  paramsForPasswordUpdate,
+  { rejectValue: string }
+>(
+  'password_reset/password_update', async(params, thunkAPI) => {
+    try {
+      const res = await clientCredentials.put('/password_reset/password_update', params);
+      devLog('PUT /password_reset/password_updateのResponse：', res);
+      return
+    } catch(err) {
+      devLog('PUT /password_reset/password_updateのエラー：', err);
       const errorMessage = getAxiosErrorMessageFromStatusCode(err, '権限が確認できませんでした')
       return thunkAPI.rejectWithValue(errorMessage);
     }
@@ -80,6 +100,21 @@ const passwordResetSlice = createSlice({
       state.loading = false
     })
     .addCase(fetchCheckPasswordResetToken.rejected, (state, action) => {
+      state.tokenStatus = 'invalid'
+      state.loading = false
+      state.error = action.payload || 'Unexpected error';
+    })
+    // パスワード更新
+    .addCase(fetchUpdateUserPassword.pending, (state) => {
+      state.loading = true
+      state.tokenStatus = 'checking'
+      state.error = null
+    })
+    .addCase(fetchUpdateUserPassword.fulfilled, (state) => {
+      state.tokenStatus = 'used';
+      state.loading = false
+    })
+    .addCase(fetchUpdateUserPassword.rejected, (state, action) => {
       state.tokenStatus = 'invalid'
       state.loading = false
       state.error = action.payload || 'Unexpected error';

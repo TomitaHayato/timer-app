@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router"
-import { toastErrorRB } from "../utils/toast";
+import { toastErrorRB, toastSuccessRB } from "../utils/toast";
 import { useEffect } from "react";
 import { devLog } from "../utils/logDev";
 import { PasswordResetForm } from "../features/password_reset/components/PasswordResetForm";
@@ -16,7 +16,7 @@ export function PasswordResetPage() {
   const { tokenStatus, loading, error } = useAppSelector(selectPasswordResetState);
 
   useEffect(() => {
-    // トークンがURLに存在しない => RootPathに遷移 + トーストメッセージを表示
+    // ID, トークンがURLに存在しない => RootPathに遷移 + トーストメッセージを表示
     devLog('URLのパラメータ:', 'token:', token, 'id:', id);
     if (!token || !id) {
       navi('/');
@@ -33,6 +33,11 @@ export function PasswordResetPage() {
       toastErrorRB(error || '権限がありません');
       navi('/');
     }
+
+    if (tokenStatus === 'used') {
+      toastSuccessRB('パスワードの再設定が完了しました。');
+      navi('/');
+    }
   }, [error, navi, tokenStatus])
 
   return(
@@ -40,7 +45,7 @@ export function PasswordResetPage() {
       {
         (loading || tokenStatus !== 'valid')
         ? <Loading />
-        : <PasswordResetForm />
+        : <PasswordResetForm id={id as string} token={token as string} />
       }
     </>
   )
