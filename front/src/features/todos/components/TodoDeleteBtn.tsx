@@ -24,9 +24,9 @@ export function TodoDeleteBtn({ id }: Props) {
 
   return(
     <>
-      { <button className="btn btn-xs btn-outline btn-square" disabled={loading} onClick={handleDelete}>
+      <button className="btn btn-xs btn-outline btn-square" disabled={loading} onClick={handleDelete}>
         <span className="icon-[weui--delete-outlined] size-5"></span>
-      </button> }
+      </button>
     </>
   )
 }

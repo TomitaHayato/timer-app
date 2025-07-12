@@ -37,6 +37,32 @@ export const createTodo = createAsyncThunk<
   }
 })
 
+export const updateTodo = createAsyncThunk<
+  Todos,
+  {
+    id: string,
+    params: TodoAddParams,
+  },
+  {
+    rejectValue: string,
+    dispatch: AppDispatch,
+  }
+>('todos/update', async(data, thunkAPI) => {
+  const { id, params } = data;
+  try {
+    const res = await fetchWithTokenRefresh(`/todos/${id}`, 'put', params);
+    const todos: Todos = res.data;
+    if (!todos) return thunkAPI.rejectWithValue('todosの取得に失敗しました');
+    return todos;
+  } catch(err) {
+    // AccessTokenとRefreshTokenが期限切れの場合、ログインユーザーに関するステートをリセット
+    if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) thunkAPI.dispatch(resetStateOfUser());
+
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'Todoの作成に失敗しました');
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+})
+
 export const deleteTodo = createAsyncThunk<
   Todos,
   string,
@@ -129,6 +155,19 @@ const todosSlice = createSlice({
       state.todos = action.payload;
     })
     .addCase(updateTodoIsCompleted.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || 'Todoの更新に失敗しました';
+    })
+    //Todo更新処理
+    .addCase(updateTodo.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(updateTodo.fulfilled, (state, action: PayloadAction<Todos>) => {
+      state.loading = false;
+      state.todos = action.payload;
+    })
+    .addCase(updateTodo.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || 'Todoの更新に失敗しました';
     })
