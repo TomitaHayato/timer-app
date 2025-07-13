@@ -1,7 +1,7 @@
 import { secToHMS } from "../../../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useEffect, useState } from "react";
-import { modeChange, selectTimer, switchTimer } from "../timerSlice";
+import { modeChange, modeChangeForth, selectTimer, switchTimer } from "../timerSlice";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { createExpiryTimestamp } from "../utils/expiryTimestamp";
 import { selectSetting } from "../../setting/Slices/settingSlice";
@@ -15,11 +15,12 @@ import { createRecord } from "../../records/recordsSlice";
 import type { PostRecordParams } from "../../records/types/records";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { selectVisibleClass } from "../../display/visibleSlice";
+import type { TimerMode } from "../types/timerType";
 
 export default function Timer() {
   const isAuth = useAppSelector(selectAuthStatus);
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
-  const { mode } = useAppSelector(selectTimer);
+  const { mode, count } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch();
   const visibleCalss = useAppSelector(selectVisibleClass);
 
@@ -82,9 +83,12 @@ export default function Timer() {
   }
 
 
+  // 秒数だけリセット
   function handleReset() {
     restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })));
     pause();
+    soundBtn.current.play();
+    soundWork?.current?.stop();
     toastSuccessRB('タイマー リセット', { autoClose: 1500 })
   }
 
@@ -105,6 +109,11 @@ export default function Timer() {
     soundWork?.current?.stop()
     toastSuccessRB('タイマー ストップ', { autoClose: 1500 })
     pause();
+  }
+
+  function handleModeChangeForth(mode: TimerMode) {
+    dispatch(modeChangeForth(mode));
+    toastSuccessRB('状態を切り替えました');
   }
 
   return(
@@ -138,7 +147,17 @@ export default function Timer() {
                 ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}><span className="icon-[weui--pause-outlined] size-8"></span></button>
                 : <button className="btn btn-outline btn-primary btn-lg" onClick={handleStart}><span className="icon-[weui--play-filled] size-8"></span></button>
               }
-              <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleReset}>リセット</button>
+
+              <p>{`長期休憩まで${4 - count % 4}セット`}</p>
+
+              <div className="flex gap-4">
+                <button className="btn btn-outline btn-success" onClick={handleReset}>秒数リセット</button>
+                {
+                  mode === 'work'
+                  ? <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('rest')}>{'休憩する'}</button>
+                  : <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('work')}>{'休憩を強制終了'}</button>
+                }
+              </div>
             </div>
           </div>
         </div>
