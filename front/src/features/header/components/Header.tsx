@@ -1,15 +1,17 @@
-import { Modal } from "../../../components/Modal";
-import OnlyDev from "../../../components/OnlyDev";
-import { LoginForm } from "../../session/components/LoginForm";
-import { SignupForm } from "../../session/components/SignupForm";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { changeVisible } from "../../display/visibleSlice";
+import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { LoginFormBtn } from "./LoginFormBtn";
+import { LogoutBtn } from "./LogoutBtn";
 import MobileDropDown from "./MobileDropDown";
-
-type dialogOrNull = HTMLDialogElement | null;
+import { ProfileIconBtn } from "./PrifileIconBtn";
 
 export default function Header() {
-  function openModal(id: string) {
-    const dialogHtml = document.getElementById(id) as dialogOrNull;
-    dialogHtml?.showModal();
+  const isAuthenticated = useAppSelector(selectAuthStatus);
+  const dispatch = useAppDispatch();
+
+  function handleVisibleClick() {
+    dispatch(changeVisible(false));
   }
 
   return(
@@ -22,34 +24,25 @@ export default function Header() {
 
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
-            <li><a>Item 1</a></li>
             <li>
-              <details>
-                <summary>Parent</summary>
-                <ul className="p-2">
-                  <li><a>Submenu 1</a></li>
-                  <li><a>Submenu 2</a></li>
-                </ul>
-              </details>
-            </li>
-            <li>
-              {/* 後で消す */}
-              { import.meta.env.DEV && <OnlyDev /> }
+              <div></div>
             </li>
           </ul>
         </div>
 
         <div className="navbar-end">
-          <button className="btn btn-sm btn-outline" onClick={() => openModal('login-form')}>
-            Login / Signup
-          </button>
-
-          <Modal modalId={'login-form'}>
-            <div className="flex flex-col gap-8">
-              <LoginForm />
-              <SignupForm />
-            </div>
-          </Modal>
+          <div className="flex gap-4">
+            <button className="btn btn-sm btn-outline" onClick={handleVisibleClick}>
+              <span className="icon-[weui--eyes-off-outlined] size-6"></span>
+              <p className="text-xs">集中</p>
+            </button>
+            { isAuthenticated && <ProfileIconBtn /> }
+            {
+              isAuthenticated
+              ? <LogoutBtn />
+              : <LoginFormBtn /> 
+            }
+          </div>
         </div>
       </div>
     </>

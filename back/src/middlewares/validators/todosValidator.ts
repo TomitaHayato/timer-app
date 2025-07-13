@@ -10,8 +10,7 @@ export const todosPostValidator = [
     .isLength({min: 1, max: 255}),
   body('deadline')
     .optional({ values: 'null' })
-    .isDate()
-    .toDate(),
+    .isISO8601(),
 ]
 
 export const todosUpdateValidator = [
@@ -23,14 +22,5 @@ export const todosUpdateValidator = [
     .isLength({min: 1, max: 255}),
   body('deadline')
     .optional({ values: 'null' })
-    .isDate()
-    .toDate(),
-]
-
-export const todosUpdateStatusValidator = [
-  body('isCompleted')
-    .exists({values: 'null'})
-    .notEmpty()
-    .isBoolean()
-    .toBoolean(),
+    .isISO8601(),
 ]

@@ -26,6 +26,8 @@ model User {
   todos     Todo[]
   setting   Setting?
   records   Record[]
+  passwordResetTokens PasswordResetToken[]
+  authRefreshToken AuthRefreshToken?
 }
 
 model Todo {
@@ -35,7 +37,7 @@ model Todo {
   title       String
   isCompleted Boolean   @default(false)
   deadline    DateTime?
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
 
@@ -48,7 +50,8 @@ model Setting {
   workSec     Int       @default(1500)
   restSec     Int       @default(300)
   longRestSec Int       @default(900)
-  user        User      @relation(fields: [userId], references: [id])
+  workingSound String?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String    @unique
 }
 
@@ -58,7 +61,23 @@ model Record {
   updatedAt   DateTime  @updatedAt
   workTime    Int       @default(0)
   workCount   Int       @default(0)
-  selfReview  Int       @default(3)
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
+}
+
+model AuthRefreshToken {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  token     String   @unique
+  expiresAt DateTime
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id String @id @default(uuid())
+  hashedToken String
+  tokenExpiredIn DateTime
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -9,11 +9,11 @@ export function Modal({ children, modalId, }: Props) {
   return(
     <>
       <dialog id={modalId} className="modal z-20">
-        <div className={`modal-box bg-gray-600 overflow-y-auto h-7/12`}>
+        <div className={`modal-box bg-gray-600 overflow-y-auto max-h-7/12`}>
           {children}
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn">Close</button>
+              <button className="btn" id={`close-${modalId}`}>Close</button>
             </form>
           </div>
         </div>

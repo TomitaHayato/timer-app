@@ -1,17 +1,17 @@
 export type Todo = {
   title: string,
   isCompleted: boolean,
-  expired?: Date,
+  deadline?: Date,
 }
 
 export type Todos = Todo[]
 
 export type createTodoParams = {
   title: string,
-  expired?: Date,
+  deadline?: Date,
 }
 
 export type updateTodoParams = {
   title?: string,
-  expired?: Date,
+  deadline?: Date,
 }

@@ -1,6 +1,7 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { PostSettingParams, UpdateSettingParams } from "../../types/setting";
 import { devLog } from "../../utils/dev/devLog";
+import { selectSettingColumns } from "../utils/selectColumns";
 
 export const createSetting = async(prisma: PrismaClient, queryInfo: { userId: string, params: PostSettingParams }) => {
   const { userId, params } = queryInfo;
@@ -17,25 +18,18 @@ export const createSetting = async(prisma: PrismaClient, queryInfo: { userId: st
 
 export const getSettingByUserId = async(prisma: PrismaClient, userId: string) => {
   return await prisma.setting.findUnique({
-    select: {
-      isMuted: true,
-      volume: true,
-      workSec: true,
-      restSec: true,
-      longRestSec: true,
-    },
+    select: selectSettingColumns,
     where: {
       userId,
     }
   })
 }
 
-export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: string, settingId: string, params: UpdateSettingParams }) => {
-  const { userId, settingId, params } = queryInfo;
+export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: string, params: UpdateSettingParams }) => {
+  const { userId, params } = queryInfo;
 
   const newSettig = await prisma.setting.update({
     where: {
-      id: settingId,
       userId,
     },
     data: {
@@ -43,7 +37,13 @@ export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: st
     }
   })
   devLog('更新後の設定値：', newSettig);
-  return newSettig;
+  const setting = await prisma.setting.findUnique({
+    select: selectSettingColumns,
+    where: {
+      userId,
+    }
+  })
+  return setting;
 }
 
 export const deleteSettingByUserId = async(prisma: PrismaClient, userId: string) => {

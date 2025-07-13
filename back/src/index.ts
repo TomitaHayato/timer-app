@@ -7,22 +7,19 @@ import { corsOption } from './config/cors/cors'
 import cookieParser from 'cookie-parser'
 import { errorHander } from './middlewares/errorHandler/errorHandler'
 import { devLog } from './utils/dev/devLog'
+import { verifyEmailConnection } from './config/mailer/transporter'
 
 dotenv.config();
 
 const port = process.env.PORT;
 const app = express();
 
-// JSONボディをパースできるようにする
-app.use(express.json());
-// Cookieデータにアクセスできるようにする
-app.use(cookieParser());
+app.use(express.json());   // JSONボディをパース
+app.use(cookieParser());   // Cookieデータにアクセス
+app.use(cors(corsOption)); // CORS対策
 
-// CORS対策
-app.use(cors(corsOption));
-
-// DB接続
-initMysql();
+initMysql(); // DB接続
+verifyEmailConnection(); // メールサーバ接続
 
 app.use('/api', routers);
 
@@ -31,7 +28,7 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send('終了');
 });
 
-app.use(errorHander);
+app.use(errorHander); // 共通のエラーハンドルMiddlewara
 
 app.listen(port, () => {
   devLog(`サーバ起動 port:${port}`)

@@ -1,38 +1,24 @@
-import { useAppDispatch } from "../../../reduxStore/hooks"
-import { completeTodo } from "../todoSlice";
 import type { Todo } from "../types/todoType"
+import { memo, useState } from "react";
+import { TodoItemInfo } from "./TodoItemInfo";
+import { TodoItemEdit } from "./TodoItemEditForm";
 
 type Props ={
   todo: Todo,
-  index: number,
 }
 
-export default function TodoItem({ todo, index, }: Props) {
-  const dispatch = useAppDispatch();
-
-  function hundleComplete() {
-    dispatch(completeTodo(todo.id));
-  }
+function TodoItem({ todo }: Props) {
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
   return(
     <>
-      <li className="list-row items-center px-2">
-        <div className="text-xl font-thin opacity-30 tabular-nums">{index}</div>
-        <div>
-          <p>{todo.title}</p>
-        </div>
-
-        {
-          todo.status
-            ? <button className="btn btn-sm btn-info btn-circle"    onClick={hundleComplete}>↩︎</button>
-            : <button className="btn btn-sm btn-success btn-circle" onClick={hundleComplete}>✔︎</button>
-        }
-
-        <button className="btn btn-sm btn-outline btn-square">
-          🗑️
-        </button>
-        
-      </li>
+      {
+        isEdit
+        ? <TodoItemEdit todo={todo} setIsEdit={setIsEdit}/>
+        : <TodoItemInfo todo={todo} setIsEdit={setIsEdit}/>
+      }
     </>
   )
 }
+
+export default memo(TodoItem);

@@ -46,7 +46,8 @@ export const updateTodo = async(prisma: PrismaClient, queryInfo: { params: updat
       userId,
     },
     data: {
-      ...params,
+      title: params.title,
+      deadline: params.deadline || null, // Deadlineカラムがundefinedの場合、DBカラムをnullにする
     }
   });
   devLog('更新結果：', result);

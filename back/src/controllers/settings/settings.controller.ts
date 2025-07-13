@@ -4,11 +4,11 @@ import { createSetting, getSettingByUserId, updateSetting } from "../../models/s
 import { isEmptyObj } from "../../utils/object";
 import { PostSettingParams } from "../../types/setting";
 import { getUserIdFromRequest } from "../utils/getUserId";
-import { getIdFromRequestParams } from "../utils/getIdFromRequestParams";
+import { devLog } from "../../utils/dev/devLog";
+import { getRequestBody } from "../utils/getRequestBody";
 
 export const getSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
-  if (!userId) return;
 
   try {
     const setting = await dbQueryHandler(getSettingByUserId, userId);
@@ -18,14 +18,8 @@ export const getSetting = async(req: Request, res: Response, next: NextFunction)
 
 export const postSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
-  if (!userId) return;
 
-  const params: PostSettingParams = req.body;
-
-  if (isEmptyObj(params)) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const params = getRequestBody<PostSettingParams>(req, res);
 
   try {
     const setting = await dbQueryHandler(createSetting, { userId, params });
@@ -35,19 +29,14 @@ export const postSetting = async(req: Request, res: Response, next: NextFunction
 
 export const putSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromRequest(req, res);
-  if (!userId) return;
-
-  const settingId: string = getIdFromRequestParams(req, res);
-  if (!settingId) return;
-
-  const params: PostSettingParams = req.body;
-  if (isEmptyObj(params)) {
-    res.status(422).json('無効なリクエストです');
-    return;
-  }
+  const params = getRequestBody<PostSettingParams>(req, res);
 
   try {
-    const setting = await dbQueryHandler(updateSetting, { settingId, userId, params });
+    devLog('パラメータ:', params)
+    const setting = await dbQueryHandler(updateSetting, { userId, params });
     res.status(200).json(setting);
-  } catch(err) { next(err) }
+  } catch(err) { 
+    next(err)
+    devLog('エラー：', err)
+  }
 }

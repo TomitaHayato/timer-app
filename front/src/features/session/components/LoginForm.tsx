@@ -1,27 +1,33 @@
 import { useForm } from "react-hook-form"
 import FormErrorText from "./FormErrorText"
-import { clientCredentials } from "../../../utils/axios"
-import { useState } from "react";
-
-type FormParams = {
-  email: string,
-  password: string,
-}
+import type { SigninParams } from "../types/session";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { selectSessionError, selectSessionLoading, signin } from "../slices/sessionSlice";
+import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
+import { devLog } from "../../../utils/logDev";
+import { LoadingSpans } from "../../../components/btn/LoadingSpans";
+import { PasswordResetRequestForm } from "../../password_reset/components/PasswordResetRequestForm";
+import { Modal } from "../../../components/Modal";
+import { openModal } from "../../../utils/modelCtl";
 
 export function LoginForm() {
-  const { register, handleSubmit, formState: { errors }, } = useForm<FormParams>();
-  // ログインに成功したかどうか
-  const [ isFailed, setIsFailed ] = useState<boolean>(false);
+  // form
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<SigninParams>();
+  // redux
+  const dispatch = useAppDispatch();
+  const sessionError: string | null = useAppSelector(selectSessionError);
+  const loading: boolean = useAppSelector(selectSessionLoading);
   
-  const onSubmit = async (data: FormParams) => {
-    console.log('送信データ：', data);
+  const onSubmit = async (data: SigninParams) => {
+    if (loading) return
+    devLog('Signin Formデータ：', data);
     try {
-      const res = await clientCredentials.post('/auth/signin', data);
-      console.log('レスポンス：', res.data);
-      setIsFailed(false);
+      // unwrapでAsynkThunkの成功・失敗をキャッチ
+      await dispatch(signin(data)).unwrap();
+      reset();
+      toastSuccessRB('ログインしました')
     } catch {
-      console.error('ログインに失敗しました');
-      setIsFailed(true);
+      toastErrorRB('ログイン失敗')
     }
   }
 
@@ -31,7 +37,7 @@ export function LoginForm() {
         <legend className="fieldset-legend text-2xl">Login</legend>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          { isFailed && <p className="text-error text-center text-lg font-semibold">ログインに失敗しました</p> }
+          { sessionError && <p className="text-error text-center text-lg font-semibold">{sessionError}</p> }
 
           <label className="label">Email</label>
           <FormErrorText errorText={ errors.email?.message }/>
@@ -45,9 +51,21 @@ export function LoginForm() {
             {...register('password', {required: '！パスワードを入力してください'})}
             />
 
-          <input type="submit" className="btn btn-success btn-block mt-4" value={"ログイン"} />
+          {
+            loading
+            ? <button className="btn btn-success btn-block mt-4"><LoadingSpans /></button>
+            : <input type="submit" className="btn btn-success btn-block mt-4" value={"ログイン"} /> 
+          }
         </form>
       </fieldset>
+      
+      <button className="link link-info" onClick={() => openModal('password-reset-form')}>
+        パスワードをお忘れの方
+      </button>
+
+      <Modal modalId={'password-reset-form'}>
+        <PasswordResetRequestForm />
+      </Modal>
     </>
   )
 }

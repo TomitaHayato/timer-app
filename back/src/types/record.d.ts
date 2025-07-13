@@ -11,13 +11,11 @@ export type Records = {
 }
 
 export type postRecordParams = {
-  selfReview: number,
   workCount: number,
   workTime: number,
 }
 
 export type RecordData = {
-  selfReview: number,
   workCount: number,
   workTime: number,
 }

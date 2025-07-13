@@ -4,6 +4,7 @@ export type Setting = {
   longRestSec: number,
   isMuted: boolean,
   volume: number,
+  workingSound?: string,
 }
 
 export type PostSettingParams = {
@@ -12,6 +13,7 @@ export type PostSettingParams = {
   longRestMin: number,
   isMuted: boolean,
   volume: number,
+  workingSound?: string,
 }
 
 export type UpdateSettingParams = {
@@ -20,4 +22,5 @@ export type UpdateSettingParams = {
   longRestMin?: number,
   isMuted?: boolean,
   volume?: number,
+  workingSound?: string,
 }

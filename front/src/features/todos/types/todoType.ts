@@ -1,13 +1,19 @@
 export type Todo = {
-  id: number,
+  id: string,
   title: string,
-  expire?: Date,
-  status: boolean,
+  deadline?: Date,
+  isCompleted: boolean,
 }
 
-export type TodoAdd = {
+export type TodoAddParams = {
   title: string,
-  expire?: Date,
+  deadline?: Date,
 }
 
 export type Todos = Todo[]
+
+export type TodosState = {
+  todos: Todo[],
+  loading: boolean,
+  error: string | null,
+}

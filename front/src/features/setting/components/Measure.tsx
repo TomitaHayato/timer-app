@@ -1,14 +1,22 @@
-import { useState } from "react"
+import type { UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import type { settingItems, SettingParams } from "../types/settingType";
+import { useAppSelector } from "../../../reduxStore/hooks";
+import { selectSetting } from "../Slices/settingSlice";
+import { useEffect } from "react";
+import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { FormShortText } from "./formShortText";
 
 type Props = {
   itemsNum: number,
   min: number,
   max: number,
   step: number,
-  defaultVal: number,
-  measureId: string,
+  measureId: settingItems, // 設定項目名
   item: string,
-  unit: string
+  unit: string,
+  register: UseFormRegister<SettingParams>,
+  watch: UseFormWatch<SettingParams>,
+  setValue: UseFormSetValue<SettingParams>,
 }
 
 export function Measure({
@@ -16,35 +24,46 @@ export function Measure({
   min,
   max,
   step,
-  defaultVal,
   measureId,
   item,
   unit,
+  register,
+  watch,
+  setValue,
 }: Props) {
+  const isAuth = useAppSelector(selectAuthStatus);
+  const itemValue = watch(measureId); // フォームの入力値
+  const valueInStore = useAppSelector(selectSetting)[measureId]; // Reduxストア内の値
+  const isVolume = measureId === 'volume';
 
-  const [val, setVal] = useState<number>(defaultVal);
-
-  function hundleChange(v: string) {
-    setVal(Number(v));
-  }
+  // Reduxストアの値変更後、フォームのValueも変更
+  useEffect(() => {
+    if (isVolume) {
+      setValue(measureId, valueInStore);
+      return;
+    } else {
+      const minutes = Math.floor(valueInStore / 60);
+      setValue(measureId, minutes)
+    } 
+  }, [valueInStore, setValue, measureId, isVolume])
 
   return(
     <>
       <div className="w-full max-w-xs">
         <label htmlFor={`range-${measureId}`}>
           <span>{item}</span>
-          <span className="font-semibold text-gray-300">{` ＜${val}${unit}＞ `}</span>
+          <span className="font-semibold text-gray-300">{` ＜${itemValue}${unit}＞ `}</span>
         </label>
-
+        { !isVolume && <FormShortText /> }
         <input
           id={`range-${measureId}`}
           type="range"
           min={min}
           max={max}
-          defaultValue={defaultVal}
           className="range range-xs"
           step={step}
-          onChange={e => hundleChange(e.target.value)} />
+          { ...register(measureId) }
+          disabled={!isVolume && !isAuth}/>
 
         <div className="flex justify-between px-2.5 mt-1 text-[0.5rem]">
           { [...Array(itemsNum)].map((_, i) => <span key={`separator-${i}-${measureId}`}>|</span>) }
