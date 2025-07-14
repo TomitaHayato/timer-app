@@ -1,4 +1,4 @@
-import { secToHMS } from "../../../utils/secFormat";
+import { secToHMS, secToJpFormat } from "../../../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useEffect, useState } from "react";
 import { modeChange, modeChangeForth, selectTimer, switchTimer } from "../timerSlice";
@@ -16,6 +16,7 @@ import type { PostRecordParams } from "../../records/types/records";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { selectVisibleClass } from "../../display/visibleSlice";
 import type { TimerMode } from "../types/timerType";
+import { PopUp } from "../../../components/PopUp";
 
 export default function Timer() {
   const isAuth = useAppSelector(selectAuthStatus);
@@ -28,6 +29,8 @@ export default function Timer() {
 
   // 初めてタイマーをスタートしたかどうか
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true);
+  // ポップアップの表示
+  const [ isPopup, setIsPopup ] = useState<boolean>(false);
 
   // react-timer-hookから Timer情報を取得
   const {
@@ -111,17 +114,20 @@ export default function Timer() {
     pause();
   }
 
+  // タイマー状態の切り替え
   function handleModeChangeForth(nextMode: TimerMode) {
     playSound('btn');
-    // 集中状態から休憩に切り替わる際の処理
-    if(mode === 'work') {
-      postRecord(workSec - totalSeconds, 0);
+    // 休憩に切り替わる際の処理
+    if(nextMode !== 'work') {
+      setIsPopup(true);
+      pause();
+      // postRecord(workSec - totalSeconds, 0);
       stopSound('work');
     } else {
       playSound('work');
+      dispatch(modeChangeForth(nextMode));
+      toastSuccessRB('状態を切り替えました');
     }
-    dispatch(modeChangeForth(nextMode));
-    toastSuccessRB('状態を切り替えました');
   }
 
   return(
@@ -170,6 +176,37 @@ export default function Timer() {
           </div>
         </div>
       </div>
+
+      {/* モード変更時に記録するかどうかを確認するためのポップアップ */}
+      {
+        isPopup && (
+          <PopUp>
+            <div>
+              <p className="mt-8 text-lg">集中時間を記録しますか？</p>
+              <p>{`(${secToJpFormat(workSec - totalSeconds)})`}</p>
+
+              <div className="absolute bottom-2 right-2 flex justify-end gap-4">
+                <button
+                  className="btn btn-success btn-sm"
+                  onClick={() => {
+                    postRecord(workSec - totalSeconds, 0);
+                    dispatch(modeChangeForth('rest')); // ここを長期休憩にもできる？
+                    toastSuccessRB('状態を切り替えました');
+                    setIsPopup(false);
+                  }} >はい</button>
+
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    dispatch(modeChangeForth('rest'));
+                    toastSuccessRB('状態を切り替えました');
+                    setIsPopup(false);
+                  }} >いいえ</button>
+              </div>
+            </div>
+          </PopUp>
+        )
+      }
     </>
   )
 }
