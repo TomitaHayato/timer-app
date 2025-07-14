@@ -7,8 +7,6 @@ export type TimerState = {
 
 export type TimerMode = 'work' | 'rest' | 'longRest';
 
-export type SoundType = 'work' | 'finish' | 'btn';
-
 export type ModeSecList = {
   workSec: number,
   restSec: number,

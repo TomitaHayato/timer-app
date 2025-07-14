@@ -4,7 +4,6 @@ import { devLog } from "../../../utils/logDev";
 import { Howl } from "howler";
 import { useAppSelector } from "../../../reduxStore/hooks";
 import { selectSetting } from "../../setting/Slices/settingSlice";
-import type { SoundType } from "../types/timerType";
 
 export function useSoundHowls() {
   const { workingSound, volume, isMuted } = useAppSelector(selectSetting);
@@ -35,20 +34,17 @@ export function useSoundHowls() {
     }
   }, [workingSound, volumeOption, isMuted]);
 
-  // 音声ファイルを文字列で指定するためのObject
-  const soundTypeMap: Record<SoundType, React.RefObject<Howl | null>> = {
-    'work': soundWork,
-    'finish': soundFinish,
-    'btn':  soundBtn,
-  }
-
   // ---- コンポーネントで呼び出す関数 ----
-  const playSound = (key: SoundType) => soundTypeMap[key]?.current?.play();
-  const stopSound = (key: SoundType) => soundTypeMap[key]?.current?.stop();
+  const playWorkSound   = () => soundWork?.current?.play();
+  const stopWorkSound   = () => soundWork?.current?.stop();
+  const playBtnSound    = () => soundBtn.current?.play();
+  const playFinishSound = () => soundFinish?.current?.play();
 
   return {
-    playSound,
-    stopSound,
+    playWorkSound,
+    stopWorkSound,
+    playBtnSound,
+    playFinishSound,
   }
 }
 
