@@ -44,12 +44,13 @@ export default function Timer() {
       dispatch(modeChange(workSec));
       soundWork?.current?.stop();
       if(mode !== 'work') {
+        // 休憩からworkに切り替わる際の処理
         soundBtn.current.play();
         soundWork?.current?.play();
       } else {
         toastSuccessRB('１ポモドーロ完了')
         soundRest.current.play();
-        postRecord();
+        postRecord(workSec, 1);
       }
     },
   });
@@ -66,12 +67,12 @@ export default function Timer() {
     if (isFirstStart) pause(); // 初回レンダリング時は何もしない
   }, [isFirstStart, longRestSec, restSec, restart, mode, workSec, pause])
 
-  const postRecord = async() => {
+  const postRecord = async(sec: number, count: number) => {
     if (!isAuth) return;
     try {
       const params: PostRecordParams = {
-        workTime: workSec,
-        workCount: 1,
+        workTime: sec,
+        workCount: count,
       }
       devLog('記録作成params：', params);
       await dispatch(createRecord(params));
@@ -111,8 +112,16 @@ export default function Timer() {
     pause();
   }
 
-  function handleModeChangeForth(mode: TimerMode) {
-    dispatch(modeChangeForth(mode));
+  function handleModeChangeForth(nextMode: TimerMode) {
+    soundBtn?.current?.play();
+    // 集中状態から休憩に切り替わる際の処理
+    if(mode === 'work') {
+      postRecord(workSec - totalSeconds, 0);
+      soundWork?.current?.stop();
+    } else {
+      soundWork?.current?.play();
+    }
+    dispatch(modeChangeForth(nextMode));
     toastSuccessRB('状態を切り替えました');
   }
 
