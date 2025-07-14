@@ -3,6 +3,10 @@ export const getWorkingSoundFilePath = (soundType?: string): string => {
   switch (soundType) {
     case 'wind_bell':
       return '/sound/wind_bell.mp3'
+    case 'ice':
+      return '/sound/ice.mp3'
+    case 'btn':
+      return '/sound/btn.mp3'
     default: 
       return '/sound/summer.mp3'
   }

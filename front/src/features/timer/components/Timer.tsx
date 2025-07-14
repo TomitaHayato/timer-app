@@ -24,7 +24,7 @@ export default function Timer() {
   const dispatch = useAppDispatch();
   const visibleCalss = useAppSelector(selectVisibleClass);
 
-  const { soundWork, soundBtn, soundRest } = useSoundHowls();
+  const { playSound, stopSound } = useSoundHowls();
 
   // 初めてタイマーをスタートしたかどうか
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true);
@@ -42,14 +42,14 @@ export default function Timer() {
     autoStart: false,
     onExpire: () => {
       dispatch(modeChange(workSec));
-      soundWork?.current?.stop();
+      stopSound('work');
       if(mode !== 'work') {
         // 休憩からworkに切り替わる際の処理
-        soundBtn.current.play();
-        soundWork?.current?.play();
+        playSound('btn');
+        playSound('work');
       } else {
         toastSuccessRB('１ポモドーロ完了')
-        soundRest.current.play();
+        playSound('finish')
         postRecord(workSec, 1);
       }
     },
@@ -83,20 +83,19 @@ export default function Timer() {
     }
   }
 
-
   // 秒数だけリセット
   function handleReset() {
     restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })));
     pause();
-    soundBtn.current.play();
-    soundWork?.current?.stop();
+    playSound('btn');
+    stopSound('work');
     toastSuccessRB('タイマー リセット', { autoClose: 1500 })
   }
 
   function handleStart() {
     toastSuccessRB('タイマー スタート', { autoClose: 1500 })
-    soundBtn.current.play();
-    soundWork?.current?.play()
+    playSound('btn');
+    playSound('work');
     if (!isFirstStart) {
       resume();
       return;
@@ -106,20 +105,20 @@ export default function Timer() {
   }
 
   function handlePause() {
-    soundBtn.current.play();
-    soundWork?.current?.stop()
+    playSound('btn');
+    stopSound('work');
     toastSuccessRB('タイマー ストップ', { autoClose: 1500 })
     pause();
   }
 
   function handleModeChangeForth(nextMode: TimerMode) {
-    soundBtn?.current?.play();
+    playSound('btn');
     // 集中状態から休憩に切り替わる際の処理
     if(mode === 'work') {
       postRecord(workSec - totalSeconds, 0);
-      soundWork?.current?.stop();
+      stopSound('work');
     } else {
-      soundWork?.current?.play();
+      playSound('work');
     }
     dispatch(modeChangeForth(nextMode));
     toastSuccessRB('状態を切り替えました');
