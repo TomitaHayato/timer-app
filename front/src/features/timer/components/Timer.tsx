@@ -18,6 +18,7 @@ import { selectVisibleClass } from "../../display/visibleSlice";
 import type { TimerMode } from "../types/timerType";
 import { PopUp } from "../../../components/PopUp";
 import { RadialProgressContainer } from "../../../components/RadialProgressContainer";
+import { Title } from "../../../components/Title";
 
 export default function Timer() {
   const isAuth = useAppSelector(selectAuthStatus);
@@ -137,6 +138,8 @@ export default function Timer() {
 
   return(
     <>
+      <Title text={`[ ${modeText(mode)} ]  ${secToHMS(totalSeconds)}`}/>
+
       <div>
         <div>
           {/* 円状のコンテナ */}
@@ -159,8 +162,6 @@ export default function Timer() {
                 : <button className="btn btn-outline btn-primary btn-lg" onClick={handleStart}><span className="icon-[weui--play-filled] size-8"></span></button>
               }
 
-              <p>{`長期休憩まで${4 - count % 4}セット`}</p>
-
               <div className="flex gap-4">
                 <button className="btn btn-outline btn-success" onClick={handleReset}>秒数リセット</button>
                 {
@@ -169,6 +170,8 @@ export default function Timer() {
                   : <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('work')}>{'休憩を強制終了'}</button>
                 }
               </div>
+
+              <p>{`長期休憩まで${4 - count % 4}セット`}</p>
             </div>
           </div>
         </div>
