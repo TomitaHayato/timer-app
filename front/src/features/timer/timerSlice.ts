@@ -42,8 +42,14 @@ export const timerSlice = createSlice({
     },
     // 強制的にモードを変更
     modeChangeForth: (state: TimerState, action: PayloadAction<TimerMode>) => {
+      // 指定されたModeが現在のModeと一致 => 何もしない
       if (state.mode === action.payload) return;
+      // 集中 => 休憩の変更時、カウントを+1
+      if(state.mode === 'work') state.count += 1;
+
       state.mode = action.payload;
+      // 指定されたModeが長期休憩の場合、カウントをリセット
+      if(action.payload === 'longRest') state.count = 0;
     },
   }
 })

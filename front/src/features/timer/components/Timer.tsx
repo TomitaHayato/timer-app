@@ -1,13 +1,13 @@
-import { secToHMS } from "../../../utils/secFormat";
+import { secToHMS, secToJpFormat } from "../../../utils/secFormat";
 import { useTimer } from 'react-timer-hook';
 import { useEffect, useState } from "react";
-import { modeChange, selectTimer, switchTimer } from "../timerSlice";
+import { modeChange, modeChangeForth, selectTimer, switchTimer } from "../timerSlice";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { createExpiryTimestamp } from "../utils/expiryTimestamp";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 import { getModeSec } from "../utils/getModeSec";
 import { modeText } from "../utils/modeText";
-import { modeBarColor, modeTextColor, sceneTimerBgColor } from "../utils/class";
+import { modeBarColor, modeTextColor } from "../utils/class";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { useSoundHowls } from "../hooks/soundSet";
 import { devLog } from "../../../utils/logDev";
@@ -15,18 +15,29 @@ import { createRecord } from "../../records/recordsSlice";
 import type { PostRecordParams } from "../../records/types/records";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { selectVisibleClass } from "../../display/visibleSlice";
+import type { TimerMode } from "../types/timerType";
+import { PopUp } from "../../../components/PopUp";
+import { RadialProgressContainer } from "../../../components/RadialProgressContainer";
+import { Title } from "../../../components/Title";
 
 export default function Timer() {
   const isAuth = useAppSelector(selectAuthStatus);
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
-  const { mode } = useAppSelector(selectTimer);
+  const { mode, count } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch();
   const visibleCalss = useAppSelector(selectVisibleClass);
 
-  const { soundWork, soundBtn, soundRest } = useSoundHowls();
+  const {
+    playWorkSound,
+    stopWorkSound,
+    playBtnSound,
+    playFinishSound,
+  } = useSoundHowls();
 
   // 初めてタイマーをスタートしたかどうか
   const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true);
+  // ポップアップの表示
+  const [ isPopup, setIsPopup ] = useState<boolean>(false);
 
   // react-timer-hookから Timer情報を取得
   const {
@@ -41,14 +52,15 @@ export default function Timer() {
     autoStart: false,
     onExpire: () => {
       dispatch(modeChange(workSec));
-      soundWork?.current?.stop();
+      stopWorkSound();
       if(mode !== 'work') {
-        soundBtn.current.play();
-        soundWork?.current?.play();
+        // 休憩からworkに切り替わる際の処理
+        playBtnSound()
+        playWorkSound();
       } else {
         toastSuccessRB('１ポモドーロ完了')
-        soundRest.current.play();
-        postRecord();
+        playFinishSound();
+        postRecord(workSec, 1);
       }
     },
   });
@@ -65,12 +77,12 @@ export default function Timer() {
     if (isFirstStart) pause(); // 初回レンダリング時は何もしない
   }, [isFirstStart, longRestSec, restSec, restart, mode, workSec, pause])
 
-  const postRecord = async() => {
+  const postRecord = async(sec: number, count: number) => {
     if (!isAuth) return;
     try {
       const params: PostRecordParams = {
-        workTime: workSec,
-        workCount: 1,
+        workTime: sec,
+        workCount: count,
       }
       devLog('記録作成params：', params);
       await dispatch(createRecord(params));
@@ -81,17 +93,19 @@ export default function Timer() {
     }
   }
 
-
+  // 秒数だけリセット
   function handleReset() {
     restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })));
     pause();
+    playBtnSound();
+    stopWorkSound()
     toastSuccessRB('タイマー リセット', { autoClose: 1500 })
   }
 
   function handleStart() {
     toastSuccessRB('タイマー スタート', { autoClose: 1500 })
-    soundBtn.current.play();
-    soundWork?.current?.play()
+    playBtnSound();
+    playWorkSound();
     if (!isFirstStart) {
       resume();
       return;
@@ -101,34 +115,43 @@ export default function Timer() {
   }
 
   function handlePause() {
-    soundBtn.current.play();
-    soundWork?.current?.stop()
+    playBtnSound();
+    stopWorkSound();
     toastSuccessRB('タイマー ストップ', { autoClose: 1500 })
     pause();
   }
 
+  // タイマー状態の切り替え
+  function handleModeChangeForth(nextMode: TimerMode) {
+    playBtnSound();
+    if(nextMode !== 'work') {
+      // 休憩に切り替わる際、PopUp表示
+      setIsPopup(true);
+      pause();
+      stopWorkSound();
+    } else {
+      playWorkSound();
+      dispatch(modeChangeForth(nextMode));
+      toastSuccessRB('状態を切り替えました');
+    }
+  }
+
   return(
     <>
+      <Title text={`[ ${modeText(mode)} ]  ${secToHMS(totalSeconds)}`}/>
+
       <div>
         <div>
           {/* 円状のコンテナ */}
-          <div className='flex items-center justify-center my-8'>
-            <div
-              className={`radial-progress ${sceneTimerBgColor('')} ${modeBarColor(mode)}`}
-              style={{
-                "--value": totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100, 
-                "--size": "20rem",
-                "--thickness": "6px"
-              } as React.CSSProperties }
-              aria-valuenow={100}
-              role="progressbar"
-            >
-              <p className={`${modeTextColor(mode)} text-center`}>{modeText(mode)}</p>
-              <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
-                { secToHMS(totalSeconds) }
-              </p>
-            </div>
-          </div>
+          <RadialProgressContainer
+            colorClass={modeBarColor(mode)}
+            value={totalSeconds/getModeSec(mode, { workSec, restSec, longRestSec }) * 100}
+          >
+            <p className={`${modeTextColor(mode)} text-center`}>{modeText(mode)}</p>
+            <p className={`text-7xl font-semibold ${modeTextColor(mode)}`}>
+              { secToHMS(totalSeconds) }
+            </p>
+          </RadialProgressContainer>
 
           <div className={visibleCalss}>
             {/* タイマー操作ボタン */}
@@ -138,11 +161,52 @@ export default function Timer() {
                 ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}><span className="icon-[weui--pause-outlined] size-8"></span></button>
                 : <button className="btn btn-outline btn-primary btn-lg" onClick={handleStart}><span className="icon-[weui--play-filled] size-8"></span></button>
               }
-              <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handleReset}>リセット</button>
+
+              <div className="flex gap-4">
+                <button className="btn btn-outline btn-success" onClick={handleReset}>秒数リセット</button>
+                {
+                  mode === 'work'
+                  ? <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('rest')}>{'休憩する'}</button>
+                  : <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('work')}>{'休憩を強制終了'}</button>
+                }
+              </div>
+
+              <p>{`長期休憩まで${4 - count % 4}セット`}</p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* モード変更時に記録するかどうかを確認するためのポップアップ */}
+      {
+        isPopup && (
+          <PopUp>
+            <div>
+              <p className="mt-8 text-lg">集中時間を記録しますか？</p>
+              <p>{`(${secToJpFormat(workSec - totalSeconds)})`}</p>
+
+              <div className="absolute bottom-2 right-2 flex justify-end gap-4">
+                <button
+                  className="btn btn-success btn-sm"
+                  onClick={() => {
+                    postRecord(workSec - totalSeconds, 0);
+                    dispatch(modeChangeForth('rest')); // ここを長期休憩にもできる？
+                    toastSuccessRB('状態を切り替えました');
+                    setIsPopup(false);
+                  }} >はい</button>
+
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    dispatch(modeChangeForth('rest'));
+                    toastSuccessRB('状態を切り替えました');
+                    setIsPopup(false);
+                  }} >いいえ</button>
+              </div>
+            </div>
+          </PopUp>
+        )
+      }
     </>
   )
 }

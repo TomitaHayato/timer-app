@@ -7,64 +7,55 @@ import { selectSetting } from "../../setting/Slices/settingSlice";
 
 export function useSoundHowls() {
   const { workingSound, volume, isMuted } = useAppSelector(selectSetting);
-  const volumeOption = volume / 100
+  const volumeOption = volume / 100 // 0~1の範囲内にする
 
-  const soundBtn = useRef<Howl>(new Howl({
-    src: ['sound/ice.mp3'],
-    volume: volumeOption,
-    mute: isMuted,
-  }))
-
-  const soundRest = useRef<Howl>(new Howl({
-    src: ['sound/btn.mp3'],
-    volume: volumeOption,
-    mute: isMuted,
-  }))
-
+  // ボタン押下の音
+  const soundBtn = useRef<Howl>(_createNewLoopHowl(volumeOption, isMuted, 'ice'));
+  // 作業終了の音
+  const soundFinish = useRef<Howl>(_createNewLoopHowl(volumeOption, isMuted, 'btn'))
+  // 作業中に流れる音楽 (useEffectで値をセット)
   const soundWork = useRef<Howl | null>(null);
 
-  // soundWork, volumeが変化 => sound.currentもそれに合わせて更新
+  // soundWork, volumeが変化 => sound.currentを新しいHowlインスタンスに更新
   useEffect(() => {
     soundWork.current?.unload();
     soundBtn.current.unload();
-    soundRest.current.unload();
+    soundFinish.current.unload();
 
-    soundWork.current = _createNewHowl(volumeOption, isMuted, workingSound);
-
-    soundBtn.current = new Howl({
-      src: ['sound/ice.mp3'],
-      volume: volumeOption,
-      mute: isMuted,
-    })
-
-    soundRest.current = new Howl({
-      src: ['sound/btn.mp3'],
-      volume: volumeOption,
-      mute: isMuted,
-    })
+    soundWork.current = _createNewLoopHowl(volumeOption, isMuted, workingSound, true);
+    soundBtn.current = _createNewLoopHowl(volumeOption, isMuted, 'ice')
+    soundFinish.current = _createNewLoopHowl(volumeOption, isMuted, 'btn')
 
     return () => {
       soundWork.current?.unload();
       soundBtn.current.unload();
-      soundRest.current.unload();
+      soundFinish.current.unload();
       devLog('Howlを解放しました');
     }
   }, [workingSound, volumeOption, isMuted]);
 
+  // ---- コンポーネントで呼び出す関数 ----
+  const playWorkSound   = () => soundWork?.current?.play();
+  const stopWorkSound   = () => soundWork?.current?.stop();
+  const playBtnSound    = () => soundBtn.current?.play();
+  const playFinishSound = () => soundFinish?.current?.play();
+
   return {
-    soundWork,
-    soundBtn,
-    soundRest,
+    playWorkSound,
+    stopWorkSound,
+    playBtnSound,
+    playFinishSound,
   }
 }
 
-function _createNewHowl(volume: number, isMuted: boolean, filename?: string) {
-  const soundFilepath = getWorkingSoundFilePath(filename);
+// 新しいHowlインスタンスを作成
+function _createNewLoopHowl(volume: number, mute: boolean, filepath?: string, loop?: boolean) {
+  const soundFilepath = getWorkingSoundFilePath(filepath);
 
   return new Howl({
     src: [soundFilepath],
-    loop: true,
+    loop,
     volume,
-    mute: isMuted,
+    mute,
   })
 }
