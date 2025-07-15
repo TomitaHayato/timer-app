@@ -37,6 +37,7 @@ model Todo {
   title       String
   isCompleted Boolean   @default(false)
   deadline    DateTime?
+  completedAt DateTime?
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
