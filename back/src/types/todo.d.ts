@@ -1,7 +1,9 @@
 export type Todo = {
+  id: string,
   title: string,
   isCompleted: boolean,
   deadline?: Date,
+  completedAt?: Date,
 }
 
 export type Todos = Todo[]
