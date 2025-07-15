@@ -95,7 +95,7 @@ export const updateTodoIsCompleted = createAsyncThunk<
   try {
     const res = await fetchWithTokenRefresh(`/todos/${todoId}/is_completed`, 'put');
     const todos = res.data;
-    devLog('res.data', todos)
+    devLog('Todos取得', todos)
     if (!todos) return thunkAPI.rejectWithValue('todosの更新に失敗しました');
     return todos;
   } catch(err) {
