@@ -22,12 +22,15 @@ export function TodoRebornBtn({ id }: Props) {
   }
 
   return(
-    <>
+    <div className="text-center tooltip">
+      <div className="tooltip-content">
+        <p className="text-xs">未完了に</p>
+      </div>
       {
-        <button className="btn btn-sm btn-info btn-circle" disabled={loading} onClick={handleClick}>
+        <button className="btn size-7 btn-info btn-circle" disabled={loading} onClick={handleClick}>
           <span className="icon-[line-md--rotate-270] size-5"></span>
         </button>
       }
-    </>
+    </div>
   )
 }

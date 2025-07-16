@@ -46,19 +46,13 @@ export default function TimerPage() {
       </div>
 
       <div className={`fixed left-4 bottom-8 flex flex-col gap-4 z-10 ${visibleClass}`}>
-        <div className="indicator">
-          <span className="indicator-item status status-success animate-pulse"></span>
-          <Drawer btnText={'完了済 Todo'}>
-            <CompletedTodos />
-          </Drawer>
-        </div>
+        <Drawer btnText={'完了済 Todo'}>
+          <CompletedTodos />
+        </Drawer>
 
-        <div className="indicator">
-          <span className="indicator-item status status-success animate-pulse"></span>
-          <Drawer btnText={'設定'}>
-            <Setting />
-          </Drawer>
-        </div>
+        <Drawer btnText={'設定'}>
+          <Setting />
+        </Drawer>
       </div>
     </>
   )

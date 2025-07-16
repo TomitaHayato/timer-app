@@ -37,7 +37,10 @@ export function TodoItemInfo({ todo, setIsEdit }: Props) {
         </div>
         
         <div className="flex gap-4">
-          <TodoUpdateBtn setIsEdit={setIsEdit}/>
+          {
+            todo.isCompleted ||
+            <TodoUpdateBtn setIsEdit={setIsEdit}/>
+          }
           <TodoDeleteBtn id={todo.id} />
         </div>
       </li>
