@@ -122,7 +122,7 @@ export function Setting() {
           </div>
 
           <div>
-            <label htmlFor="sound-select">集中時の音楽</label>
+            <label htmlFor="sound-select">テーマ</label>
             <FormShortText />
             <select
               id="sound-select"

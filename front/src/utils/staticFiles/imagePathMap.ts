@@ -6,3 +6,5 @@ const imageMap = {
 
 // 上記のObjectを変更されないよう、KeyからPathを取得する関数だけをexportする
 export const getImagePath = (key: keyof typeof imageMap) => imageMap[key] || imageMap['default']
+
+export type ImageKey = 'default' | 'wind_bell'

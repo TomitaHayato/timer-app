@@ -25,7 +25,7 @@ export function MainLayout() {
   return(
     <>
       <div className={`min-h-screen ${bgCustom()}`} onClick={handleClickAnywhere}>
-        <div className="bg-[url(/images/wind_bell.png)] bg-cover">
+        <div className="bg-[url(/images/Water.png)] bg-cover">
           <div className={visibleCalss}>
             <Header/>
           </div>
@@ -33,6 +33,7 @@ export function MainLayout() {
           <Outlet />
 
         </div>
+        
       </div>
     </>
   )

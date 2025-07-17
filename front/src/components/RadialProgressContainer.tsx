@@ -11,7 +11,8 @@ export function RadialProgressContainer({ colorClass, value, children }: Props) 
   return(
     <div className='flex items-center justify-center my-8'>
       <div
-        className={`radial-progress ${sceneTimerBgColor('')} ${colorClass}`}
+      // 要変更（タイマーの背景）
+        className={`radial-progress ${sceneTimerBgColor('Water')} ${colorClass}`}
         style={{
           "--value": value, 
           "--size": "20rem",

@@ -1,3 +1,4 @@
+import type { ImageKey } from "../../../utils/staticFiles/imagePathMap"
 import type { SoundKey } from "../../../utils/staticFiles/soundFiles"
 
 export type Setting= {
@@ -7,6 +8,7 @@ export type Setting= {
   volume: number,
   isMuted: boolean,
   workingSound?: SoundKey,
+  bgImage?: ImageKey
 }
 
 export type SettingState = {
@@ -22,6 +24,7 @@ export type SettingParams = {
   volume: number,
   isMuted: boolean,
   workingSound?: SoundKey,
+  bgImage?: ImageKey
 }
 
 export type settingItems = 'workSec' | 'restSec' | 'longRestSec' | 'volume'

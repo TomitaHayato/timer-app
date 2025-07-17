@@ -50,7 +50,7 @@ const settingSlice = createSlice({
   reducers: {
     // ステートを更新
     replaceSetting: (state, action: PayloadAction<Setting>) => {
-      const { workSec, restSec, longRestSec, volume, isMuted, workingSound } = action.payload;
+      const { workSec, restSec, longRestSec, volume, isMuted, workingSound, bgImage } = action.payload;
       if (!workSec || !restSec || !longRestSec || volume === undefined || isMuted === null || isMuted === undefined) {
         return;
       }
@@ -60,7 +60,8 @@ const settingSlice = createSlice({
       state.setting.longRestSec = longRestSec
       state.setting.volume = volume
       state.setting.isMuted= isMuted
-      state.setting.workingSound = workingSound
+      state.setting.workingSound = workingSound || 'default'
+      state.setting.bgImage = bgImage || 'default'
     },
     resetSettingState: (state: SettingState) => {
       state.setting = defaultSetting();
@@ -74,15 +75,16 @@ const settingSlice = createSlice({
       })
       .addCase(updateSetting.fulfilled, (state, action: PayloadAction<Setting>) => {
         state.loading = false;
-        const { workSec, restSec, longRestSec, volume, isMuted, workingSound } = action.payload;
+        const { workSec, restSec, longRestSec, volume, isMuted, workingSound, bgImage } = action.payload;
         if (!workSec || !restSec || !longRestSec || volume === undefined || isMuted === null || isMuted === undefined) return;
 
         state.setting.workSec = workSec
         state.setting.restSec = restSec
         state.setting.longRestSec = longRestSec
         state.setting.volume = volume
-        state.setting.isMuted= isMuted
-        state.setting.workingSound = workingSound
+        state.setting.isMuted = isMuted
+        state.setting.workingSound = workingSound || 'default'
+        state.setting.bgImage = bgImage || 'default'
       })
       .addCase(updateSetting.rejected, (state, action) => {
         state.loading = false;
