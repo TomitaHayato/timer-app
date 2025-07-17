@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getWorkingSoundFilePath } from "../../../utils/soundFiles"
+import { getWorkingSoundFilePath, type SoundKey } from "../../../utils/staticFiles/soundFiles"
 import { devLog } from "../../../utils/logDev";
 import { Howl } from "howler";
 import { useAppSelector } from "../../../reduxStore/hooks";
@@ -49,7 +49,7 @@ export function useSoundHowls() {
 }
 
 // 新しいHowlインスタンスを作成
-function _createNewLoopHowl(volume: number, mute: boolean, filepath?: string, loop?: boolean) {
+function _createNewLoopHowl(volume: number, mute: boolean, filepath?: SoundKey, loop?: boolean) {
   const soundFilepath = getWorkingSoundFilePath(filepath);
 
   return new Howl({

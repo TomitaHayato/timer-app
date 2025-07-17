@@ -11,7 +11,7 @@ import { FormShortText } from "./formShortText";
 import { selectTimer } from "../../timer/timerSlice";
 import { UserDeleteBtn } from "./UserDeletebtn";
 import { useEffect } from "react";
-import { soundTypeName, soundTypes } from "../../../utils/soundFiles";
+import { soundTypeName, soundTypes } from "../../../utils/staticFiles/soundFiles";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()

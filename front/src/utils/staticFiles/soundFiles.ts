@@ -1,15 +1,16 @@
+const soundMap = {
+  default: '/sound/summer.mp3',
+  wind_bell: '/sound/wind_bell.mp3',
+  ice: '/sound/ice.mp3',
+  btn: '/sound/btn.mp3',
+}
+
+export type SoundKey = keyof typeof soundMap;
+
 // 指定された音楽設定に応じて、/publicのmp3のpathを返す
-export const getWorkingSoundFilePath = (soundType?: string): string => {
-  switch (soundType) {
-    case 'wind_bell':
-      return '/sound/wind_bell.mp3'
-    case 'ice':
-      return '/sound/ice.mp3'
-    case 'btn':
-      return '/sound/btn.mp3'
-    default: 
-      return '/sound/summer.mp3'
-  }
+export const getWorkingSoundFilePath = (key?: SoundKey): string => {
+  if(!key) return soundMap.default;
+  return soundMap[key] || soundMap.default
 }
 
 // 音声ファイル一覧

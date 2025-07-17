@@ -23,7 +23,8 @@ export default function TimerPage() {
         <TodosIndexSide />
       </div>
 
-      <div className="bg-[url(/image/wind_sbell.png)] bg-cover">
+      {/* メインコンテンツ */}
+      <div>
         {/* Todoを表示 */}
         <div className={visibleClass}>
           <TodoSelector />

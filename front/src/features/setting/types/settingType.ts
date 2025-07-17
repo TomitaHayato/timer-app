@@ -1,10 +1,12 @@
+import type { SoundKey } from "../../../utils/staticFiles/soundFiles"
+
 export type Setting= {
   workSec:  number,
   restSec:  number,
   longRestSec: number,
   volume: number,
   isMuted: boolean,
-  workingSound?: string,
+  workingSound?: SoundKey,
 }
 
 export type SettingState = {
@@ -19,7 +21,7 @@ export type SettingParams = {
   longRestSec: number,
   volume: number,
   isMuted: boolean,
-  workingSound?: string,
+  workingSound?: SoundKey,
 }
 
 export type settingItems = 'workSec' | 'restSec' | 'longRestSec' | 'volume'

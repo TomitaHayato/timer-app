@@ -25,7 +25,7 @@ export function MainLayout() {
   return(
     <>
       <div className={`min-h-screen ${bgCustom()}`} onClick={handleClickAnywhere}>
-        <div>
+        <div className="bg-[url(/images/wind_bell.png)] bg-cover">
           <div className={visibleCalss}>
             <Header/>
           </div>
