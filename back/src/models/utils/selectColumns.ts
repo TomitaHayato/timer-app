@@ -6,6 +6,7 @@ export const selectSettingColumns = {
   restSec: true,
   longRestSec: true,
   workingSound: true,
+  bgImage: true,
 }
 
 export const selectUserColumns = {
