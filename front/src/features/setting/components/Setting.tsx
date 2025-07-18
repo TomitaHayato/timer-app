@@ -31,6 +31,7 @@ export function Setting() {
       workSec: data.workSec * 60,
       restSec: data.restSec * 60,
       longRestSec: data.longRestSec * 60,
+      bgImage: data.workingSound, // 背景画像と音楽は同じ値にする
     }
     devLog('送信データ', postSettingParams);
 

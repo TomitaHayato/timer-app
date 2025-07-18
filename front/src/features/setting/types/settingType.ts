@@ -1,5 +1,5 @@
 import type { ImageKey } from "../../../utils/staticFiles/imagePathMap"
-import type { SoundKey } from "../../../utils/staticFiles/soundFiles"
+import type { WorkingSoundKey } from "../../../utils/staticFiles/soundFiles"
 
 export type Setting= {
   workSec:  number,
@@ -7,7 +7,7 @@ export type Setting= {
   longRestSec: number,
   volume: number,
   isMuted: boolean,
-  workingSound?: SoundKey,
+  workingSound?: WorkingSoundKey,
   bgImage?: ImageKey
 }
 
@@ -23,7 +23,7 @@ export type SettingParams = {
   longRestSec: number,
   volume: number,
   isMuted: boolean,
-  workingSound?: SoundKey,
+  workingSound?: WorkingSoundKey,
   bgImage?: ImageKey
 }
 
