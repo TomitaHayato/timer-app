@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
-import { changeVisible } from "../../display/visibleSlice";
+import { changeSimpleBg, changeVisible, selectSimpleBg } from "../../display/visibleSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { LoginFormBtn } from "./LoginFormBtn";
 import { LogoutBtn } from "./LogoutBtn";
@@ -9,9 +9,14 @@ import { ProfileIconBtn } from "./PrifileIconBtn";
 export default function Header() {
   const isAuthenticated = useAppSelector(selectAuthStatus);
   const dispatch = useAppDispatch();
+  const simpleBg = useAppSelector(selectSimpleBg)
 
   function handleVisibleClick() {
     dispatch(changeVisible(false));
+  }
+
+  function handleSimpleBgClick() {
+    dispatch(changeSimpleBg(!simpleBg))
   }
 
   return(
@@ -32,11 +37,21 @@ export default function Header() {
 
         <div className="navbar-end">
           <div className="flex gap-4">
-            <button className="btn btn-sm btn-outline" onClick={handleVisibleClick}>
+            <button className="btn btn-sm btn-primary" onClick={handleSimpleBgClick}>
+              <span className="icon-[weui--album-filled] size-6"></span>
+              <p className="text-xs">シンプル背景</p>
+            </button>
+
+            {/* 集中ボタン */}
+            <button className="btn btn-sm btn-primary" onClick={handleVisibleClick}>
               <span className="icon-[weui--eyes-off-outlined] size-6"></span>
               <p className="text-xs">集中</p>
             </button>
+
+            {/* プロフィール */}
             { isAuthenticated && <ProfileIconBtn /> }
+
+            {/* ログインログアウト */}
             {
               isAuthenticated
               ? <LogoutBtn />
