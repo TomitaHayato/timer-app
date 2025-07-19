@@ -10,12 +10,14 @@ import { selectRecords } from "../features/records/recordsSlice";
 import { todayDate } from "../utils/time";
 import { selectAuthStatus } from "../features/session/slices/sessionSlice";
 import { TodoSelector } from "../features/timer/components/TodoSelector";
-import { selectVisibleClass } from "../features/display/visibleSlice";
+import { selectSimpleBg, selectVisibleClass } from "../features/display/visibleSlice";
+import { textColorClass } from "../utils/class";
 
 export default function TimerPage() {
   const { dailyRecord } = useAppSelector(selectRecords);
   const isAuth = useAppSelector(selectAuthStatus);
   const visibleClass = useAppSelector(selectVisibleClass); // 要素の表示非表示を管理するclass
+  const simpleBg = useAppSelector(selectSimpleBg);
 
   return(
     <>
@@ -33,7 +35,7 @@ export default function TimerPage() {
         <Timer />
 
         <div className={`absolute top-28 left-12 ${visibleClass}`}>
-          <h3 className="text-center text-gray-400 font-semibold mb-2">今日の記録 {todayDate()}</h3>
+          <h3 className={`text-center mb-2 ${textColorClass(simpleBg)}`}>今日の記録 {todayDate()}</h3>
           {
             isAuth
             ? <RecordStat record={dailyRecord} />

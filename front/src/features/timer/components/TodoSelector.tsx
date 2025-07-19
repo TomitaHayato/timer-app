@@ -7,11 +7,14 @@ import { useAppSelector } from "../../../reduxStore/hooks";
 import { TodoItem } from "./TodoItem";
 import { SelectedTodo } from "./SelectedTodo";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { btnMdClass } from "../../../utils/class";
+import { selectSimpleBg } from "../../display/visibleSlice";
 
 export function TodoSelector() {
   const todos = useAppSelector(selectSortedTodos);
   const isAuth = useAppSelector(selectAuthStatus);
   const [ todo, setTodo ] = useState<Todo | null>(null);
+  const simpleBg = useAppSelector(selectSimpleBg);
 
   return(
     <>
@@ -19,7 +22,7 @@ export function TodoSelector() {
         {
           todo
           ? <SelectedTodo todo={todo} setTodo={setTodo}/>
-          : <button disabled={!isAuth} className="btn btn-outline text-indigo-300" onClick={() => openModal('todoSelector')}>Todoを選択</button>
+          : <button disabled={!isAuth} className={btnMdClass(simpleBg)} onClick={() => openModal('todoSelector')}>Todoを選択</button>
         }
       </div>
 

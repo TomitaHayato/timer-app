@@ -14,11 +14,12 @@ import { devLog } from "../../../utils/logDev";
 import { createRecord } from "../../records/recordsSlice";
 import type { PostRecordParams } from "../../records/types/records";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
-import { selectVisibleClass } from "../../display/visibleSlice";
+import { selectSimpleBg, selectVisibleClass } from "../../display/visibleSlice";
 import type { TimerMode } from "../types/timerType";
 import { PopUp } from "../../../components/PopUp";
 import { RadialProgressContainer } from "../../../components/RadialProgressContainer";
 import { Title } from "../../../components/Title";
+import { btnLgClass, restBtnClass } from "../../../utils/class";
 
 export default function Timer() {
   const isAuth = useAppSelector(selectAuthStatus);
@@ -26,6 +27,7 @@ export default function Timer() {
   const { mode, count } = useAppSelector(selectTimer);
   const dispatch = useAppDispatch();
   const visibleCalss = useAppSelector(selectVisibleClass);
+  const simpleBg = useAppSelector(selectSimpleBg);
 
   const {
     playWorkSound,
@@ -158,16 +160,16 @@ export default function Timer() {
             <div className="flex flex-col justify-center items-center gap-8 mb-8">
               {
                 isRunning
-                ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}><span className="icon-[weui--pause-outlined] size-8"></span></button>
-                : <button className="btn btn-outline btn-primary btn-lg" onClick={handleStart}><span className="icon-[weui--play-filled] size-8"></span></button>
+                ? <button className={btnLgClass(simpleBg)} onClick={handlePause}><span className="icon-[weui--pause-outlined] size-8"></span></button>
+                : <button className={btnLgClass(simpleBg)} onClick={handleStart}><span className="icon-[weui--play-filled] size-8"></span></button>
               }
 
               <div className="flex gap-4">
-                <button className="btn btn-outline btn-success" onClick={handleReset}>秒数リセット</button>
+                <button className={restBtnClass(simpleBg)} onClick={handleReset}>秒数リセット</button>
                 {
                   mode === 'work'
-                  ? <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('rest')}>{'休憩する'}</button>
-                  : <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('work')}>{'休憩を強制終了'}</button>
+                  ? <button className={restBtnClass(simpleBg)} onClick={() => handleModeChangeForth('rest')}>{'休憩する'}</button>
+                  : <button className={restBtnClass(simpleBg)} onClick={() => handleModeChangeForth('work')}>{'休憩を強制終了'}</button>
                 }
               </div>
 

@@ -2,10 +2,14 @@ import { Modal } from "../../../components/Modal";
 import { openModal } from "../../../utils/modelCtl";
 import { Profile } from "../../users/components/Profile";
 
-export function ProfileIconBtn() {
+type Props = {
+  btnClass: string,
+}
+
+export function ProfileIconBtn({ btnClass }: Props) {
   return(
     <>
-      <button className="btn btn-sm btn-outline" onClick={() => openModal('profile')}>
+      <button className={btnClass} onClick={() => openModal('profile')}>
         <span className="icon-[line-md--account] size-6"></span>
       </button>
 
