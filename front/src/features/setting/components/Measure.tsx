@@ -7,7 +7,7 @@ import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { FormShortText } from "./formShortText";
 
 type Props = {
-  itemsNum: number,
+  itemsNum: number, // 区切りの数
   min: number,
   max: number,
   step: number,

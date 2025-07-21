@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
+import { devLog } from "../../../utils/logDev";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { selectTodos, updateTodoIsCompleted } from "../todoSlice";
 
@@ -7,6 +8,7 @@ type Props = {
 }
 
 export function TodoCompleteBtn({ id }: Props) {
+  devLog('TodoCompleteBtn コンポーネント')
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector(selectTodos);
 

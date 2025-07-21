@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { checkAuthToken } from "../../features/session/slices/sessionSlice";
 import { bgCustom } from "../../utils/class";
 import { selectSetting } from "../../features/setting/Slices/settingSlice";
-import { getImagePath } from "../../utils/staticFiles/imagePathMap";
+import { getBgImageClass } from "../../utils/staticFiles/imagePathMap";
 
 export function MainLayout() {
   const { bgImage } = useAppSelector(selectSetting);
@@ -29,11 +29,7 @@ export function MainLayout() {
   return(
     <>
       <div className={`min-h-screen ${bgCustom()}`} onClick={handleClickAnywhere}>
-        <div className={
-          simpleBg
-          ? ''
-          : `bg-cover bg-[url(${getImagePath(bgImage)})]`
-        }>
+        <div className={simpleBg ? '' : getBgImageClass(bgImage)}>
           <div className={visibleCalss}>
             <Header/>
           </div>
