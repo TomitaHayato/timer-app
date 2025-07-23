@@ -14,3 +14,8 @@ export const getBgImageClass = (key?: ImageKey): string => {
   return bgImageClassMap[key] || bgImageClassMap['default']
 }
 
+export const getRandomBgClass = ():string => {
+  const allBgClass = Object.values(bgImageClassMap);
+  const randomIndex = Math.floor(Math.random() * allBgClass.length);
+  return allBgClass[randomIndex];
+}
