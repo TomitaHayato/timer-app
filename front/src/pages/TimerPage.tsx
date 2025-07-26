@@ -5,19 +5,31 @@ import TodosIndexSide from "../features/todos/components/TodosIndexSide";
 import CompletedTodos from "../features/todos/components/CompletedTodos";
 import { Records } from "../features/records/components/Records";
 import { RecordStat } from "../features/records/components/RecordStat";
-import { useAppSelector } from "../reduxStore/hooks";
+import { useAppDispatch, useAppSelector } from "../reduxStore/hooks";
 import { selectRecords } from "../features/records/recordsSlice";
 import { todayDate } from "../utils/time";
-import { selectAuthStatus } from "../features/session/slices/sessionSlice";
+import { checkAuthToken, selectAuthStatus } from "../features/session/slices/sessionSlice";
 import { TodoSelector } from "../features/timer/components/TodoSelector";
 import { selectSimpleBg, selectVisibleClass } from "../features/display/visibleSlice";
 import { textColorClass } from "../utils/class";
+import { useEffect } from "react";
+import { Opening } from "../features/opening/Opening";
+import { selectIsOpening } from "../features/opening/openingSlice";
 
 export default function TimerPage() {
   const { dailyRecord } = useAppSelector(selectRecords);
   const isAuth = useAppSelector(selectAuthStatus);
   const visibleClass = useAppSelector(selectVisibleClass); // 要素の表示非表示を管理するclass
   const simpleBg = useAppSelector(selectSimpleBg);
+  const dispatch = useAppDispatch();
+  const isOpening = useAppSelector(selectIsOpening);
+
+  // マウント時に認証Check
+  useEffect(() => {
+    dispatch(checkAuthToken());
+  }, [dispatch])
+
+  if (isOpening) return <Opening />
 
   return(
     <>

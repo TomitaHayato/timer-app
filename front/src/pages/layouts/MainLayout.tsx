@@ -2,8 +2,6 @@ import { Outlet } from "react-router";
 import Header from "../../features/header/components/Header";
 import { useAppDispatch, useAppSelector } from "../../reduxStore/hooks";
 import { changeVisible, selectSimpleBg, selectVisible, selectVisibleClass } from "../../features/display/visibleSlice";
-import { useEffect } from "react";
-import { checkAuthToken } from "../../features/session/slices/sessionSlice";
 import { bgCustom } from "../../utils/class";
 import { selectSetting } from "../../features/setting/Slices/settingSlice";
 import { getBgImageClass } from "../../utils/staticFiles/imagePathMap";
@@ -20,11 +18,6 @@ export function MainLayout() {
     if (isVisible) return;
     dispatch(changeVisible(true));
   }
-
-  // マウント時に認証Check
-  useEffect(() => {
-    dispatch(checkAuthToken());
-  }, [dispatch])
 
   return(
     <>

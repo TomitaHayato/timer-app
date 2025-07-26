@@ -1,9 +1,9 @@
 // 設定のthemeの値と画像ファイルのpathを対応させるObject
 const bgImageClassMap = {
-  default:   'bg-cover bg-[url(/images/forest.png)]',
-  wind_bell: 'bg-cover bg-[url(/images/wind_bell.png)]',
-  sea:       'bg-cover bg-[url(/images/sea.png)]',
-  water:     'bg-cover bg-[url(/images/Water.png)]',
+  default:   'min-h-screen bg-cover bg-[url(/images/forest.png)]',
+  wind_bell: 'min-h-screen bg-cover bg-[url(/images/wind_bell.png)]',
+  sea:       'min-h-screen bg-cover bg-[url(/images/sea.png)]',
+  water:     'min-h-screen bg-cover bg-[url(/images/Water.png)]',
 }
 
 export type ImageKey = keyof typeof bgImageClassMap
