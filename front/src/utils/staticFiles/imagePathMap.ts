@@ -3,7 +3,7 @@ const bgImageClassMap = {
   default:   'min-h-screen bg-cover bg-[url(/images/forest.png)]',
   wind_bell: 'min-h-screen bg-cover bg-[url(/images/wind_bell.png)]',
   sea:       'min-h-screen bg-cover bg-[url(/images/sea.png)]',
-  water:     'min-h-screen bg-cover bg-[url(/images/Water.png)]',
+  water:     'min-h-screen bg-cover bg-[url(/images/water.png)]',
 }
 
 export type ImageKey = keyof typeof bgImageClassMap
