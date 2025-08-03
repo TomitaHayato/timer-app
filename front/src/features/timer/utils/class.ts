@@ -1,15 +1,9 @@
 import type { TimerMode } from "../types/timerType"
 
 export function modeTextColor(mode: TimerMode) {
-  const restTextColor = 'from-amber-600 to-amber-400';
-  const workTextColor = 'from-sky-600 to-sky-400';
+  if(mode === 'work') return "bg-gradient-to-tr from-sky-600 to-sky-400 bg-clip-text text-transparent"
 
-  const textColorMap: Record<TimerMode, string> = {
-    work: workTextColor,
-    rest: restTextColor,
-    longRest: restTextColor,
-  }
-  return `bg-gradient-to-tr ${textColorMap[mode]} bg-clip-text text-transparent`
+  return "bg-gradient-to-tr from-amber-600 to-amber-400 bg-clip-text text-transparent"
 }
 
 export function modeBorderColor(mode: TimerMode) {
