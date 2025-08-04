@@ -27,7 +27,13 @@ export function deadlineColor(date: Date): string {
   }
 }
 
-// -------- 背景によって変化するクラス -----------
+// --------------------- 背景によって変化するクラス -----------------------
+export const grayTextClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? "text-white"
+  : "text-gray-500"
+}
+
 export const btnSmClass = (simpleBg: boolean) => {
   return simpleBg
   ? 'btn btn-sm btn-outline'
@@ -37,7 +43,7 @@ export const btnSmClass = (simpleBg: boolean) => {
 export const btnMdClass = (simpleBg: boolean) => {
   return simpleBg
   ? 'btn btn-outline'
-  : 'btn bg-sky-400 hover:bg-indigo-500 text-black'
+  : 'btn bg-sky-300 hover:bg-indigo-500 text-gray-700'
 }
 
 export const btnLgClass = (simpleBg: boolean) => {
@@ -62,7 +68,7 @@ export const bgColorClass = (simpleBg: boolean) => {
 export const textColorClass = (simpleBg: boolean) => {
   return simpleBg
   ? 'text-gray-400 font-semibold'
-  : 'text-orange-300 text-lg font-extrabold'
+  : 'text-orange-300 font-extrabold'
 }
 
 export const textColorClassOnGrayBg = (simpleBg: boolean) => {

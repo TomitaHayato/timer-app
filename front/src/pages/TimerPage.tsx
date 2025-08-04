@@ -15,6 +15,7 @@ import { textColorClass } from "../utils/class";
 import { useEffect } from "react";
 import { Opening } from "../features/opening/Opening";
 import { selectIsOpening } from "../features/opening/openingSlice";
+import { TextOnBgImageWrapper } from "../components/TextOnBgImageWrapper";
 
 export default function TimerPage() {
   const { dailyRecord } = useAppSelector(selectRecords);
@@ -47,11 +48,17 @@ export default function TimerPage() {
         <Timer />
 
         <div className={`absolute top-28 left-12 ${visibleClass}`}>
-          <h3 className={`text-center mb-2 ${textColorClass(simpleBg)}`}>今日の記録 {todayDate()}</h3>
+          <div className="mb-2">
+            <TextOnBgImageWrapper>
+              <h3 className={`text-center ${textColorClass(simpleBg)}`}>今日の記録 {todayDate()}</h3>
+            </TextOnBgImageWrapper>
+          </div>
           {
             isAuth
             ? <RecordStat record={dailyRecord} />
-            : <p className="text-gray-500">ログイン後に表示されます</p>
+            : <TextOnBgImageWrapper>
+                <p className="text-gray-400">ログイン後に表示されます</p>
+              </TextOnBgImageWrapper>
           }
         </div>
         
