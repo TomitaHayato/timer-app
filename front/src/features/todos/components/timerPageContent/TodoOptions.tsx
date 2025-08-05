@@ -1,14 +1,14 @@
 import dayjs from "dayjs"
-import type { Todo } from "../../todos/types/todoType"
-import { deadlineColor } from "../../../utils/class";
-import { closeModal } from "../../../utils/modelCtl";
+import type { Todo } from "../../types/todoType"
+import { deadlineColor } from "../../../../utils/class";
+import { closeModal } from "../../../../utils/modelCtl";
 
 type Props = {
   todo: Todo,
   setTodo: React.Dispatch<React.SetStateAction<Todo | null>>,
 }
 
-export function TodoItem({ todo, setTodo }: Props) {
+export function TodoOptions({ todo, setTodo }: Props) {
   function handleClick() {
     setTodo(todo);
     closeModal('todoSelector');

@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../reduxStore/hooks";
 import { selectRecords } from "../features/records/recordsSlice";
 import { todayDate } from "../utils/time";
 import { checkAuthToken, selectAuthStatus } from "../features/session/slices/sessionSlice";
-import { TodoSelector } from "../features/timer/components/TodoSelector";
+import { TodoSelector } from "../features/todos/components/timerPageContent/TodoSelector";
 import { selectSimpleBg, selectVisibleClass } from "../features/display/visibleSlice";
 import { textColorClass } from "../utils/class";
 import { useEffect } from "react";

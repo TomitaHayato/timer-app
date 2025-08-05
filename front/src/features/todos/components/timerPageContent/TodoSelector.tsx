@@ -1,14 +1,14 @@
 import { useState } from "react"
-import type { Todo } from "../../todos/types/todoType"
-import { Modal } from "../../../components/Modal";
-import { openModal } from "../../../utils/modelCtl";
-import { selectSortedTodos } from "../../todos/todoSlice";
-import { useAppSelector } from "../../../reduxStore/hooks";
-import { TodoItem } from "./TodoItem";
+import type { Todo } from "../../types/todoType"
+import { Modal } from "../../../../components/Modal";
+import { openModal } from "../../../../utils/modelCtl";
+import { selectSortedTodos } from "../../todoSlice";
+import { useAppSelector } from "../../../../reduxStore/hooks";
 import { SelectedTodo } from "./SelectedTodo";
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
-import { btnMdClass } from "../../../utils/class";
-import { selectSimpleBg } from "../../display/visibleSlice";
+import { selectAuthStatus } from "../../../session/slices/sessionSlice";
+import { btnMdClass } from "../../../../utils/class";
+import { selectSimpleBg } from "../../../display/visibleSlice";
+import { TodoOptions } from "./TodoOptions";
 
 export function TodoSelector() {
   const todos = useAppSelector(selectSortedTodos);
@@ -31,7 +31,7 @@ export function TodoSelector() {
         {
           todos.length === 0
           ? <p className="text-center text-lg">Todoがありません</p>
-          : todos.filter((todo: Todo) => !todo.isCompleted).map((todo: Todo) => <TodoItem key={todo.id} todo={todo} setTodo={setTodo}/>)
+          : todos.filter((todo: Todo) => !todo.isCompleted).map((todo: Todo) => <TodoOptions key={todo.id} todo={todo} setTodo={setTodo}/>)
         }
       </Modal>
     </>
