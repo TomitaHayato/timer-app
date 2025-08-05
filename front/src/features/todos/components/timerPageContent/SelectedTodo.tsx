@@ -1,9 +1,9 @@
 import dayjs from "dayjs"
-import type { Todo } from "../../todos/types/todoType"
-import { openModal } from "../../../utils/modelCtl"
+import type { Todo } from "../../types/todoType"
+import { openModal } from "../../../../utils/modelCtl"
 import { useEffect } from "react"
-import { TodoCompleteBtn } from "./TodoCompleteBtn"
-import { deadlineColor } from "../../../utils/class"
+import { deadlineColor } from "../../../../utils/class"
+import { TodoCompleteBtnSm } from "./TodoCompleteBtnSm"
 
 type Props = {
   todo: Todo,
@@ -19,7 +19,7 @@ export function SelectedTodo({ todo, setTodo }: Props) {
   return(
     <>
       <div className="w-full flex justify-between items-center gap-4 pt-8 pb-2 px-4 shadow-2xl bg-gray-700 rounded-xl relative">
-        <TodoCompleteBtn id={todo.id} setTodo={setTodo}/>
+        <TodoCompleteBtnSm id={todo.id} setTodo={setTodo}/>
 
         <div>
           <p className="font-semibold text-lg">{todo.title}</p>

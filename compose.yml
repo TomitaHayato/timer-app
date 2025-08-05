@@ -25,6 +25,7 @@ services:
       - ./back:/node_app
       - learning_app_back_modules:/app/node_modules
     command: sh -c "npm install && npm run dev"
+    init: true
 
   front:
     build: ./front
@@ -37,6 +38,7 @@ services:
       - ./front:/app
       - learning_app_front_modules:/app/node_modules
     command: sh -c "npm install && npm run dev -- --host"
+    init: true
 
 volumes:
   learning_app_front_modules:

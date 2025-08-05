@@ -4,6 +4,7 @@ import { rightDrawer } from "../../../utils/class";
 import { selectTodosUncompleted } from "../todoSlice";
 import TodoCreateForm from "./TodoCreateForm";
 import TodoList from "./TodoList";
+import { sortTodosAscByDeadline } from "../utils/todoSort";
 
 export default function TodosIndexSide() {
   const todos = useAppSelector(selectTodosUncompleted);
@@ -25,8 +26,8 @@ export default function TodosIndexSide() {
           <TodoCreateForm />
         </div>
 
-        <div className="overflow-auto h-11/12">
-          <TodoList todos={todos}/>
+        <div className="overflow-auto h-11/12 pb-80">
+          <TodoList todos={sortTodosAscByDeadline(todos)}/>
         </div>
       </div>
     </>

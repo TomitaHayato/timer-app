@@ -5,6 +5,7 @@ export type Setting = {
   isMuted: boolean,
   volume: number,
   workingSound?: string,
+  bgImage?: string,
 }
 
 export type PostSettingParams = {
@@ -14,6 +15,7 @@ export type PostSettingParams = {
   isMuted: boolean,
   volume: number,
   workingSound?: string,
+  bgImage?: string,
 }
 
 export type UpdateSettingParams = {
@@ -23,4 +25,5 @@ export type UpdateSettingParams = {
   isMuted?: boolean,
   volume?: number,
   workingSound?: string,
+  bgImage?: string,
 }

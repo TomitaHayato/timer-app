@@ -1,18 +1,32 @@
+import { TextOnBgImageWrapper } from "../../../components/TextOnBgImageWrapper";
 import { useAppSelector } from "../../../reduxStore/hooks"
+import { selectSimpleBg } from "../../display/visibleSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice"
 import { AggregatedRecords } from "./AggregatedRecords";
 
 export function Records() {
   const isAuth = useAppSelector(selectAuthStatus);
+  const simpleBg = useAppSelector(selectSimpleBg);
 
   return(
     <>
       <div className="py-8 text-center">
-        <h3 className="text-3xl text-center text-gray-500 mb-8">記録</h3>
+        <div className="mb-4">
+          <TextOnBgImageWrapper>
+            <h3 className={
+              simpleBg
+              ? "text-3xl text-center text-gray-500"
+              : "text-3xl text-center text-amber-400 font-semibold"
+            }>記録</h3>
+          </TextOnBgImageWrapper>
+        </div>
+
         {
           isAuth
-          ?  <AggregatedRecords />
-          : <p className="text-gray-500">ログイン後に表示されます</p>
+          ? <AggregatedRecords />
+          : <TextOnBgImageWrapper>
+              <p className="text-gray-400">ログイン後に表示されます</p>
+            </TextOnBgImageWrapper>
         }
       </div>
     </>

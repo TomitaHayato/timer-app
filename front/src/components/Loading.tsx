@@ -1,4 +1,7 @@
+import { devLog } from "../utils/logDev";
+
 export function Loading() {
+  devLog('Loadingコンポーネント');
   return(
     <>
       <div

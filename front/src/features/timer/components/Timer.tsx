@@ -1,139 +1,87 @@
 import { secToHMS, secToJpFormat } from "../../../utils/secFormat";
-import { useTimer } from 'react-timer-hook';
-import { useEffect, useState } from "react";
-import { modeChange, modeChangeForth, selectTimer, switchTimer } from "../timerSlice";
-import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
-import { createExpiryTimestamp } from "../utils/expiryTimestamp";
+import { useState } from "react";
+import { selectTimer } from "../timerSlice";
+import { useAppSelector } from "../../../reduxStore/hooks";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 import { getModeSec } from "../utils/getModeSec";
 import { modeText } from "../utils/modeText";
 import { modeBarColor, modeTextColor } from "../utils/class";
-import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
-import { useSoundHowls } from "../hooks/soundSet";
-import { devLog } from "../../../utils/logDev";
-import { createRecord } from "../../records/recordsSlice";
-import type { PostRecordParams } from "../../records/types/records";
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
-import { selectVisibleClass } from "../../display/visibleSlice";
-import type { TimerMode } from "../types/timerType";
+import { selectSimpleBg, selectVisibleClass } from "../../display/visibleSlice";
 import { PopUp } from "../../../components/PopUp";
 import { RadialProgressContainer } from "../../../components/RadialProgressContainer";
 import { Title } from "../../../components/Title";
+import { btnLgClass, restBtnClass } from "../../../utils/class";
+import { useTimerHook } from "../hooks/useTimerHook";
+import { useSoundHowls } from "../hooks/soundSet";
+import { TextOnBgImageWrapper } from "../../../components/TextOnBgImageWrapper";
+import { selectAuthStatus } from "../../session/slices/sessionSlice";
 
 export default function Timer() {
+  // ポップアップの表示
   const isAuth = useAppSelector(selectAuthStatus);
+  const [ isPopup, setIsPopup ] = useState<boolean>(false);
   const { workSec, restSec, longRestSec } = useAppSelector(selectSetting);
   const { mode, count } = useAppSelector(selectTimer);
-  const dispatch = useAppDispatch();
   const visibleCalss = useAppSelector(selectVisibleClass);
+  const simpleBg = useAppSelector(selectSimpleBg);
+
+  const {
+    isRunning,
+    totalSeconds,
+    pause,
+    handleStart,
+    handleReset,
+    handlePause,
+    postRecord,
+    toRestModeForth,
+    toWorkModeForth,
+  } = useTimerHook();
 
   const {
     playWorkSound,
     stopWorkSound,
     playBtnSound,
-    playFinishSound,
   } = useSoundHowls();
 
-  // 初めてタイマーをスタートしたかどうか
-  const [ isFirstStart, setIsFirstStart ] = useState<boolean>(true);
-  // ポップアップの表示
-  const [ isPopup, setIsPopup ] = useState<boolean>(false);
-
-  // react-timer-hookから Timer情報を取得
-  const {
-    totalSeconds,
-    isRunning,
-    start,
-    pause,
-    resume,
-    restart,
-  } = useTimer({
-    expiryTimestamp: createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })),
-    autoStart: false,
-    onExpire: () => {
-      dispatch(modeChange(workSec));
-      stopWorkSound();
-      if(mode !== 'work') {
-        // 休憩からworkに切り替わる際の処理
-        playBtnSound()
-        playWorkSound();
-      } else {
-        toastSuccessRB('１ポモドーロ完了')
-        playFinishSound();
-        postRecord(workSec, 1);
-      }
-    },
-  });
-
-  // isRunningをステートに反映
-  useEffect(() => {
-    dispatch(switchTimer(isRunning));
-  }, [dispatch, isRunning])
-
-
-  // 秒数更新後、タイマーをリスタート
-  useEffect(() => {
-    restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })))
-    if (isFirstStart) pause(); // 初回レンダリング時は何もしない
-  }, [isFirstStart, longRestSec, restSec, restart, mode, workSec, pause])
-
-  const postRecord = async(sec: number, count: number) => {
-    if (!isAuth) return;
-    try {
-      const params: PostRecordParams = {
-        workTime: sec,
-        workCount: count,
-      }
-      devLog('記録作成params：', params);
-      await dispatch(createRecord(params));
-      toastSuccessRB('記録しました');
-    } catch(err) {
-      devLog('postRecordのエラー：', err);
-      toastErrorRB('記録の保存に失敗しました', { autoClose: 2000 })
-    }
+  function timerPause() {
+    playBtnSound();
+    handlePause();
+    stopWorkSound();
   }
 
-  // 秒数だけリセット
-  function handleReset() {
-    restart(createExpiryTimestamp(getModeSec(mode, { workSec, restSec, longRestSec })));
-    pause();
+  function timerStart() {
+    playBtnSound();
+    handleStart();
+    playWorkSound();
+  }
+
+  function timerSecReset() {
     playBtnSound();
     stopWorkSound()
-    toastSuccessRB('タイマー リセット', { autoClose: 1500 })
+    handleReset();
   }
 
-  function handleStart() {
-    toastSuccessRB('タイマー スタート', { autoClose: 1500 })
-    playBtnSound();
-    playWorkSound();
-    if (!isFirstStart) {
-      resume();
-      return;
-    }
-    setIsFirstStart(false);
-    start();
-  }
-
-  function handlePause() {
+  function timerMoveRestForth() {
     playBtnSound();
     stopWorkSound();
-    toastSuccessRB('タイマー ストップ', { autoClose: 1500 })
     pause();
+    if(isAuth) {
+      setIsPopup(true);
+    } else {
+      toRestModeForth();
+    }
   }
 
-  // タイマー状態の切り替え
-  function handleModeChangeForth(nextMode: TimerMode) {
+  function timerMoveWorkForth() {
     playBtnSound();
-    if(nextMode !== 'work') {
-      // 休憩に切り替わる際、PopUp表示
-      setIsPopup(true);
-      pause();
-      stopWorkSound();
-    } else {
-      playWorkSound();
-      dispatch(modeChangeForth(nextMode));
-      toastSuccessRB('状態を切り替えました');
-    }
+    toWorkModeForth();
+    playWorkSound();
+  }
+
+  function handlePopup(confirm: boolean) {
+    if(confirm) postRecord(workSec - totalSeconds, 0); // 非同期
+    toRestModeForth();
+    setIsPopup(false);
   }
 
   return(
@@ -155,29 +103,33 @@ export default function Timer() {
 
           <div className={visibleCalss}>
             {/* タイマー操作ボタン */}
-            <div className="flex flex-col justify-center items-center gap-8 mb-8">
+            <div className="flex flex-col justify-center items-center gap-4 mb-8">
               {
                 isRunning
-                ? <button className="btn btn-outline text-indigo-300 btn-lg" onClick={handlePause}><span className="icon-[weui--pause-outlined] size-8"></span></button>
-                : <button className="btn btn-outline btn-primary btn-lg" onClick={handleStart}><span className="icon-[weui--play-filled] size-8"></span></button>
+                ? <button className={btnLgClass(simpleBg)} onClick={timerPause}><span className="icon-[weui--pause-outlined] size-8"></span></button>
+                : <button className={btnLgClass(simpleBg)} onClick={timerStart}><span className="icon-[weui--play-filled] size-8"></span></button>
               }
 
               <div className="flex gap-4">
-                <button className="btn btn-outline btn-success" onClick={handleReset}>秒数リセット</button>
+                <button className={restBtnClass(simpleBg)} onClick={timerSecReset}>
+                  <span className="icon-[line-md--rotate-270] size-8"></span>
+                </button>
                 {
                   mode === 'work'
-                  ? <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('rest')}>{'休憩する'}</button>
-                  : <button className="btn btn-outline btn-success" onClick={() => handleModeChangeForth('work')}>{'休憩を強制終了'}</button>
+                  ? (<button className={restBtnClass(simpleBg)} onClick={timerMoveRestForth}><span className="icon-[streamline--tea-cup] size-6"></span></button>)
+                  : (<button className={restBtnClass(simpleBg)} onClick={timerMoveWorkForth}><i className="icon-[streamline-ultimate--co-working-space-laptop-bold] size-6"/></button>)
                 }
               </div>
-
-              <p>{`長期休憩まで${4 - count % 4}セット`}</p>
+              
+              <TextOnBgImageWrapper>
+                <p className="text-lg">{`長期休憩まで${4 - count % 4}セット`}</p>
+              </TextOnBgImageWrapper>
             </div>
           </div>
         </div>
       </div>
 
-      {/* モード変更時に記録するかどうかを確認するためのポップアップ */}
+      {/* 集中 -> 休憩の際, 集中時間を記録するか確認するポップアップ */}
       {
         isPopup && (
           <PopUp>
@@ -188,20 +140,11 @@ export default function Timer() {
               <div className="absolute bottom-2 right-2 flex justify-end gap-4">
                 <button
                   className="btn btn-success btn-sm"
-                  onClick={() => {
-                    postRecord(workSec - totalSeconds, 0);
-                    dispatch(modeChangeForth('rest')); // ここを長期休憩にもできる？
-                    toastSuccessRB('状態を切り替えました');
-                    setIsPopup(false);
-                  }} >はい</button>
+                  onClick={() => handlePopup(true)} >はい</button>
 
                 <button
                   className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    dispatch(modeChangeForth('rest'));
-                    toastSuccessRB('状態を切り替えました');
-                    setIsPopup(false);
-                  }} >いいえ</button>
+                  onClick={() => handlePopup(false)} >いいえ</button>
               </div>
             </div>
           </PopUp>

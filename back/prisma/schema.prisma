@@ -37,6 +37,7 @@ model Todo {
   title       String
   isCompleted Boolean   @default(false)
   deadline    DateTime?
+  completedAt DateTime?
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
@@ -51,6 +52,7 @@ model Setting {
   restSec     Int       @default(300)
   longRestSec Int       @default(900)
   workingSound String?
+  bgImage String?
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String    @unique
 }

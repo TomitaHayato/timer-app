@@ -1,9 +1,12 @@
 import { useAppDispatch } from "../../../reduxStore/hooks"
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { signout } from "../../session/slices/sessionSlice"
-import { SessionBtn } from "../classFn/btn"
 
-export const LogoutBtn = () => {
+type Props = {
+  btnClass: string,
+}
+
+export const LogoutBtn = ({ btnClass }: Props) => {
   const dispatch = useAppDispatch();
 
   const logout = async() => {
@@ -17,7 +20,7 @@ export const LogoutBtn = () => {
 
   return(
     <>
-      <button className={SessionBtn()} onClick={logout}>
+      <button className={btnClass} onClick={logout}>
         ログアウト
       </button>
     </>

@@ -3,7 +3,7 @@ import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { UserPostParams, UserUpdateParams } from "../../types/user";
 import { devLog } from "../../utils/dev/devLog";
-import { selectRecordColumns, selectSettingColumns, selectUserColumns } from "../utils/selectColumns";
+import { selectRecordColumns, selectSettingColumns, selectTodoColumns, selectUserColumns } from "../utils/selectColumns";
 import dayjs from "dayjs";
 import { dataHash } from "../../utils/dataHash";
 
@@ -52,7 +52,7 @@ export const getUserWithRelation = async(
       ...(records && {
         records: { select: selectRecordColumns }
       }),
-      todos,
+      todos: { select: selectTodoColumns },
     },
     where: {
       id: userId,

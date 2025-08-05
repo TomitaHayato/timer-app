@@ -26,3 +26,59 @@ export function deadlineColor(date: Date): string {
     return 'text-green-500'
   }
 }
+
+// --------------------- 背景によって変化するクラス -----------------------
+export const grayTextClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? "text-white"
+  : "text-gray-500"
+}
+
+export const btnSmClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'btn btn-sm btn-outline'
+  : 'btn btn-sm bg-sky-400 hover:bg-indigo-500 text-black'
+}
+
+export const btnMdClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'btn btn-outline'
+  : 'btn bg-sky-300 hover:bg-indigo-500 text-gray-700'
+}
+
+export const btnLgClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'btn btn-lg btn-outline'
+  : 'btn btn-lg bg-sky-400 hover:bg-indigo-500 text-black'
+}
+
+export const restBtnClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'btn btn-outline btn-success'
+  : 'btn bg-sky-400 hover:bg-indigo-500 text-black'
+}
+
+
+export const bgColorClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? ''
+  : 'bg-gray-100/75'
+}
+
+export const textColorClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'text-gray-400 font-semibold'
+  : 'text-orange-300 font-extrabold'
+}
+
+export const textColorClassOnGrayBg = (simpleBg: boolean) => {
+  return simpleBg
+  ? ''
+  : 'text-gray-700'
+}
+
+export const radialProgressBgColorClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? ''
+  : 'bg-sky-100/75'
+}

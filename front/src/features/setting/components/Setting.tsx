@@ -11,7 +11,7 @@ import { FormShortText } from "./formShortText";
 import { selectTimer } from "../../timer/timerSlice";
 import { UserDeleteBtn } from "./UserDeletebtn";
 import { useEffect } from "react";
-import { soundTypeName, soundTypes } from "../../../utils/soundFiles";
+import { soundTypeName, soundTypes } from "../../../utils/staticFiles/soundFiles";
 
 export function Setting() {
   const { register, watch, handleSubmit, setValue } = useForm<SettingParams>()
@@ -31,6 +31,7 @@ export function Setting() {
       workSec: data.workSec * 60,
       restSec: data.restSec * 60,
       longRestSec: data.longRestSec * 60,
+      bgImage: data.workingSound, // 背景画像と音楽は同じ値にする
     }
     devLog('送信データ', postSettingParams);
 
@@ -122,7 +123,7 @@ export function Setting() {
           </div>
 
           <div>
-            <label htmlFor="sound-select">集中時の音楽</label>
+            <label htmlFor="sound-select">テーマ</label>
             <FormShortText />
             <select
               id="sound-select"

@@ -6,7 +6,8 @@ export const defaultSettingDev: Setting = {
   longRestSec: 10,
   volume: 50,
   isMuted: false,
-  workingSound: "",
+  workingSound: 'default',
+  bgImage: 'default',
 }
 
 export const defaultSettingProd: Setting = {
@@ -15,7 +16,8 @@ export const defaultSettingProd: Setting = {
   longRestSec: 900,
   volume: 50,
   isMuted: false,
-  workingSound: "",
+  workingSound: 'default',
+  bgImage: 'default',
 }
 
 export const defaultSetting = (): Setting => {

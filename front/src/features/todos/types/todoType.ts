@@ -3,6 +3,7 @@ export type Todo = {
   title: string,
   deadline?: Date,
   isCompleted: boolean,
+  completedAt?: Date
 }
 
 export type TodoAddParams = {

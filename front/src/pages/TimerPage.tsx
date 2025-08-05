@@ -5,17 +5,32 @@ import TodosIndexSide from "../features/todos/components/TodosIndexSide";
 import CompletedTodos from "../features/todos/components/CompletedTodos";
 import { Records } from "../features/records/components/Records";
 import { RecordStat } from "../features/records/components/RecordStat";
-import { useAppSelector } from "../reduxStore/hooks";
+import { useAppDispatch, useAppSelector } from "../reduxStore/hooks";
 import { selectRecords } from "../features/records/recordsSlice";
 import { todayDate } from "../utils/time";
-import { selectAuthStatus } from "../features/session/slices/sessionSlice";
-import { TodoSelector } from "../features/timer/components/TodoSelector";
-import { selectVisibleClass } from "../features/display/visibleSlice";
+import { checkAuthToken, selectAuthStatus } from "../features/session/slices/sessionSlice";
+import { TodoSelector } from "../features/todos/components/timerPageContent/TodoSelector";
+import { selectSimpleBg, selectVisibleClass } from "../features/display/visibleSlice";
+import { textColorClass } from "../utils/class";
+import { useEffect } from "react";
+import { Opening } from "../features/opening/Opening";
+import { selectIsOpening } from "../features/opening/openingSlice";
+import { TextOnBgImageWrapper } from "../components/TextOnBgImageWrapper";
 
 export default function TimerPage() {
   const { dailyRecord } = useAppSelector(selectRecords);
   const isAuth = useAppSelector(selectAuthStatus);
   const visibleClass = useAppSelector(selectVisibleClass); // 要素の表示非表示を管理するclass
+  const simpleBg = useAppSelector(selectSimpleBg);
+  const dispatch = useAppDispatch();
+  const isOpening = useAppSelector(selectIsOpening);
+
+  // マウント時に認証Check
+  useEffect(() => {
+    dispatch(checkAuthToken());
+  }, [dispatch])
+
+  if (isOpening) return <Opening />
 
   return(
     <>
@@ -23,7 +38,8 @@ export default function TimerPage() {
         <TodosIndexSide />
       </div>
 
-      <div className="bg-[url(/image/wind_sbell.png)] bg-cover">
+      {/* メインコンテンツ */}
+      <div>
         {/* Todoを表示 */}
         <div className={visibleClass}>
           <TodoSelector />
@@ -32,11 +48,17 @@ export default function TimerPage() {
         <Timer />
 
         <div className={`absolute top-28 left-12 ${visibleClass}`}>
-          <h3 className="text-center text-gray-400 font-semibold mb-2">今日の記録 {todayDate()}</h3>
+          <div className="mb-2">
+            <TextOnBgImageWrapper>
+              <h3 className={`text-center ${textColorClass(simpleBg)}`}>今日の記録 {todayDate()}</h3>
+            </TextOnBgImageWrapper>
+          </div>
           {
             isAuth
             ? <RecordStat record={dailyRecord} />
-            : <p className="text-gray-500">ログイン後に表示されます</p>
+            : <TextOnBgImageWrapper>
+                <p className="text-gray-400">ログイン後に表示されます</p>
+              </TextOnBgImageWrapper>
           }
         </div>
         
@@ -46,19 +68,13 @@ export default function TimerPage() {
       </div>
 
       <div className={`fixed left-4 bottom-8 flex flex-col gap-4 z-10 ${visibleClass}`}>
-        <div className="indicator">
-          <span className="indicator-item status status-success animate-pulse"></span>
-          <Drawer btnText={'完了済 Todo'}>
-            <CompletedTodos />
-          </Drawer>
-        </div>
+        <Drawer btnText={'完了済 Todo'}>
+          <CompletedTodos />
+        </Drawer>
 
-        <div className="indicator">
-          <span className="indicator-item status status-success animate-pulse"></span>
-          <Drawer btnText={'設定'}>
-            <Setting />
-          </Drawer>
-        </div>
+        <Drawer btnText={'設定'}>
+          <Setting />
+        </Drawer>
       </div>
     </>
   )

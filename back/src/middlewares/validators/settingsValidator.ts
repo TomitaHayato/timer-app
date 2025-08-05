@@ -30,6 +30,9 @@ export const settingsPostValidator = [
   body('workingSound')
     .optional({ values: 'null' })
     .isString(),
+  body('bgImage')
+    .optional({ values: 'null' })
+    .isString(),
 ]
 
 export const settingsUpdateValidator = [
@@ -54,6 +57,9 @@ export const settingsUpdateValidator = [
     .isInt({ min: 0, max: 100 })
     .toInt(),
   body('workingSound')
+    .optional({ values: 'null' })
+    .isString(),
+  body('bgImage')
     .optional({ values: 'null' })
     .isString(),
 ]

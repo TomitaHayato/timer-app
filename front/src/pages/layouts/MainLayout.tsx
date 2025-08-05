@@ -1,12 +1,14 @@
 import { Outlet } from "react-router";
 import Header from "../../features/header/components/Header";
 import { useAppDispatch, useAppSelector } from "../../reduxStore/hooks";
-import { changeVisible, selectVisible, selectVisibleClass } from "../../features/display/visibleSlice";
-import { useEffect } from "react";
-import { checkAuthToken } from "../../features/session/slices/sessionSlice";
+import { changeVisible, selectSimpleBg, selectVisible, selectVisibleClass } from "../../features/display/visibleSlice";
 import { bgCustom } from "../../utils/class";
+import { selectSetting } from "../../features/setting/Slices/settingSlice";
+import { getBgImageClass } from "../../utils/staticFiles/imagePathMap";
 
 export function MainLayout() {
+  const { bgImage } = useAppSelector(selectSetting);
+  const simpleBg = useAppSelector(selectSimpleBg)
   const dispatch = useAppDispatch();
   const visibleCalss = useAppSelector(selectVisibleClass);
   const isVisible = useAppSelector(selectVisible);
@@ -17,15 +19,10 @@ export function MainLayout() {
     dispatch(changeVisible(true));
   }
 
-  // マウント時に認証Check
-  useEffect(() => {
-    dispatch(checkAuthToken());
-  }, [dispatch])
-
   return(
     <>
       <div className={`min-h-screen ${bgCustom()}`} onClick={handleClickAnywhere}>
-        <div>
+        <div className={simpleBg ? '' : getBgImageClass(bgImage)}>
           <div className={visibleCalss}>
             <Header/>
           </div>
@@ -33,6 +30,7 @@ export function MainLayout() {
           <Outlet />
 
         </div>
+
       </div>
     </>
   )

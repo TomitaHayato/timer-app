@@ -28,10 +28,19 @@ export function TodoItemInfo({ todo, setIsEdit }: Props) {
             !todo.isCompleted && todo.deadline
             && <p className={`${deadlineColor(todo.deadline)} text-xs`}>{dayjs(todo.deadline).format('YYYY年 MM月DD日')}</p>
           }
+          {
+            todo.isCompleted && todo.completedAt
+            && <p className={`text-success text-xs`}>
+              完了日: {dayjs(todo.completedAt).format('YYYY年 MM月DD日')}
+            </p>
+          }
         </div>
         
         <div className="flex gap-4">
-          <TodoUpdateBtn setIsEdit={setIsEdit}/>
+          {
+            todo.isCompleted ||
+            <TodoUpdateBtn setIsEdit={setIsEdit}/>
+          }
           <TodoDeleteBtn id={todo.id} />
         </div>
       </li>

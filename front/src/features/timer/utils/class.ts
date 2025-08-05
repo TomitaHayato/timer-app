@@ -1,13 +1,9 @@
 import type { TimerMode } from "../types/timerType"
 
 export function modeTextColor(mode: TimerMode) {
-  switch (mode) {
-    case 'work':
-      return 'bg-gradient-to-tr from-blue-600 to-indigo-300 bg-clip-text text-transparent'
-      // return 'text-blue-700'
-    default:
-      return 'bg-gradient-to-tr from-yellow-600 to-yellow-300 bg-clip-text text-transparent'
-  }
+  if(mode === 'work') return "bg-gradient-to-tr from-sky-600 to-sky-400 bg-clip-text text-transparent"
+
+  return "bg-gradient-to-tr from-amber-600 to-amber-400 bg-clip-text text-transparent"
 }
 
 export function modeBorderColor(mode: TimerMode) {
@@ -32,7 +28,11 @@ export function modeBarColor(mode: TimerMode) {
 export function sceneTimerBgColor(scene: string) {
   switch (scene) {
     case 'wind_bell':
-      return 'bg-sky-100 opacity-85'
+      return 'bg-sky-100/85'
+    case 'summer':
+      return 'bg-green-200/80'
+    case 'Water':
+      return 'bg-sky-100/55'
     default:
       return ''
   }

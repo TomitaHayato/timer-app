@@ -6,6 +6,7 @@ export const selectSettingColumns = {
   restSec: true,
   longRestSec: true,
   workingSound: true,
+  bgImage: true,
 }
 
 export const selectUserColumns = {
@@ -19,6 +20,9 @@ export const selectRecordColumns = {
 }
 
 export const selectTodoColumns = {
+  id: true, 
   title: true,
   deadline: true,
+  isCompleted: true,
+  completedAt: true,
 }
