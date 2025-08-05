@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../reduxStore/hooks";
 import { devLog } from "../../utils/logDev";
 import { getRandomBgClass } from "../../utils/staticFiles/imagePathMap";
 import { openingEnd } from "./openingSlice";
+import { Title } from "../../components/Title";
 
 export function Opening() {
   devLog('Openingコンポーネント');
@@ -38,21 +39,25 @@ export function Opening() {
   }, [dispatch, isSessionLoading])
 
   return(
-    <div className="fixed w-full h-full top-0">
-      <div className={bgClass}>
-        <div className={
-          isVisible
-          ? "transition-opacity duration-1000 ease-in-out opacity-100"
-          : "transition-opacity duration-1000 ease-in-out opacity-0"
-        }>
-          <div className="pt-40">
-            <p className="text-center font-bold text-6xl glass w-fit mx-auto px-5 py-2 rounded-full text-pink-300">
-              Pompdoro
-              Timer
-            </p>
+    <>
+      <Title text={'Timer'}/>
+
+      <div className="fixed w-full h-full top-0">
+        <div className={bgClass}>
+          <div className={
+            isVisible
+            ? "transition-opacity duration-1000 ease-in-out opacity-100"
+            : "transition-opacity duration-1000 ease-in-out opacity-0"
+          }>
+            <div className="pt-40">
+              <p className="text-center font-bold text-6xl glass w-fit mx-auto px-5 py-2 rounded-full text-pink-300">
+                Pompdoro
+                Timer
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
