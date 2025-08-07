@@ -7,6 +7,8 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   // vitestの設定
   test: {
+    // https://vitest.dev/config/
+    environment: "happy-dom",
   },
 
   plugins: [
