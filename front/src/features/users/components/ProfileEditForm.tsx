@@ -34,7 +34,7 @@ export function ProfileEditForm({ setIsEdit }: Props) {
 
   return(
     <>
-      <div>
+      <div data-testid="profile-edit-form">
         <div className="flex justify-center items-center mb-8">
           <h3 className="text-xl font-semibold">プロフィール</h3>
           <button onClick={handleEditClick}><span className="btn text-gray-400 icon-[weui--previous-filled] size-6"></span></button>

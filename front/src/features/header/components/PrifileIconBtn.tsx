@@ -9,7 +9,7 @@ type Props = {
 export function ProfileIconBtn({ btnClass }: Props) {
   return(
     <>
-      <button className={btnClass} onClick={() => openModal('profile')}>
+      <button className={btnClass} onClick={() => openModal('profile')} data-testid="profile-modal-btn">
         <span className="icon-[line-md--account] size-6"></span>
       </button>
 

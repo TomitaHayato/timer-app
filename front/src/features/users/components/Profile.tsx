@@ -11,12 +11,12 @@ export function Profile() {
   if(!user) return;
 
   return(
-    <>
+    <div data-testid="profile">
       {
         isEdit
         ? <ProfileEditForm  setIsEdit={setIsEdit} />
         : <ProfileContent  setIsEdit={setIsEdit} />
       }
-    </>
+    </div>
   )
 }
