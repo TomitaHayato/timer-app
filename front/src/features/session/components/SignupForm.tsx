@@ -27,7 +27,7 @@ export function SignupForm() {
 
   return(
     <>
-      <fieldset className="fieldset rounded-box w-full p-4">
+      <fieldset className="fieldset rounded-box w-full p-4" data-testid="signup-form">
         <legend className="fieldset-legend text-2xl">Signup</legend>
 
         <form onSubmit={handleSubmit(onSubmit)}>

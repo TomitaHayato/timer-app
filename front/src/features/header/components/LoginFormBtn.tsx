@@ -10,7 +10,7 @@ type Props = {
 export const LoginFormBtn = ({ btnClass }: Props) => {
   return(
     <>
-      <button className={btnClass} onClick={() => openModal('login-form')}>
+      <button className={btnClass} onClick={() => openModal('login-form')} data-testid="login-form-modal-button">
         Login / Signup
       </button>
 

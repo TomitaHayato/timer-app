@@ -33,7 +33,7 @@ export function LoginForm() {
 
   return(
     <>
-      <fieldset className="fieldset rounded-box w-full p-4">
+      <fieldset className="fieldset rounded-box w-full p-4" data-testid="login-form">
         <legend className="fieldset-legend text-2xl">Login</legend>
 
         <form onSubmit={handleSubmit(onSubmit)}>
