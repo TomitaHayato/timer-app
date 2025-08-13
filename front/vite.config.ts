@@ -9,6 +9,8 @@ export default defineConfig({
   test: {
     // https://vitest.dev/config/
     environment: "happy-dom",
+    globals: true,
+    setupFiles: "./src/testSetup.ts"
   },
 
   plugins: [
