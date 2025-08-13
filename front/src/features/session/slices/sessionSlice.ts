@@ -113,8 +113,8 @@ export const signout = createAsyncThunk<
     await fetchWithTokenRefresh('/auth/signout', 'get');
     // 他のStateをリセット
     thunkAPI.dispatch(replaceSetting(defaultSetting()))
-    thunkAPI.dispatch(replaceRecords(defaultRecords))
-    thunkAPI.dispatch(replaceTodos(defaultTodos))
+    thunkAPI.dispatch(replaceRecords(defaultRecords()))
+    thunkAPI.dispatch(replaceTodos(defaultTodos()))
   } catch(err) {
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
     if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {

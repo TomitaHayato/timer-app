@@ -10,7 +10,7 @@ import { INVALID_REFRESH_TOKEN } from '../../utils/apiErrors/errorMessages';
 import { resetStateOfUser } from '../session/slices/sessionSlice';
 
 const initialState: TodosState = {
-  todos: defaultTodos,
+  todos: defaultTodos(),
   loading: false,
   error: null,
 }
@@ -117,7 +117,7 @@ const todosSlice = createSlice({
       state.todos = todos;
     },
     resetTodosState: (state: TodosState) => {
-      state.todos = defaultTodos;
+      state.todos = defaultTodos();
     },
   },
   extraReducers: builder => {

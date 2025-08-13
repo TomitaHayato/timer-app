@@ -9,7 +9,7 @@ import { INVALID_REFRESH_TOKEN } from "../../utils/apiErrors/errorMessages";
 import { resetStateOfUser } from "../session/slices/sessionSlice";
 
 const initialState: RecordsState = {
-  records: defaultRecords,
+  records: defaultRecords(),
   loading: false,
   error: null,
 }
@@ -58,7 +58,7 @@ const recordsSlice = createSlice({
       state.records.totalRecord = totalRecord;
     },
     resetRecordsState: (state: RecordsState) => {
-      state.records = defaultRecords;
+      state.records = defaultRecords();
     },
   },
   extraReducers(builder) {

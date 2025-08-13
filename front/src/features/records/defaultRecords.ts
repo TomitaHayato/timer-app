@@ -3,9 +3,11 @@ export const defaultRecord = {
   workCount: 0,
 }
 
-export const defaultRecords = {
-  dailyRecord: defaultRecord,
-  weeklyRecord: defaultRecord,
-  monthlyRecord: defaultRecord,
-  totalRecord: defaultRecord,
+export const defaultRecords = () => {
+  return {
+    dailyRecord: defaultRecord,
+    weeklyRecord: defaultRecord,
+    monthlyRecord: defaultRecord,
+    totalRecord: defaultRecord,
+  }
 }
