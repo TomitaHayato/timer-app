@@ -29,3 +29,4 @@ export const setupStore = (preloadedState?: Partial<RootState>) => configureStor
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+export type AppStore = ReturnType<typeof setupStore>
