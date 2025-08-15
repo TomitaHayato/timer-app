@@ -13,6 +13,8 @@ import { devLog } from "../../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
 import { fetchWithTokenRefresh } from "../../../utils/fetch/fetchWithTokenRefresh";
 import { INVALID_REFRESH_TOKEN } from "../../../utils/apiErrors/errorMessages";
+import type { UserData } from "../../../types/dataFromAPI";
+import type { TermsRecords } from "../../records/types/records";
 
 const initialState: SessionState = {
   user: null,
@@ -52,8 +54,8 @@ export const signin = createAsyncThunk<
 
       // 各スライスにデータを配分
       const setting = userData.setting || defaultSetting();
-      const records = recordsData || defaultRecords;
-      const todos = userData.todos || defaultTodos
+      const records = recordsData || defaultRecords();
+      const todos = userData.todos || defaultTodos()
 
       thunkAPI.dispatch(replaceSetting(setting))
       thunkAPI.dispatch(replaceRecords(records))
@@ -78,14 +80,14 @@ export const signup = createAsyncThunk<
   try {
     const res = await clientCredentials.post('/auth/signup', params);
     devLog('signupのres:', res);
-    const { userData, recordsData } = res.data;
-    if (!userData)  return thunkAPI.rejectWithValue('userData is null');
+    const { userData, recordsData }: { userData?: UserData, recordsData?: TermsRecords } = res.data;
+    if (!userData) return thunkAPI.rejectWithValue('userData is null');
 
     devLog('UserData:', userData)
     // 各スライスにデータを配分
     const setting = userData.setting || defaultSetting();
-    const records = recordsData || defaultRecords;
-    const todos = userData.todos || defaultTodos
+    const records = recordsData || defaultRecords();
+    const todos = userData.todos || defaultTodos()
 
     thunkAPI.dispatch(replaceSetting(setting))
     thunkAPI.dispatch(replaceRecords(records))

@@ -1,4 +1,5 @@
 import type { SessionState, User } from "../../../features/session/types/session"
+import { defaultSetting } from "../../../features/setting/defaultSetting"
 import type { Todo, Todos, TodosState } from "../../../features/todos/types/todoType"
 
 const _createDammyUser = (userStatus?: User): User => {
@@ -45,5 +46,14 @@ export const dammyTodosState = (): TodosState => {
     todos: _createDammyTodos(),
     loading: false,
     error: null,
+  }
+}
+
+export const userDataFromAPI = () => {
+  return {
+    name: "test",
+    email: "email@test.com",
+    setting: defaultSetting(),
+    todos: [],
   }
 }

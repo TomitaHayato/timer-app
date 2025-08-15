@@ -26,7 +26,7 @@ export const PasswordResetRequestForm = () => {
   }
 
   return(
-    <div className="py-8">
+    <div className="py-8" data-testid="password-reset-request-form">
       <p className="text-gray-300 mb-8">
         パスワードを再生成するアカウントのメールアドレスを入力してください。
         パスワードリセット用URLが送信されます
