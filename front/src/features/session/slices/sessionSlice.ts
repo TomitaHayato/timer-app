@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { AppDispatch, RootState } from "../../../reduxStore/store";
-import type { SessionState, SigninParams, SignupParams, User } from "../types/session";
+import type { SessionState, SigninParams, SignupParams, User } from "../../../types/session";
 import { clientCredentials } from "../../../utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { replaceSetting, resetSettingState } from "../../setting/Slices/settingSlice";
@@ -14,7 +14,7 @@ import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/
 import { fetchWithTokenRefresh } from "../../../utils/fetch/fetchWithTokenRefresh";
 import { INVALID_REFRESH_TOKEN } from "../../../utils/apiErrors/errorMessages";
 import type { UserData } from "../../../types/dataFromAPI";
-import type { TermsRecords } from "../../records/types/records";
+import type { TermsRecords } from "../../../types/records";
 
 const initialState: SessionState = {
   user: null,

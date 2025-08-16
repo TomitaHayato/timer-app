@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import type { Todo } from "../../types/todoType"
+import type { Todo } from "../../../../types/todoType"
 import { deadlineColor } from "../../../../utils/class";
 import { closeModal } from "../../../../utils/modelCtl";
 

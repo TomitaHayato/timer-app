@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import type { User } from "../../session/types/session";
+import type { User } from "../../../types/session";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { selectUser, updateUser } from "../../session/slices/sessionSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";

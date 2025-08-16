@@ -1,6 +1,6 @@
-import type { SessionState, User } from "../../../features/session/types/session"
+import type { SessionState, User } from "../../../types/session"
 import { defaultSetting } from "../../../features/setting/defaultSetting"
-import type { Todo, Todos, TodosState } from "../../../features/todos/types/todoType"
+import type { Todo, Todos, TodosState } from "../../../types/todoType"
 
 const _createDammyUser = (userStatus?: User): User => {
   return {

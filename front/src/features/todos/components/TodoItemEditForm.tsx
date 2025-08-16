@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import type { Todo, TodoAddParams } from "../types/todoType"
+import type { Todo, TodoAddParams } from "../../../types/todoType"
 import { useForm } from "react-hook-form"
 import { useEffect, useState } from "react"
 import { DayPicker } from "react-day-picker"

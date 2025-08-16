@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Measure } from "./Measure";
-import type { SettingParams } from "../types/settingType";
+import type { SettingParams } from "../../../types/settingType";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { replaceSetting, selectSetting, selectSettingState, updateSetting } from "../Slices/settingSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";

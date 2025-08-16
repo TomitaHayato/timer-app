@@ -2,7 +2,7 @@ import { useAppSelector } from "../../../reduxStore/hooks";
 import { bgColorClass, textColorClassOnGrayBg } from "../../../utils/class";
 import { secToJpFormat } from "../../../utils/secFormat";
 import { selectSimpleBg } from "../../display/visibleSlice";
-import type { Record } from "../types/records";
+import type { Record } from "../../../types/records";
 
 type Props = {
   record: Record,

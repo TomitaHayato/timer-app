@@ -4,7 +4,7 @@ import { screen } from "@testing-library/dom";
 import { cleanup } from "@testing-library/react";
 import { renderWithProvider } from "../../../utils/test/testingLibraryCustom";
 import { LoginForm } from "./LoginForm";
-import type { SessionState } from "../types/session";
+import type { SessionState } from "../../../types/session";
 import { userDataFromAPI } from "../../../utils/test/dammyData/dammyState";
 
 // axiosのMock化

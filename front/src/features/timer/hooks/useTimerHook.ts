@@ -6,7 +6,7 @@ import { modeChange, modeChangeForth, selectTimer, switchTimer } from "../timerS
 import { useSoundHowls } from "./soundSet";
 import { selectSetting } from "../../setting/Slices/settingSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
-import type { PostRecordParams } from "../../records/types/records";
+import type { PostRecordParams } from "../../../types/records";
 import { devLog } from "../../../utils/logDev";
 import { createRecord } from "../../records/recordsSlice";
 import { selectAuthStatus } from "../../session/slices/sessionSlice";

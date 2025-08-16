@@ -1,5 +1,5 @@
-import type { Setting } from "../features/setting/types/settingType";
-import type { Todos } from "../features/todos/types/todoType";
+import type { Setting } from "./settingType";
+import type { Todos } from "./todoType";
 
 export type UserData = {
   name: string,

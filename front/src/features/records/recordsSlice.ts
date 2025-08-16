@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { defaultRecords } from "./defaultRecords";
-import type { PostRecordParams, RecordsState, TermsRecords } from "./types/records";
+import type { PostRecordParams, RecordsState, TermsRecords } from "../../types/records";
 import type { AppDispatch, RootState } from "../../reduxStore/store";
 import { devLog } from "../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../utils/errorHandler/axiosError";

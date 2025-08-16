@@ -1,4 +1,4 @@
-import type { Todo } from "../types/todoType"
+import type { Todo } from "../../../types/todoType"
 import { memo, useState } from "react";
 import { TodoItemInfo } from "./TodoItemInfo";
 import { TodoItemEdit } from "./TodoItemEditForm";

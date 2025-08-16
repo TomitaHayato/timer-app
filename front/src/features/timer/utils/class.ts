@@ -1,4 +1,4 @@
-import type { TimerMode } from "../types/timerType"
+import type { TimerMode } from "../../../types/timerType"
 
 export function modeTextColor(mode: TimerMode) {
   if(mode === 'work') return "bg-gradient-to-tr from-sky-600 to-sky-400 bg-clip-text text-transparent"

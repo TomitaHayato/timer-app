@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { Todo } from "../../types/todoType"
+import type { Todo } from "../../../../types/todoType"
 import { Modal } from "../../../../components/Modal";
 import { openModal } from "../../../../utils/modelCtl";
 import { selectSortedTodos } from "../../todoSlice";

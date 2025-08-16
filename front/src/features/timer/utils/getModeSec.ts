@@ -1,4 +1,4 @@
-import type { ModeSecList, TimerMode } from "../types/timerType";
+import type { ModeSecList, TimerMode } from "../../../types/timerType";
 
 export const getModeSec =(mode: TimerMode, { workSec, restSec, longRestSec }: ModeSecList): number => {
   switch (mode) {

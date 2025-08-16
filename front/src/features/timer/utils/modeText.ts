@@ -1,4 +1,4 @@
-import type { TimerMode } from "../types/timerType";
+import type { TimerMode } from "../../../types/timerType";
 
 export const modeText = (mode: TimerMode) => {
   switch (mode) {

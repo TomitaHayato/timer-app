@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { Todo, TodoAddParams, Todos, TodosState } from './types/todoType'
+import type { Todo, TodoAddParams, Todos, TodosState } from '../../types/todoType'
 import type { AppDispatch, RootState } from '../../reduxStore/store';
 import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';

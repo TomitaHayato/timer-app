@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { Todo } from "../types/todoType";
+import type { Todo } from "../../../types/todoType";
 
 export function sortTodosByDeadline(todos: Todo[]): Todo[] {
   return [...todos].sort((a, b) => {

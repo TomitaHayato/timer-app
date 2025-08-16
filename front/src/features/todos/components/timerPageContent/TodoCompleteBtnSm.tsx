@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../../../reduxStore/hooks";
 import { toastErrorRB, toastSuccessRB } from "../../../../utils/toast";
 import { selectTodos, updateTodoIsCompleted } from "../../todoSlice";
-import type { Todo } from "../../types/todoType";
+import type { Todo } from "../../../../types/todoType";
 
 type Props = {
   id: string,

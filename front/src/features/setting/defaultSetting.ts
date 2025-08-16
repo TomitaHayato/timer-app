@@ -1,4 +1,4 @@
-import type { Setting } from "./types/settingType";
+import type { Setting } from "../../types/settingType";
 
 export const defaultSettingDev = (): Setting => {
   return {

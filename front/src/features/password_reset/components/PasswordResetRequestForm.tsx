@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { toastSuccessRB } from "../../../utils/toast";
 import { closeModal } from "../../../utils/modelCtl";
 import { devLog } from "../../../utils/logDev";
-import type { passwordForgetParams } from "../types/password_reset";
+import type { passwordForgetParams } from "../../../types/password_reset";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { fetchPasswordResetRequest, selectPasswordResetLoading } from "../redux/passwordResetSlice";
 

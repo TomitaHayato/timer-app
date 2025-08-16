@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import FormErrorText from "./FormErrorText"
-import type { SigninParams } from "../types/session";
+import type { SigninParams } from "../../../types/session";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { selectSessionError, selectSessionLoading, signin } from "../slices/sessionSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";

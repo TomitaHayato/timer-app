@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import type { TodoAddParams } from "../types/todoType"
+import type { TodoAddParams } from "../../../types/todoType"
 import { devLog } from "../../../utils/logDev"
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast"
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks"

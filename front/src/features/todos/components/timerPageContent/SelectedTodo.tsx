@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import type { Todo } from "../../types/todoType"
+import type { Todo } from "../../../../types/todoType"
 import { openModal } from "../../../../utils/modelCtl"
 import { useEffect } from "react"
 import { deadlineColor } from "../../../../utils/class"

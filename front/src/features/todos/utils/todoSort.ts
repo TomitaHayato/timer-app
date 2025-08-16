@@ -1,5 +1,5 @@
 import { diffDate } from "../../../utils/time";
-import type { Todos } from "../types/todoType";
+import type { Todos } from "../../../types/todoType";
 
 export const sortTodosDescByCompletedAt = (todos: Todos) => {
   const sortedTodos = todos.sort((a, b) => {
