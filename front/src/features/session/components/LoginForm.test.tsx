@@ -23,9 +23,7 @@ const loadingSessionState: SessionState = {
 }
 
 describe("LoginForm.tsx", () => {
-  afterEach(() => {
-    cleanup();
-  });
+  afterEach(() => cleanup());
 
   describe("フォームのUI表示", () => {
     test("必須バリデーションが機能している", async() => {
@@ -79,8 +77,8 @@ describe("LoginForm.tsx", () => {
       await user.type(screen.getByTestId("login-password-input"), "passwordForTest");
       await user.click(screen.getByText("ログイン"));
 
-      expect(screen.queryByText("example@email.com")).not.toBeInTheDocument();
-      expect(screen.queryByText("passwordForTest")).not.toBeInTheDocument();
+      expect(screen.getByTestId("login-email-input")).toHaveValue();
+      expect(screen.getByTestId("login-password-input")).toHaveValue();
       expect(screen.queryByText("ログインに失敗しました")).not.toBeInTheDocument();
     });
 
