@@ -65,6 +65,13 @@ export const bgColorClass = (simpleBg: boolean) => {
   : 'bg-gray-100/75'
 }
 
+export const containerGrayClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'p-2'
+  : 'bg-gray-100/75 rounded-xl p-2'
+}
+
+
 export const textColorClass = (simpleBg: boolean) => {
   return simpleBg
   ? 'text-gray-400 font-semibold'
