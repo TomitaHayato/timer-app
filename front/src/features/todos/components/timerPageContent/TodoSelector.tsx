@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { Todo } from "../../../../types/todoType"
 import { Modal } from "../../../../components/Modal";
 import { openModal } from "../../../../utils/modelCtl";
@@ -15,6 +15,10 @@ export function TodoSelector() {
   const isAuth = useAppSelector(selectAuthStatus);
   const [ todo, setTodo ] = useState<Todo | null>(null);
   const simpleBg = useAppSelector(selectSimpleBg);
+
+  useEffect(() => {
+    if(!isAuth) setTodo(null);
+  }, [isAuth])
 
   return(
     <>
