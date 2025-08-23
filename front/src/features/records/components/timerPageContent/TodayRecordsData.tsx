@@ -9,7 +9,7 @@ export function TodayRecordsData() {
         <TodayRecordStats />
       </div>
 
-      <div>
+      <div className="mt-2">
         <TodayTodos />
       </div>
     </>

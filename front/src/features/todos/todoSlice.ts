@@ -8,6 +8,7 @@ import { sortTodosByDeadline } from './utils/todosSort';
 import { fetchWithTokenRefresh } from '../../utils/fetch/fetchWithTokenRefresh';
 import { INVALID_REFRESH_TOKEN } from '../../utils/apiErrors/errorMessages';
 import { resetStateOfUser } from '../session/slices/sessionSlice';
+import { filterByDeadline } from './utils/todosFilter';
 
 const initialState: TodosState = {
   todos: defaultTodos(),
@@ -179,6 +180,7 @@ export const selectTodos = (state: RootState) => state.todos;
 export const selectSortedTodos = (state: RootState) => sortTodosByDeadline(state.todos.todos);
 export const selectTodosCompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => todo.isCompleted)
 export const selectTodosUncompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => !todo.isCompleted)
+export const selectTodayTodos = (state: RootState) => filterByDeadline(state.todos.todos, new Date());
 
 export const {
   replaceTodos,
