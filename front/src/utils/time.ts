@@ -19,5 +19,5 @@ export function thisMonthDate() {
 
 // 日付同士の差を日数単位で返す（A > Bの場合、正）
 export const diffDate = (dateA: Date, dateB: Date) => {
-  return dayjs(dateA).diff(dateB, 'date');
+  return dayjs(dateA).diff(dateB, 'd');
 }
