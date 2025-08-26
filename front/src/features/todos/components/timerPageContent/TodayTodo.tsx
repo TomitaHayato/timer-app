@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Todo } from "../../../../types/todoType"
 import { TodayTodoInfo } from "./TodayTodoInfo";
-import { TodoItemEdit } from "../TodoItemEditForm";
+import { TodoItemEditForm } from "../TodoItemEditForm";
 
 type Props = {
   todo: Todo,
@@ -14,7 +14,7 @@ export function TodayTodo({ todo }: Props) {
     <li className="mb-2">
       {
         isEdit
-        ? <TodoItemEdit todo={todo} setIsEdit={setIsEdit}/>
+        ? <TodoItemEditForm todo={todo} setIsEdit={setIsEdit}/>
         : <TodayTodoInfo todo={todo} setIsEdit={setIsEdit} />
       }
     </li>

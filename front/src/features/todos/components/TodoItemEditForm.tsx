@@ -13,7 +13,7 @@ type Props = {
 }
 
 // Todoの編集モード
-export function TodoItemEdit({ todo, setIsEdit }: Props) {
+export function TodoItemEditForm({ todo, setIsEdit }: Props) {
   const dispatch = useAppDispatch();
   // 日付はステートで管理
   const [deadline, setDeadline] = useState<Date | undefined>();
@@ -39,7 +39,7 @@ export function TodoItemEdit({ todo, setIsEdit }: Props) {
     }
     try {
       await dispatch(updateTodo({
-        id: todo.id,
+        id: todo.id, // TODO: ここもTodoAddParamsに追加する
         params,
       }));
       toastSuccessRB('Todoを更新しました');
@@ -51,17 +51,12 @@ export function TodoItemEdit({ todo, setIsEdit }: Props) {
 
   return(
     <>
-      <li className="list-row items-center px-2 py-2 mb-1 text-sm bg-gray-600">
-        <div>
-          <span className="icon-[line-md--confirm-circle-filled-to-circle-filled-transition] size-5 text-pink-400"></span>
-        </div>
-
-        <div>
+      <li className="flex justify-center gap-2 items-center px-2 py-2 mb-1 text-sm bg-gray-600">
+        <div className="min-w-10/12 text-center">
           <form onSubmit={handleSubmit(fetchUpdateTodo)}>
             { errors?.title?.message && <p className="text-xs text-error">{errors.title.message}</p> }
-            <input
-              type="text"
-              className="input input-sm"
+            <textarea
+              className="textarea"
               { ...register('title', { required: '※タイトルを入力してください' }) }/>
 
             <div className="flex justify-start mt-0.5">
@@ -78,19 +73,14 @@ export function TodoItemEdit({ todo, setIsEdit }: Props) {
               </div>
             </div>
 
-            <input type="submit" className="mt-2 btn btn-wide btn-sm" value='更新する'/>
+            <input type="submit" className="my-2 btn btn-primary btn-wide btn-sm" value='更新する'/>
           </form>
         </div>
 
         
-        <div className="flex gap-4">
-          <button className="btn btn-xs btn-outline btn-square" onClick={() => setIsEdit(false)}>
-            <span className="icon-[weui--previous-filled] size-5"></span>
-          </button>
-
-          {/* DELETEボタンの場所の穴埋め */}
-          <span className="size-5"></span>
-        </div>
+        <button className="btn btn-xs btn-outline btn-square" onClick={() => setIsEdit(false)}>
+          <span className="icon-[weui--previous-filled] size-5"></span>
+        </button>
       </li>
     </>
   )
