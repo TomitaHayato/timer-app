@@ -4,7 +4,7 @@ import type { AppDispatch, RootState } from '../../reduxStore/store';
 import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';
 import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axiosError';
-import { sortTodosByDeadline } from './utils/todosSort';
+import { sortTodosByDeadline, sortTodosByIsCompleted } from './utils/todosSort';
 import { fetchWithTokenRefresh } from '../../utils/fetch/fetchWithTokenRefresh';
 import { INVALID_REFRESH_TOKEN } from '../../utils/apiErrors/errorMessages';
 import { resetStateOfUser } from '../session/slices/sessionSlice';
@@ -180,7 +180,7 @@ export const selectTodos = (state: RootState) => state.todos;
 export const selectSortedTodos = (state: RootState) => sortTodosByDeadline(state.todos.todos);
 export const selectTodosCompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => todo.isCompleted)
 export const selectTodosUncompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => !todo.isCompleted)
-export const selectTodayTodos = (state: RootState) => filterByDeadline(state.todos.todos, new Date());
+export const selectTodayTodos = (state: RootState) => sortTodosByIsCompleted(filterByDeadline(state.todos.todos, new Date()));
 
 export const {
   replaceTodos,
