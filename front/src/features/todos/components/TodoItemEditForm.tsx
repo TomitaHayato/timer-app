@@ -57,7 +57,13 @@ export function TodoItemEditForm({ todo, setIsEdit }: Props) {
             { errors?.title?.message && <p className="text-xs text-error">{errors.title.message}</p> }
             <textarea
               className="textarea"
-              { ...register('title', { required: '※タイトルを入力してください' }) }/>
+              { ...register('title', {
+                required: '※タイトルを入力してください',
+                maxLength: {
+                  value: 255,
+                  message: "255文字以内で入力してください",
+                }
+              })}/>
 
             <div className="flex justify-start mt-0.5">
               <button type="button" popoverTarget="rdp-popover-edit" className="input input-sm px-6 rounded-xl" style={{ anchorName: "--rdp" } as React.CSSProperties}>
