@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import type { Todo, TodoAddParams } from "../../../types/todoType"
+import type { Todo, TodoAddParams, TodoUpdateParams } from "../../../types/todoType"
 import { useForm } from "react-hook-form"
 import { useEffect, useState } from "react"
 import { DayPicker } from "react-day-picker"
@@ -33,15 +33,13 @@ export function TodoItemEditForm({ todo, setIsEdit }: Props) {
   }, [todo, reset])
 
   const fetchUpdateTodo = async(data: { title: string }) => {
-    const params: TodoAddParams = {
+    const params: TodoUpdateParams = {
       ...data,
+      id: todo.id,
       deadline,
     }
     try {
-      await dispatch(updateTodo({
-        id: todo.id, // TODO: ここもTodoAddParamsに追加する
-        params,
-      }));
+      await dispatch(updateTodo({ params }));
       toastSuccessRB('Todoを更新しました');
       setIsEdit(false)
     } catch {
