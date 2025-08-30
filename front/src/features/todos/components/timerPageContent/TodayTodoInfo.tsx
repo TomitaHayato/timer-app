@@ -13,7 +13,7 @@ type Props = {
 export function TodayTodoInfo({ todo, setIsEdit }: Props) {
   return(
     <>
-      <div className="items-center px-2 py-1 text-sm bg-gray-400 rounded-xl flex gap-2 justify-between w-60">
+      <li className="items-center px-2 py-1 mb-2 text-sm bg-gray-400 rounded-xl flex gap-2 justify-between w-60">
         {
           todo.isCompleted
           ? <TodoRebornBtn id={todo.id} />
@@ -37,7 +37,7 @@ export function TodayTodoInfo({ todo, setIsEdit }: Props) {
           }
           <TodoDeleteBtn id={todo.id} />
         </div>
-      </div>
+      </li>
     </>
   )
 }

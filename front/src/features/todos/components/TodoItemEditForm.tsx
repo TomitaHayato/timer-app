@@ -59,7 +59,7 @@ export function TodoItemEditForm({ todo, setIsEdit }: Props) {
                 }
               })}/>
 
-            <div className="flex justify-start mt-0.5">
+            <div className="mt-0.5">
               <Controller
                 name="deadline"
                 control={control}

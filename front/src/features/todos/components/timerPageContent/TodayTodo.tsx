@@ -11,12 +11,12 @@ export function TodayTodo({ todo }: Props) {
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   return(
-    <li className="mb-2">
+    <>
       {
         isEdit
         ? <TodoItemEditForm todo={todo} setIsEdit={setIsEdit}/>
         : <TodayTodoInfo todo={todo} setIsEdit={setIsEdit} />
       }
-    </li>
+    </>
   )
 }
