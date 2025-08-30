@@ -1,11 +1,10 @@
-import dayjs from "dayjs"
 import type { Todo, TodoAddParams, TodoUpdateParams } from "../../../types/todoType"
-import { useForm } from "react-hook-form"
-import { useEffect, useState } from "react"
-import { DayPicker } from "react-day-picker"
+import { Controller, useForm } from "react-hook-form"
+import { useEffect } from "react"
 import { useAppDispatch } from "../../../reduxStore/hooks"
 import { updateTodo } from "../todoSlice"
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast"
+import { DayPickerForm } from "./DayPickerForm"
 
 type Props = {
   todo: Todo,
@@ -15,28 +14,25 @@ type Props = {
 // Todoの編集モード
 export function TodoItemEditForm({ todo, setIsEdit }: Props) {
   const dispatch = useAppDispatch();
-  // 日付はステートで管理
-  const [deadline, setDeadline] = useState<Date | undefined>();
 
   const {
+    control,
     register,
     formState: { errors },
     reset,
-    handleSubmit
+    handleSubmit,
   } = useForm<TodoAddParams>({
     defaultValues: { title: '' }
   });
 
   useEffect(() => {
     reset({ title: todo.title });
-    setDeadline(todo.deadline);
   }, [todo, reset])
 
   const fetchUpdateTodo = async(data: { title: string }) => {
     const params: TodoUpdateParams = {
       ...data,
       id: todo.id,
-      deadline,
     }
     try {
       await dispatch(updateTodo({ params }));
@@ -64,17 +60,13 @@ export function TodoItemEditForm({ todo, setIsEdit }: Props) {
               })}/>
 
             <div className="flex justify-start mt-0.5">
-              <button type="button" popoverTarget="rdp-popover-edit" className="input input-sm px-6 rounded-xl" style={{ anchorName: "--rdp" } as React.CSSProperties}>
-                {deadline ? dayjs(deadline).format('YYYY年 MM月DD日') : "Todoの期限を指定"}
-              </button>
-
-              <div popover="auto" id="rdp-popover-edit" className="dropdown" style={{ positionAnchor: "--rdp" } as React.CSSProperties}>
-                <DayPicker
-                  className="react-day-picker text-base"
-                  mode="single"
-                  selected={deadline}
-                  onSelect={setDeadline} />
-              </div>
+              <Controller
+                name="deadline"
+                control={control}
+                render={({ field }) => (
+                  <DayPickerForm field={field} />
+                )}
+              />
             </div>
 
             <input type="submit" className="my-2 btn btn-primary btn-wide btn-sm" value='更新する'/>
