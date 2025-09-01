@@ -13,5 +13,5 @@ export const deadlineText = (deadline: Date): string => {
 
 export const selectedTodoClass = (simpleBg: boolean) => {
   if(simpleBg) return "bg-gray-600 rounded-xl shadow-xl";
-  return "bg-gray-100/60 text-gray-800 rounded-xl shadow-xl";
+  return "bg-gray-100/70 text-gray-800 rounded-xl shadow-xl";
 }

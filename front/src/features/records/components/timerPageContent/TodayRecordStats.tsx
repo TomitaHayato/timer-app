@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../../../reduxStore/hooks";
-import { containerGrayClass, textColorClass } from "../../../../utils/class";
+import { containerGrayClass, statTitleColorClass } from "../../../../utils/class";
 import { todayDate } from "../../../../utils/time";
 import { selectSimpleBg } from "../../../display/visibleSlice";
 import { selectAuthStatus } from "../../../session/slices/sessionSlice";
@@ -15,7 +15,7 @@ export function TodayRecordStats() {
     <>
       <div className={`${containerGrayClass(simpleBg)}`}>
         <div className="mb-2">
-          <h3 className={`text-center ${textColorClass(simpleBg)}`}>今日の記録 {todayDate()}</h3>
+          <h3 className={`text-center ${statTitleColorClass(simpleBg)}`}>今日の記録 {todayDate()}</h3>
         </div>
         {
           isAuth
