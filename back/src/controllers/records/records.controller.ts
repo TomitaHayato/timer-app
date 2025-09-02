@@ -25,13 +25,13 @@ export const recordsIndex = async(req: Request, res: Response, next: NextFunctio
 
 
 // 作成処理
-export const postRecord = async(req: Request, res: Response, next: NextFunction) => {
+export const postRecord = async(req: Request, res: Response) => {
   const userId = getUserIdFromRequest(req, res);
   // リクエストからパラメータを取得
   const params = getRequestBody<postRecordParams>(req, res);
 
   // 作成処理
-  await dbQueryHandler(createRecord, { userId, params });
+  await dbQueryHandler(createRecord, userId, params);
   // 最新状態を返却（最新状態の取得時に、指定された期間はリセットされる）
   const records = await getRecordsFromDB(userId, 0, 0, 0);
   res.status(201).json(records);

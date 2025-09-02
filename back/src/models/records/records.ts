@@ -4,9 +4,7 @@ import { devLog } from "../../utils/dev/devLog";
 import dayjs from 'dayjs'
 import { summarizeRecords } from "./utils/summarizeRecords";
 
-export const createRecord = async(prisma: PrismaClient, queryInfo: { userId: string, params: postRecordParams }) => {
-  const { userId, params } = queryInfo;
-
+export const createRecord = async(prisma: PrismaClient, userId: string, params: postRecordParams) => {
   const newRecord = await prisma.record.create({
     data: {
       userId,
