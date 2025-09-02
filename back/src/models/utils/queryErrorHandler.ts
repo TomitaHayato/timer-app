@@ -3,15 +3,13 @@ import { devLog } from "../../utils/dev/devLog";
 
 const prisma = new PrismaClient();
 
-type QueryArgs = {} | string | undefined
-
-// DBクエリ処理をエラーハンドラーでラップする（引数は[ オブジェクト１つ ]または[ 文字列 ]のみを想定）
-export const dbQueryHandler = async < T, Args extends QueryArgs = undefined >(
-  queryFn: (prisma: PrismaClient, args: Args) => Promise<T>,
-  args: Args
+// DBクエリ処理をエラーハンドラーでラップする
+export const dbQueryHandler = async < T, Args extends unknown[] >(
+  queryFn: (prisma: PrismaClient, ...args: Args) => Promise<T>,
+  ...args: Args
 ): Promise<T> => {
   try {
-    return await queryFn(prisma, args);
+    return await queryFn(prisma, ...args);
   } catch(err) {
     devLog(err)
     throw err;
