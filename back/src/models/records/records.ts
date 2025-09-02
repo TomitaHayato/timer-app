@@ -46,9 +46,7 @@ const getRecordsByTerms = async(prisma: PrismaClient, userId: string, start: Dat
 }
 
 // 指定された日の記録を取得
-export const getRecordsByDate = async(prisma: PrismaClient, queryInfo: { userId: string, daysAgo: number }) => {
-  const { userId, daysAgo } = queryInfo;
-
+export const getRecordsByDate = async(prisma: PrismaClient, userId: string, daysAgo: number) => {
   const targetDay = dayjs().subtract(daysAgo, 'd'); // 何日前のデータが欲しいか
 
   const start = targetDay.startOf('day').toDate()
@@ -57,9 +55,7 @@ export const getRecordsByDate = async(prisma: PrismaClient, queryInfo: { userId:
 }
 
 // 指定された週の記録を取得
-export const getRecordsByWeek = async(prisma: PrismaClient, queryInfo: { userId: string, weeksAgo: number }) => {
-  const { userId, weeksAgo } = queryInfo;
-
+export const getRecordsByWeek = async(prisma: PrismaClient, userId: string, weeksAgo: number) => {
   const targetWeek = dayjs().subtract(weeksAgo, 'w');
 
   const start = targetWeek.startOf('week').toDate()
@@ -68,9 +64,7 @@ export const getRecordsByWeek = async(prisma: PrismaClient, queryInfo: { userId:
 }
 
 // 指定された月の記録を取得
-export const getRecordsByMonth = async(prisma: PrismaClient, queryInfo: { userId: string, monthsAgo: number }) => {
-  const { userId, monthsAgo } = queryInfo;
-
+export const getRecordsByMonth = async(prisma: PrismaClient, userId: string, monthsAgo: number) => {
   const targetMonth = dayjs().subtract(monthsAgo, 'm');
 
   const start = targetMonth.startOf('month').toDate()
