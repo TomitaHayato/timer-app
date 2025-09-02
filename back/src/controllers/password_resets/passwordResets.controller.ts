@@ -30,10 +30,11 @@ export const sendEmailForPasswordReset = async(req: Request, res: Response, next
     // UserのPasswordResetTokenレコードを作成
     const token = randomUUID();
     const hashedToken = await dataHash(token);
-    const tokenInDB = await dbQueryHandler(createPasswordResetTokenByUserId, {
-      userId: user.id,
+    const tokenInDB = await dbQueryHandler(
+      createPasswordResetTokenByUserId,
+      user.id,
       hashedToken,
-    });
+    );
 
     // メール送信
     const urlParams = `?token=${token}&id=${tokenInDB.id}`;
@@ -88,7 +89,7 @@ export const resetPassword = async(req: Request, res: Response, next: NextFuncti
 
     // パスワードリセット処理
     const hashedPassword = await dataHash(password);
-    await dbQueryHandler(updateUserPasswordAndDeleteResetToken, { userId: tokenInDB.userId, hashedPassword });
+    await dbQueryHandler(updateUserPasswordAndDeleteResetToken, tokenInDB.userId, hashedPassword);
 
     devLog('パスワード更新完了');
     res.status(200).json('パスワードを更新しました');
