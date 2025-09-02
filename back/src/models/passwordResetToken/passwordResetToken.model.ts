@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
 import { PrismaClient } from "../../../generated/prisma"
 import { devLog } from "../../utils/dev/devLog";
-import { dbQueryHandler } from "../utils/errorHandler";
+import { dbQueryHandler } from "../utils/queryErrorHandler";
 import { checkExpire } from "../../utils/date";
 import { hashCompare } from "../../utils/dataHash";
-import { updateUserPassword } from "../users/users";
 
 export const createPasswordResetTokenByUserId = async(prisma: PrismaClient, queryInfo: { userId: string, hashedToken: string }) => {
   const { userId, hashedToken } = queryInfo;

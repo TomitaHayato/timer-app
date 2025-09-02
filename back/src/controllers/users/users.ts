@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { getUserIdFromRequest } from "../utils/getUserId";
 import { deleteUserById, updateUser } from "../../models/users/users";
-import { dbQueryHandler } from "../../models/utils/errorHandler";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie } from "../../utils/jwt";
 import { clearRefreshTokenFromCookie } from "../../utils/refreshToken";
 import { devLog } from "../../utils/dev/devLog";

@@ -1,5 +1,5 @@
 import { getRecordsByDate, getRecordsByMonth, getRecordsByWeek, getTotalRecords } from "../models/records/records";
-import { dbQueryHandler } from "../models/utils/errorHandler";
+import { dbQueryHandler } from "../models/utils/queryErrorHandler";
 
 export const getRecordsFromDB = async(userId: string, daysAgo: number, weeksAgo: number, monthsAgo: number) => {
   const dailyRecord = await dbQueryHandler(getRecordsByDate, { userId, daysAgo });

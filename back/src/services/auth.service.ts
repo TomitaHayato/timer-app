@@ -1,5 +1,5 @@
 import { getUserWithRelation } from "../models/users/users";
-import { dbQueryHandler } from "../models/utils/errorHandler";
+import { dbQueryHandler } from "../models/utils/queryErrorHandler";
 import { getRecordsFromDB } from "./records.service";
 
 export const getUserDataSet = async(userId: string) => {

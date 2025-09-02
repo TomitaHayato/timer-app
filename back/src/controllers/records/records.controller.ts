@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { dbQueryHandler } from "../../models/utils/errorHandler";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createRecord } from "../../models/records/records";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserIdFromRequest } from "../utils/getUserId";

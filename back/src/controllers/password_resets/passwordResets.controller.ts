@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import { getRequestBody } from "../utils/getRequestBody"
 import { emailForPasswordReset, passwordResetParams } from "../../types/passwordResetToken";
-import { dbQueryHandler } from "../../models/utils/errorHandler";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { getUserByEmail } from "../../models/users/users";
 import { randomUUID } from "crypto";
 import { dataHash } from "../../utils/dataHash";

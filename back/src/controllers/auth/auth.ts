@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import { createUserWithRelation, getUserByEmail, getUserWithRelation } from "../../models/users/users";
 import { dataHash, hashCompare } from "../../utils/dataHash";
-import { dbQueryHandler } from "../../models/utils/errorHandler";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";

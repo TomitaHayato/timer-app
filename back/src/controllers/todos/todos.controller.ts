@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { dbQueryHandler } from "../../models/utils/errorHandler";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createTodo, deleteTodo, getTodoById, getUserTodos, updateTodo, updateTodoStatus } from "../../models/todos/todos";
 import { createTodoParams, updateTodoParams } from "../../types/todo";
 import { isEmptyObj } from "../../utils/object";

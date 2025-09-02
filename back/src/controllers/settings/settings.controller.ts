@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { dbQueryHandler } from "../../models/utils/errorHandler";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createSetting, getSettingByUserId, updateSetting } from "../../models/settings/settings";
 import { isEmptyObj } from "../../utils/object";
 import { PostSettingParams } from "../../types/setting";
