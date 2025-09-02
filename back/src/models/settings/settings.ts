@@ -3,9 +3,7 @@ import { PostSettingParams, UpdateSettingParams } from "../../types/setting";
 import { devLog } from "../../utils/dev/devLog";
 import { selectSettingColumns } from "../utils/selectColumns";
 
-export const createSetting = async(prisma: PrismaClient, queryInfo: { userId: string, params: PostSettingParams }) => {
-  const { userId, params } = queryInfo;
-
+export const createSetting = async(prisma: PrismaClient, userId: string, params: PostSettingParams) => {
   const newSettig = await prisma.setting.create({
     data: {
       userId,
@@ -25,9 +23,7 @@ export const getSettingByUserId = async(prisma: PrismaClient, userId: string) =>
   })
 }
 
-export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: string, params: UpdateSettingParams }) => {
-  const { userId, params } = queryInfo;
-
+export const updateSetting = async(prisma: PrismaClient, userId: string, params: UpdateSettingParams) => {
   const newSettig = await prisma.setting.update({
     where: {
       userId,
