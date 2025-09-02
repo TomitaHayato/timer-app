@@ -5,8 +5,7 @@ import { authRefreshTokenSelect } from "./utils/selectOption";
 import { randomUUID } from "crypto";
 
 // userIdとtokenからレコードを取得
-export const getRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: string, token: string }) => {
-  const { userId, token } = queryInfo;
+export const getRefreshToken = async(prisma: PrismaClient, userId: string, token: string) => {
   const refreshToken = prisma.authRefreshToken.findUnique({
     select: authRefreshTokenSelect(),
     where: {
@@ -18,8 +17,7 @@ export const getRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: 
 }
 
 // userIdとtokenからレコードを取得
-export const getRefreshTokenByUserId = async(prisma: PrismaClient, queryInfo: { userId: string }) => {
-  const { userId } = queryInfo;
+export const getRefreshTokenByUserId = async(prisma: PrismaClient, userId: string) => {
   const refreshToken = prisma.authRefreshToken.findUnique({
     select: authRefreshTokenSelect(),
     where: {
@@ -45,9 +43,8 @@ export const createRefreshToken = async(prisma: PrismaClient, queryInfo: { userI
 }
 
 // 既存のレコードがあれば更新、なければ作成
-export const createOrUpdateRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: string }) => {
-  const { userId } = queryInfo;
-  const tokenNow = await getRefreshTokenByUserId(prisma, { userId });
+export const createOrUpdateRefreshToken = async(prisma: PrismaClient, userId: string) => {
+  const tokenNow = await getRefreshTokenByUserId(prisma, userId);
 
   if(!tokenNow) {
     // 既存のトークンがない場合、作成
@@ -56,14 +53,13 @@ export const createOrUpdateRefreshToken = async(prisma: PrismaClient, queryInfo:
   } else {
     // 既存のトークンがある場合、更新
     const newToken = randomUUID();
-    const token = await updateRefreshToken(prisma, { userId, newToken });
+    const token = await updateRefreshToken(prisma, userId, newToken);
     return token;
   }
 }
 
 // userIdで指定したrefreshTokenのtoken, expiresAtを更新
-export const updateRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: string, newToken: string }) => {
-  const { userId, newToken } = queryInfo;
+export const updateRefreshToken = async(prisma: PrismaClient, userId: string, newToken: string) => {
   const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定
   const updatedToken = prisma.authRefreshToken.update({
     where: {
@@ -78,8 +74,7 @@ export const updateRefreshToken = async(prisma: PrismaClient, queryInfo: { userI
   return updatedToken;
 }
 
-export const deleteRefreshToken = async(prisma: PrismaClient, queryInfo: { userId: string }) => {
-  const { userId } = queryInfo;
+export const deleteRefreshToken = async(prisma: PrismaClient, userId: string) => {
   await prisma.authRefreshToken.delete({
     where: { userId },
   });

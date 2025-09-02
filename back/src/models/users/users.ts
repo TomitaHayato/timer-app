@@ -3,7 +3,7 @@ import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { UserPostParams, UserUpdateParams } from "../../types/user";
 import { devLog } from "../../utils/dev/devLog";
-import { selectRecordColumns, selectSettingColumns, selectTodoColumns, selectUserColumns } from "../utils/selectColumns";
+import { selectRecordColumns, selectSettingColumns, selectTodoColumns } from "../utils/selectColumns";
 import dayjs from "dayjs";
 import { dataHash } from "../../utils/dataHash";
 
@@ -67,7 +67,7 @@ export const createUserWithRelation = async(prisma: PrismaClient, params: UserPo
   const token = randomUUID();
   const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定
   // 作成処理
-  const newRecord = await prisma.user.create({
+  const newUser = await prisma.user.create({
     data: {
       ...params,
       setting: {
@@ -84,9 +84,9 @@ export const createUserWithRelation = async(prisma: PrismaClient, params: UserPo
     }
   });
   // 作成したレコードを返す
-  devLog('作成されたUserと関連:', newRecord);
-  const newRecords = await prisma.user.findUnique({ where: params });
-  return newRecords;
+  devLog('作成されたUserと関連:', newUser);
+  const createdUser = await prisma.user.findUnique({ where: params });
+  return createdUser;
 }
 
 export const updateUser = async(prisma: PrismaClient, queryInfo: { params: UserUpdateParams, userId: string }) => {

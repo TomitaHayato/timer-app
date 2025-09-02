@@ -29,7 +29,7 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
     devLog('作成されたUser：', newUser);
     if(!newUser) throw new Error();
     // 作成したリフレッシュトークンを取得
-    const authRefreshToken = await dbQueryHandler(getRefreshTokenByUserId, { userId: newUser.id });
+    const authRefreshToken = await dbQueryHandler(getRefreshTokenByUserId, newUser.id);
     if(!authRefreshToken) throw new Error();
 
     // リフレッシュトークンとアクセストークンをCookieにセット
@@ -59,7 +59,7 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     // hashedPasswordカラムとpasswordのハッシュを比較
     if (await hashCompare(password, user.hashedPassword)) {
       // refreshTokenを生成
-      const authRefreshToken = await dbQueryHandler(createOrUpdateRefreshToken, { userId: user.id });
+      const authRefreshToken = await dbQueryHandler(createOrUpdateRefreshToken, user.id);
       // リフレッシュトークンとアクセストークンをCookieにセット
       setRefreshTokenInCookie(res, authRefreshToken.token);
       setJwtInCookie(res, user.id);
@@ -92,7 +92,7 @@ export const signOut = async(req: Request, res: Response, next: NextFunction) =>
 
     clearJwtCookie(res);
     clearRefreshTokenFromCookie(res);
-    await dbQueryHandler(deleteRefreshToken, { userId });
+    await dbQueryHandler(deleteRefreshToken, userId);
 
     res.status(200).json('ログアウトしました');
   } catch(err) {
@@ -154,7 +154,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return
     }
     // DBからリフレッシュトークンの状態を取得
-    const refreshTokenInDB = await dbQueryHandler(getRefreshToken, { userId, token: refreshToken });
+    const refreshTokenInDB = await dbQueryHandler(getRefreshToken, userId, refreshToken);
     // リフレッシュトークンがDBにあるかどうか
     if (!refreshTokenInDB) {
       devLog('tokensRefreshコントローラ', 'refreshTokenがDBにない');
@@ -165,13 +165,13 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
     if (!checkExpire(refreshTokenInDB.expiresAt)) {
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
       clearRefreshTokenFromCookie(res);
-      await dbQueryHandler(deleteRefreshToken, { userId });
+      await dbQueryHandler(deleteRefreshToken, userId);
       res.status(401).json(INVALID_REFRESH_TOKEN);
       return
     }
     // リフレッシュトークン生成 => DB更新 => set-Cookieに付加
     const newRefreshToken = makeRefreshToken();
-    await dbQueryHandler(updateRefreshToken, { userId, newToken: newRefreshToken })
+    await dbQueryHandler(updateRefreshToken, userId, newRefreshToken)
     setRefreshTokenInCookie(res, newRefreshToken);
     // JWTを再度生=> JWTをSet-cookieに付加
     setJwtInCookie(res, userId);
