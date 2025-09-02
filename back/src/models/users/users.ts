@@ -89,8 +89,7 @@ export const createUserWithRelation = async(prisma: PrismaClient, params: UserPo
   return createdUser;
 }
 
-export const updateUser = async(prisma: PrismaClient, queryInfo: { params: UserUpdateParams, userId: string }) => {
-  const { params, userId } = queryInfo;
+export const updateUser = async(prisma: PrismaClient, params: UserUpdateParams, userId: string) => {
   const user = await prisma.user.update({
     select: {
       name: true,
@@ -102,9 +101,7 @@ export const updateUser = async(prisma: PrismaClient, queryInfo: { params: UserU
   return user
 }
 
-export const updateUserPassword = async(prisma: PrismaClient, queryInfo: { password: string, userId: string }) => {
-  const { password, userId } = queryInfo;
-
+export const updateUserPassword = async(prisma: PrismaClient, password: string, userId: string) => {
   const hashedPassword = await dataHash(password);
 
   const newUser = await prisma.user.update({

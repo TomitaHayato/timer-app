@@ -89,7 +89,7 @@ export const resetPassword = async(req: Request, res: Response, next: NextFuncti
 
     // パスワードリセット処理
     const hashedPassword = await dataHash(password);
-    await dbQueryHandler(updateUserPasswordAndDeleteResetToken, tokenInDB.userId, hashedPassword);
+    await dbQueryHandler(updateUserPasswordAndDeleteResetToken, hashedPassword, tokenInDB.userId);
 
     devLog('パスワード更新完了');
     res.status(200).json('パスワードを更新しました');

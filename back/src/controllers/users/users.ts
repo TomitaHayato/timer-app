@@ -27,7 +27,7 @@ export const updateUserProfile = async(req: Request, res: Response, next: NextFu
     const userId = getUserIdFromRequest(req, res);
     const params: UserUpdateParams = getRequestBody<User>(req, res);
 
-    const newUser = await dbQueryHandler(updateUser, { params, userId });
+    const newUser = await dbQueryHandler(updateUser, params, userId);
     devLog('update後のUser:', newUser);
     res.status(200).json(newUser);
   } catch(err) { next(err) }
