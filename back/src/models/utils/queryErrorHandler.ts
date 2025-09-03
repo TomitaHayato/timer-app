@@ -1,7 +1,6 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { devLog } from "../../utils/dev/devLog";
-
-export const prismaClient = new PrismaClient();
+import { prismaClient } from "./prismaClient";
 
 // DBクエリ処理をエラーハンドラーでラップする
 export const dbQueryHandler = async < T, Args extends unknown[] >(
