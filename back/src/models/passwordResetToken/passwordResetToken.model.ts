@@ -5,7 +5,8 @@ import { dbQueryHandler } from "../utils/queryErrorHandler";
 import { checkExpire } from "../../utils/date";
 import { hashCompare } from "../../utils/dataHash";
 
-export const createPasswordResetTokenByUserId = async(prisma: PrismaClient, userId: string, hashedToken: string) => {
+export const createPasswordResetTokenByUserId = async(prisma: PrismaClient, params: {userId: string, hashedToken: string}) => {
+  const {userId, hashedToken} = params;
   const tokenExpiredIn = dayjs().add(30, 'minutes').toDate(); // 有効期限は30分
 
   const passwordResetToken = await prisma.passwordResetToken.create({
@@ -19,9 +20,7 @@ export const createPasswordResetTokenByUserId = async(prisma: PrismaClient, user
   return passwordResetToken;
 }
 
-export const deletePasswordResetToken = async(prisma: PrismaClient, queryInfo: { userId: string }): Promise<void> => {
-  const { userId } = queryInfo;
-
+export const deletePasswordResetToken = async(prisma: PrismaClient, userId: string): Promise<void> => {
   await prisma.passwordResetToken.deleteMany({
     where: {
       userId: userId
@@ -75,7 +74,8 @@ export const verifyPasswordResetToken = async(id: string, token: string) => {
 }
 
 // パスワードリセット => パスワードリセットTokenをDBから削除
-export const updateUserPasswordAndDeleteResetToken = async(prisma: PrismaClient, userId: string, hashedPassword: string) => {
+export const updateUserPasswordAndDeleteResetToken = async(prisma: PrismaClient, params: {userId: string, hashedPassword: string}) => {
+  const {userId, hashedPassword} = params;
 
   await prisma.$transaction([
     prisma.passwordResetToken.deleteMany({ where: { userId } }),

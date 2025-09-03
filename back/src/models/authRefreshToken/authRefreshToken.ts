@@ -5,7 +5,8 @@ import { authRefreshTokenSelect } from "./utils/selectOption";
 import { randomUUID } from "crypto";
 
 // userIdとtokenからレコードを取得
-export const getRefreshToken = async(prisma: PrismaClient, userId: string, token: string) => {
+export const getRefreshToken = async(prisma: PrismaClient, params: {userId: string, token: string}) => {
+  const { userId, token } = params;
   const refreshToken = prisma.authRefreshToken.findUnique({
     select: authRefreshTokenSelect(),
     where: {
@@ -52,13 +53,14 @@ export const createOrUpdateRefreshToken = async(prisma: PrismaClient, userId: st
   } else {
     // 既存のトークンがある場合、更新
     const newToken = randomUUID();
-    const token = await updateRefreshToken(prisma, userId, newToken);
+    const token = await updateRefreshToken(prisma, {userId, newToken});
     return token;
   }
 }
 
 // userIdで指定したrefreshTokenのtoken, expiresAtを更新
-export const updateRefreshToken = async(prisma: PrismaClient, userId: string, newToken: string) => {
+export const updateRefreshToken = async(prisma: PrismaClient, params: {userId: string, newToken: string}) => {
+  const {userId, newToken} = params;
   const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定
   const updatedToken = prisma.authRefreshToken.update({
     where: {

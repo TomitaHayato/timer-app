@@ -45,14 +45,14 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
  
   try {
     // 現在のステータスの値を取得
-    const todo = await dbQueryHandler(getTodoById, userId, todoId);
+    const todo = await dbQueryHandler(getTodoById, { userId, todoId });
     if (!todo) {
       res.status(422).json('無効なリクエストです');
       return;
     }
     const statusNow: boolean = todo.isCompleted;
     // 更新処理（isCompletedを反転）
-    await dbQueryHandler(updateTodoStatus, userId, todoId, !statusNow);
+    await dbQueryHandler(updateTodoStatus, { userId, todoId, newStatus: !statusNow });
     // 最新状態を返す
     const todos = await dbQueryHandler(getUserTodos, userId);
     res.status(200).json(todos);
@@ -73,7 +73,7 @@ export const updateTodoRecord= async(req: Request, res: Response, next: NextFunc
 
   try {
     // 更新処理
-    await dbQueryHandler(updateTodo, params, userId, todoId);
+    await dbQueryHandler(updateTodo, {todoParams: params, userId, todoId});
     // 最新状態を返す
     const todos = await dbQueryHandler(getUserTodos, userId);
     res.status(200).json(todos);
@@ -88,7 +88,7 @@ export const deleteTodoRecord = async(req: Request, res: Response, next: NextFun
 
   try {
     // 削除処理
-    await dbQueryHandler(deleteTodo, userId, todoId);
+    await dbQueryHandler(deleteTodo, {userId, todoId});
     // 最新状態を返す
     const todos = await dbQueryHandler(getUserTodos, userId);
     res.status(200).json(todos);

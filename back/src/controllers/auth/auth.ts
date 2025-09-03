@@ -154,7 +154,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return
     }
     // DBからリフレッシュトークンの状態を取得
-    const refreshTokenInDB = await dbQueryHandler(getRefreshToken, userId, refreshToken);
+    const refreshTokenInDB = await dbQueryHandler(getRefreshToken, { userId, token: refreshToken});
     // リフレッシュトークンがDBにあるかどうか
     if (!refreshTokenInDB) {
       devLog('tokensRefreshコントローラ', 'refreshTokenがDBにない');
@@ -171,7 +171,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
     }
     // リフレッシュトークン生成 => DB更新 => set-Cookieに付加
     const newRefreshToken = makeRefreshToken();
-    await dbQueryHandler(updateRefreshToken, userId, newRefreshToken)
+    await dbQueryHandler(updateRefreshToken, {userId, newToken: newRefreshToken})
     setRefreshTokenInCookie(res, newRefreshToken);
     // JWTを再度生=> JWTをSet-cookieに付加
     setJwtInCookie(res, userId);
