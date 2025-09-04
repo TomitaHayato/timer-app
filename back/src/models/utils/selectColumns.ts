@@ -9,11 +9,6 @@ export const selectSettingColumns = {
   bgImage: true,
 }
 
-export const selectUserColumns = {
-  name: true,
-  email: true,
-}
-
 export const selectRecordColumns = {
   workCount: true,
   workTime: true,

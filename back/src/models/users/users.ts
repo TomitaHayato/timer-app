@@ -1,32 +1,24 @@
-import { randomUUID } from "crypto";
 import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { UserPostParams, UserUpdateParams } from "../../types/user";
-import { devLog } from "../../utils/dev/devLog";
 import { selectRecordColumns, selectSettingColumns, selectTodoColumns } from "../utils/selectColumns";
-import dayjs from "dayjs";
+import { selectUserColumnsMini, selectUserColumnsWithIdAndPass, selectUserColumnsWithId } from "./utils/selectOption";
 
 export const getAllUser = async(prisma: PrismaClient) => {
-  const allUsers = await prisma.user.findMany();
-  devLog(allUsers);
-  return allUsers;
+  return await prisma.user.findMany();
 }
 
 export const getUserById = async(prisma: PrismaClient, userId: string) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    }
-  })
-  devLog('user取得', user);
-  return user;
+  return await prisma.user.findUnique({
+    select: selectUserColumnsWithId(),
+    where: { id: userId },
+  });
 }
 
 export const getUserByEmail = async(prisma: PrismaClient, email: string) => {
   return await prisma.user.findUnique({
-    where: {
-      email: email,
-    }
+    select: selectUserColumnsWithIdAndPass(),
+    where: { email },
   });
 }
 
@@ -39,38 +31,30 @@ export const getUserWithRelation = async(
     records?: boolean,
 }) => {
   const { userId, setting, todos, records } = params;
-  const user = await prisma.user.findUnique({
+  return await prisma.user.findUnique({
     select: {
-      name: true,
-      email: true,
+      ...selectUserColumnsMini(),
       ...(setting && {
         setting: { select: selectSettingColumns }
       }),
       ...(records && {
         records: { select: selectRecordColumns }
       }),
-      todos: { select: selectTodoColumns },
+      ...(todos && {
+        todos: { select: selectTodoColumns },
+      }),
     },
-    where: {
-      id: userId,
-    }
-  })
-  devLog('DB: 認証完了したUser:', user)
-  return user;
+    where: { id: userId },
+  });
 }
 
-export const createUserWithRelation = async(prisma: PrismaClient, params: UserPostParams) => {
-  // refreshToken用の値
-  const token = randomUUID();
-  const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定
+export const createNewUser = async(prisma: PrismaClient, params: UserPostParams, token: string, expiresAt: Date) => {
   // 作成処理
-  const newUser = await prisma.user.create({
+  return await prisma.user.create({
     data: {
       ...params,
       setting: {
-        create: {
-          ...defaultSetting
-        }
+        create: { ...defaultSetting() }
       },
       authRefreshToken: {
         create: {
@@ -78,20 +62,14 @@ export const createUserWithRelation = async(prisma: PrismaClient, params: UserPo
           expiresAt,
         }
       }
-    }
+    },
+    select: selectUserColumnsWithId(),
   });
-  // 作成したレコードを返す
-  devLog('作成されたUserと関連:', newUser);
-  const createdUser = await prisma.user.findUnique({ where: params });
-  return createdUser;
 }
 
 export const updateUser = async(prisma: PrismaClient, params: UserUpdateParams, userId: string) => {
   const user = await prisma.user.update({
-    select: {
-      name: true,
-      email: true
-    },
+    select: selectUserColumnsMini(),
     where: { id: userId },
     data: params,
   })

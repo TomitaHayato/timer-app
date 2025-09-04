@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { createUserWithRelation, getUserByEmail } from "../../models/users/users";
+import { getUserByEmail } from "../../models/users/users";
 import { dataHash, hashCompare } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
@@ -13,6 +13,7 @@ import { getRequestBody } from "../utils/getRequestBody";
 import { signinParams } from "../../types/auth";
 import { checkExpire } from "../../utils/date";
 import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/authRefreshToken.service";
+import { createUserWithRelationRecords } from "../../services/user.service";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -22,11 +23,11 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
     // パスワードをハッシュ化
     const hashedPassword = await dataHash(password);
     // 新しいユーザーと関連レコードをDBに追加
-    const newUser = await dbQueryHandler(createUserWithRelation, {
+    const newUser = await createUserWithRelationRecords({
       name,
       email,
       hashedPassword,
-    })
+    });
     devLog('作成されたUser：', newUser);
     if(!newUser) throw new Error();
     // 作成したリフレッシュトークンを取得
