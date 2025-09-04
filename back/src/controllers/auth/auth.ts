@@ -13,7 +13,7 @@ import { getRequestBody } from "../utils/getRequestBody";
 import { signinParams } from "../../types/auth";
 import { checkExpire } from "../../utils/date";
 import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/authRefreshToken.service";
-import { createUserWithRelationRecords } from "../../services/user.service";
+import { createNewUserWithRelationRecords } from "../../services/user.service";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -23,7 +23,7 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
     // パスワードをハッシュ化
     const hashedPassword = await dataHash(password);
     // 新しいユーザーと関連レコードをDBに追加
-    const newUser = await createUserWithRelationRecords({
+    const newUser = await createNewUserWithRelationRecords({
       name,
       email,
       hashedPassword,

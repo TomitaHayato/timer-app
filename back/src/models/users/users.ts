@@ -1,21 +1,23 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
-import { UserPostParams, UserUpdateParams } from "../../types/user";
+import { NewUserPostParams, User, Users, UserUpdateParams, UserWithRisk } from "../../types/user";
 import { selectRecordColumns, selectSettingColumns, selectTodoColumns } from "../utils/selectColumns";
-import { selectUserColumnsMini, selectUserColumnsWithIdAndPass, selectUserColumnsWithId } from "./utils/selectOption";
+import { selectUserColumnsWithIdAndPass, selectUserColumnsWithId } from "./utils/selectOption";
 
-export const getAllUser = async(prisma: PrismaClient) => {
-  return await prisma.user.findMany();
+export const getAllUser = async(prisma: PrismaClient): Promise<Users> => {
+  return await prisma.user.findMany({
+    select: selectUserColumnsWithId(),
+  });
 }
 
-export const getUserById = async(prisma: PrismaClient, userId: string) => {
+export const getUserById = async(prisma: PrismaClient, userId: string): Promise<User | null> => {
   return await prisma.user.findUnique({
     select: selectUserColumnsWithId(),
     where: { id: userId },
   });
 }
 
-export const getUserByEmail = async(prisma: PrismaClient, email: string) => {
+export const getUserByEmail = async(prisma: PrismaClient, email: string): Promise<UserWithRisk | null> => {
   return await prisma.user.findUnique({
     select: selectUserColumnsWithIdAndPass(),
     where: { email },
@@ -33,7 +35,7 @@ export const getUserWithRelation = async(
   const { userId, setting, todos, records } = params;
   return await prisma.user.findUnique({
     select: {
-      ...selectUserColumnsMini(),
+      ...selectUserColumnsWithId(),
       ...(setting && {
         setting: { select: selectSettingColumns }
       }),
@@ -48,7 +50,7 @@ export const getUserWithRelation = async(
   });
 }
 
-export const createNewUser = async(prisma: PrismaClient, params: UserPostParams, token: string, expiresAt: Date) => {
+export const createNewUser = async(prisma: PrismaClient, params: NewUserPostParams, token: string, expiresAt: Date): Promise<User> => {
   // 作成処理
   return await prisma.user.create({
     data: {
@@ -67,9 +69,9 @@ export const createNewUser = async(prisma: PrismaClient, params: UserPostParams,
   });
 }
 
-export const updateUser = async(prisma: PrismaClient, params: UserUpdateParams, userId: string) => {
+export const updateUser = async(prisma: PrismaClient, params: UserUpdateParams, userId: string): Promise<User> => {
   const user = await prisma.user.update({
-    select: selectUserColumnsMini(),
+    select: selectUserColumnsWithId(),
     where: { id: userId },
     data: params,
   })

@@ -4,9 +4,16 @@ export type User = {
   email: string,
 }
 
+export type UserWithRisk = {
+  id: string,
+  name: string,
+  email: string,
+  hashedPassword: string,
+}
+
 export type Users = User[]
 
-export type UserPostParams = {
+export type NewUserPostParams = {
   name: string,
   email: string,
   hashedPassword: string,
