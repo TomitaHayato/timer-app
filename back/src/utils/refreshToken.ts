@@ -1,8 +1,5 @@
 import { randomUUID } from "crypto"
-import dayjs from "dayjs";
 import { Response } from "express";
-import { authRefreshToken } from "../types/authRefreshToken";
-import { devLog } from "./dev/devLog";
 
 const COOKIE_NAME = "refresh_token"
 const COOKIE_SCOPE = '/api/auth/token_refresh'; // refresh_tokenがリクエストに付加されるpathを限定

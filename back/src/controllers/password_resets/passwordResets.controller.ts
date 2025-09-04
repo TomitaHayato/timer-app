@@ -3,9 +3,8 @@ import { getRequestBody } from "../utils/getRequestBody"
 import { emailForPasswordReset, passwordResetParams } from "../../types/passwordResetToken";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { getUserByEmail } from "../../models/users/users";
-import { randomUUID } from "crypto";
 import { dataHash } from "../../utils/dataHash";
-import { createPasswordResetTokenByUserId, updateUserPasswordAndDeleteResetToken, verifyPasswordResetToken } from "../../models/passwordResetToken/passwordResetToken.model";
+import { updateUserPasswordAndDeleteResetToken } from "../../models/passwordResetToken/passwordResetToken.model";
 import { EmailInfo } from "../../config/mailer/mailer";
 import { passwordResetEmailBody } from "../../config/mailer/templates/password_reset/text_body.";
 import { passwordResetEmailHtmlBody } from "../../config/mailer/templates/password_reset/html_body";
@@ -13,6 +12,7 @@ import { sendEmail } from "../../config/mailer/transporter";
 import { devLog } from "../../utils/dev/devLog";
 import { getEnvValue } from "../../utils/handleENV";
 import { INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
+import { createPasswordResetTokenFromUserId, verifyPasswordResetToken } from "../../services/passwordResetToken.service";
 
 // reqからemail取得 => トークン生成 + メール送信
 export const sendEmailForPasswordReset = async(req: Request, res: Response, next: NextFunction) => {
@@ -28,18 +28,10 @@ export const sendEmailForPasswordReset = async(req: Request, res: Response, next
     }
 
     // UserのPasswordResetTokenレコードを作成
-    const token = randomUUID();
-    const hashedToken = await dataHash(token);
-    const tokenInDB = await dbQueryHandler(
-      createPasswordResetTokenByUserId,
-      {
-        userId: user.id,
-        hashedToken,
-      }
-    );
+    const { token, passwordResetToken } = await createPasswordResetTokenFromUserId(user.id);
 
     // メール送信
-    const urlParams = `?token=${token}&id=${tokenInDB.id}`;
+    const urlParams = `?token=${token}&id=${passwordResetToken.id}`;
     const resetLink = getEnvValue('CLIENT_ORIGIN') + getEnvValue('PASSWORD_RESET_PATH') + urlParams
     const emailInfo: EmailInfo = {
       to: user.email,

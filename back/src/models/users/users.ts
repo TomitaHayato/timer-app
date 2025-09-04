@@ -23,13 +23,11 @@ export const getUserById = async(prisma: PrismaClient, userId: string) => {
 }
 
 export const getUserByEmail = async(prisma: PrismaClient, email: string) => {
-  const user = await prisma.user.findUnique({
+  return await prisma.user.findUnique({
     where: {
       email: email,
     }
-  })
-  devLog('user取得', user);
-  return user;
+  });
 }
 
 export const getUserWithRelation = async(
