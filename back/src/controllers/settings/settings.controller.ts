@@ -2,12 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createSetting, getSettingByUserId, updateSetting } from "../../models/settings/settings";
 import { PostSettingParams } from "../../types/setting";
-import { getUserIdFromRequest } from "../utils/getUserId";
+import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getRequestBody } from "../utils/getRequestBody";
 
 export const getSetting = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
 
   try {
     const setting = await dbQueryHandler(getSettingByUserId, userId);
@@ -16,7 +16,7 @@ export const getSetting = async(req: Request, res: Response, next: NextFunction)
 }
 
 export const postSetting = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
 
   const params = getRequestBody<PostSettingParams>(req, res);
 
@@ -27,7 +27,7 @@ export const postSetting = async(req: Request, res: Response, next: NextFunction
 }
 
 export const putSetting = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
   const params = getRequestBody<PostSettingParams>(req, res);
 
   try {

@@ -3,13 +3,13 @@ import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createTodo, deleteTodo, getTodoById, getUserTodos, updateTodo, updateTodoStatus } from "../../models/todos/todos";
 import { createTodoParams, updateTodoParams } from "../../types/todo";
 import { isEmptyObj } from "../../utils/object";
-import { getUserIdFromRequest } from "../utils/getUserId";
-import { getIdFromRequestParams } from "../utils/getIdFromRequestParams";
+import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
+import { getIdFromRequestURLParams } from "../utils/getIdFromRequestParams";
 import { getRequestBody } from "../utils/getRequestBody";
 
 // Todosを全件取得
 export const todosIndex = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
 
   try {
     // DBからログインユーザーのTodo一覧を取得
@@ -21,7 +21,7 @@ export const todosIndex = async(req: Request, res: Response, next: NextFunction)
 
 // Todoを新規作成
 export const postTodos = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
   const params = getRequestBody<createTodoParams>(req, res);
 
   try {
@@ -35,7 +35,7 @@ export const postTodos = async(req: Request, res: Response, next: NextFunction) 
 
 // TODOのStatus更新
 export const updateTodosStatus = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
 
   const todoId: string = req.params.id;
   if(!todoId) {
@@ -61,9 +61,9 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
 
 // レコード更新
 export const updateTodoRecord= async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
 
-  const todoId: string = getIdFromRequestParams(req, res);
+  const todoId: string = getIdFromRequestURLParams(req, res);
 
   const params: updateTodoParams =req.body;
   if(isEmptyObj(params)) {
@@ -82,9 +82,9 @@ export const updateTodoRecord= async(req: Request, res: Response, next: NextFunc
 
 // レコード削除
 export const deleteTodoRecord = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
 
-  const todoId: string = getIdFromRequestParams(req, res);
+  const todoId: string = getIdFromRequestURLParams(req, res);
 
   try {
     // 削除処理

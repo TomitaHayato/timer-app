@@ -2,14 +2,14 @@ import { NextFunction, Request, Response } from "express"
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createRecord } from "../../models/records/records";
 import { devLog } from "../../utils/dev/devLog";
-import { getUserIdFromRequest } from "../utils/getUserId";
+import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { getRequestBody } from "../utils/getRequestBody";
 import { postRecordParams } from "../../types/record";
 import { getRecordsFromDB } from "../../services/records.service";
 
 // 期間ごとに集計したRecordsの配列を返す
 export const recordsIndex = async(req: Request, res: Response, next: NextFunction) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
 
   // 期間指定をリクエストから取得
   const daysAgo: number = req.body.daysAgo || 0;
@@ -26,7 +26,7 @@ export const recordsIndex = async(req: Request, res: Response, next: NextFunctio
 
 // 作成処理
 export const postRecord = async(req: Request, res: Response) => {
-  const userId = getUserIdFromRequest(req, res);
+  const userId = getUserIdFromJWT(req, res);
   // リクエストからパラメータを取得
   const params = getRequestBody<postRecordParams>(req, res);
 

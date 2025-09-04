@@ -4,7 +4,7 @@ import { devLog } from "../../utils/dev/devLog";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 
-// JWTトークンを検証
+// JWTトークンを検証（認証が必要なエンドポイントに設置）
 export const authCheckMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies?.jwt_token; // リクエストのCookieからJWTを取得
   if (!token) {

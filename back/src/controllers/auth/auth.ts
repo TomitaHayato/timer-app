@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { createUserWithRelation, getUserByEmail, getUserWithRelation } from "../../models/users/users";
+import { createUserWithRelation, getUserByEmail } from "../../models/users/users";
 import { dataHash, hashCompare } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
@@ -43,13 +43,11 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
     next(err);
   }
 }
-// TODO:EX: 現状、ユーザーと関連データの情報だけがDBに生成され、リフレッシュトークンの作成処理のみが失敗する可能性がある。この場合、DBに情報は保存されているのにエラーがクライアントに返される。改善のために、ユーザー、関連レコード、リフレッシュトークンの作成処理を1つのトランザクションで管理する
 
 export const signIn = async(req: Request, res: Response, next: NextFunction) => {
   const { email, password } = getRequestBody<signinParams>(req, res); // クライアントからの入力値を取得
 
   try {
-    // DBからemailを持つUserを取得
     const user = await dbQueryHandler(getUserByEmail, email);
     if(!user) {
       res.status(401).json('メールアドレスが登録されていません' );
@@ -155,7 +153,6 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
     }
     // DBからリフレッシュトークンの状態を取得
     const refreshTokenInDB = await dbQueryHandler(getRefreshToken, { userId, token: refreshToken});
-    // リフレッシュトークンがDBにあるかどうか
     if (!refreshTokenInDB) {
       devLog('tokensRefreshコントローラ', 'refreshTokenがDBにない');
       res.status(401).json(INVALID_REFRESH_TOKEN);

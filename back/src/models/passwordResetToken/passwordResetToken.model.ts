@@ -43,17 +43,17 @@ export const getPasswordResetTokenById = async(prisma: PrismaClient, id: string)
   return record;
 }
 
-// 指定されたトークンが有効かどうか検証（DBに存在 + トークンの内容が一致 + 期限が有効）
+// トークンの有効性を検証（DBに存在 + トークンが一致 + 期限が有効）
 export const verifyPasswordResetToken = async(id: string, token: string) => {
   try {
+    // tokenの存在Check
     const passwordResetTokenInDB = await dbQueryHandler(getPasswordResetTokenById, id);
-    // DBに存在
     if (!passwordResetTokenInDB) {
       devLog('passwordResetTokenが見つかりません');
       return false; // トークンが存在しない場合、false
     }
 
-    // Tokenが一致するか
+    // TokenがDBと一致するか
     if (!hashCompare(token, passwordResetTokenInDB.hashedToken)) {
       devLog('passwordResetTokenが異なります');
       return false;
