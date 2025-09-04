@@ -65,7 +65,7 @@ export const updateTodoRecord= async(req: Request, res: Response, next: NextFunc
 
   const todoId: string = getIdFromRequestURLParams(req, res);
 
-  const params: updateTodoParams =req.body;
+  const params: updateTodoParams = req.body;
   if(isEmptyObj(params)) {
     res.status(422).json('無効なリクエストです');
     return;

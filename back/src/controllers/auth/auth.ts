@@ -5,13 +5,14 @@ import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserDataSet } from "../../services/auth.service";
-import { createOrUpdateRefreshToken, deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
+import { deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId, updateRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
 import { clearRefreshTokenFromCookie, makeRefreshToken, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_REFRESH_TOKEN, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 import { getRequestBody } from "../utils/getRequestBody";
 import { signinParams } from "../../types/auth";
 import { checkExpire } from "../../utils/date";
+import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/authRefreshToken.service";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -57,7 +58,7 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     // hashedPasswordカラムとpasswordのハッシュを比較
     if (await hashCompare(password, user.hashedPassword)) {
       // refreshTokenを生成
-      const authRefreshToken = await dbQueryHandler(createOrUpdateRefreshToken, user.id);
+      const authRefreshToken = await createOrUpdateRefreshToken(user.id);
       // リフレッシュトークンとアクセストークンをCookieにセット
       setRefreshTokenInCookie(res, authRefreshToken.token);
       setJwtInCookie(res, user.id);
@@ -167,9 +168,8 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return
     }
     // リフレッシュトークン生成 => DB更新 => set-Cookieに付加
-    const newRefreshToken = makeRefreshToken();
-    await dbQueryHandler(updateRefreshToken, {userId, newToken: newRefreshToken})
-    setRefreshTokenInCookie(res, newRefreshToken);
+    const { token } = await refreshRefreshToken(userId);
+    setRefreshTokenInCookie(res, token);
     // JWTを再度生=> JWTをSet-cookieに付加
     setJwtInCookie(res, userId);
     devLog('認証トークンを更新しました')
