@@ -1,6 +1,6 @@
 import { getUserWithRelation } from "../models/users/users";
 import { dbQueryHandler } from "../models/utils/queryErrorHandler";
-import { getRecordsFromDB } from "./records.service";
+import { getAllSummarizedRecordsFromDB } from "./records.service";
 
 export const getUserDataSet = async(userId: string) => {
   const userData = await dbQueryHandler(getUserWithRelation, {
@@ -8,7 +8,7 @@ export const getUserDataSet = async(userId: string) => {
     setting: true,
     todos: true,
   });
-  const recordsData = await getRecordsFromDB(userId, 0, 0, 0);
+  const recordsData = await getAllSummarizedRecordsFromDB(userId);
   return {
     userData,
     recordsData,

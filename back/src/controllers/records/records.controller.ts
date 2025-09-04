@@ -5,7 +5,7 @@ import { devLog } from "../../utils/dev/devLog";
 import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { getRequestBody } from "../utils/getRequestBody";
 import { postRecordParams } from "../../types/record";
-import { getRecordsFromDB } from "../../services/records.service";
+import { getAllSummarizedRecordsFromDB } from "../../services/records.service";
 
 // 期間ごとに集計したRecordsの配列を返す
 export const recordsIndex = async(req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +17,7 @@ export const recordsIndex = async(req: Request, res: Response, next: NextFunctio
   const monthsAgo: number = req.body.monthsAgo || 0;
 
   try {
-    const records = await getRecordsFromDB(userId, daysAgo, weeksAgo, monthsAgo);
+    const records = await getAllSummarizedRecordsFromDB(userId, { daysAgo, weeksAgo, monthsAgo });
     devLog('レコード一覧:', records);
     res.status(200).json(records);
   } catch(err) { next(err) }
@@ -33,7 +33,7 @@ export const postRecord = async(req: Request, res: Response) => {
   // 作成処理
   await dbQueryHandler(createRecord, userId, params);
   // 最新状態を返却（最新状態の取得時に、指定された期間はリセットされる）
-  const records = await getRecordsFromDB(userId, 0, 0, 0);
+  const records = await getAllSummarizedRecordsFromDB(userId);
   res.status(201).json(records);
 }
 
