@@ -14,29 +14,30 @@ import { signinParams } from "../../types/auth";
 import { checkExpire } from "../../utils/date";
 import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/authRefreshToken.service";
 import { createNewUserWithRelationRecords } from "../../services/user.service";
+import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
-  const { name, email, password } = req.body;
+  const { name, email, password } = getRequestBody<{ name: string, email: string, password: string }>(req, res);
 
   try {
-    // パスワードをハッシュ化
-    const hashedPassword = await dataHash(password);
-    // 新しいユーザーと関連レコードをDBに追加
+    // 新しいUserと関連レコードをDBに追加
     const newUser = await createNewUserWithRelationRecords({
       name,
       email,
-      hashedPassword,
+      hashedPassword: await dataHash(password),
     });
+    if(!newUser) throw new Error("Userが作成されていません");
     devLog('作成されたUser：', newUser);
-    if(!newUser) throw new Error();
+
     // 作成したリフレッシュトークンを取得
     const authRefreshToken = await dbQueryHandler(getRefreshTokenByUserId, newUser.id);
-    if(!authRefreshToken) throw new Error();
+    if(!authRefreshToken) throw new Error("リフレッシュトークンが作成されていません");
 
     // リフレッシュトークンとアクセストークンをCookieにセット
     setRefreshTokenInCookie(res, authRefreshToken.token);
     setJwtInCookie(res, newUser.id);
+
     // DBから作成したユーザーと関連レコードを取得
     const userDataSet = await getUserDataSet(newUser.id);
     res.status(200).json(userDataSet);
@@ -47,7 +48,7 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
 }
 
 export const signIn = async(req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = getRequestBody<signinParams>(req, res); // クライアントからの入力値を取得
+  const { email, password } = getRequestBody<signinParams>(req, res);
 
   try {
     const user = await dbQueryHandler(getUserByEmail, email);
@@ -58,17 +59,17 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
 
     // hashedPasswordカラムとpasswordのハッシュを比較
     if (await hashCompare(password, user.hashedPassword)) {
-      // refreshTokenを生成
       const authRefreshToken = await createOrUpdateRefreshToken(user.id);
+
       // リフレッシュトークンとアクセストークンをCookieにセット
       setRefreshTokenInCookie(res, authRefreshToken.token);
       setJwtInCookie(res, user.id);
+
       const userDataSet = await getUserDataSet(user.id);
       res.status(200).json(userDataSet);
     } else {
       res.status(401).json('ログインに失敗しました。')
     }
-    return;
   } catch(err) {
     devLog('ログイン失敗');
     res.status(422).json('ログインに失敗しました')
@@ -76,22 +77,14 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
 }
 
 export const signOut = async(req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies?.jwt_token;
-  if (!token) {
-    devLog('tokenCheckコントローラ：', '認証Tokenなし')
-    res.status(401).json(INVALID_TOKEN_ERROR);
-    return;
-  }
-
   try {
-    // Token検証
-    const payload = verifyJwt(token);
-    // 認証成功なので、userに紐づいたTodos, Records, Settingを返す
-    const userId = payload.userId;
-    if (!userId) throw new Error;
+    const userId = getUserIdFromJWT(req, res);
 
+    // Cookieの認証データ削除
     clearJwtCookie(res);
     clearRefreshTokenFromCookie(res);
+
+    // DBの認証データ削除
     await dbQueryHandler(deleteRefreshToken, userId);
 
     res.status(200).json('ログアウトしました');
@@ -103,7 +96,7 @@ export const signOut = async(req: Request, res: Response, next: NextFunction) =>
 
 // 認証トークンの有無・有効期限を確認
 export const tokenCheck = async (req: Request, res: Response) => {
-  // リクエストのCookieからJWTを取得（authCheckミドルウェアを介していないので、req.cookiesから取得し検証する）
+  // CookieからJWT取得（authCheckミドルウェアを介していないので、req.cookiesから取得し検証する）
   const token = req.cookies?.jwt_token;
   if (!token) {
     devLog('tokenCheckコントローラ：', '認証Tokenなし')
@@ -113,20 +106,20 @@ export const tokenCheck = async (req: Request, res: Response) => {
 
   try {
     // Token検証
-    const payload = verifyJwt(token);
-    // 認証成功なので、userに紐づいたTodos, Records, Settingを返す
-    const userId = payload.userId;
+    const userId = verifyJwt(token).userId;
     if (!userId) throw new Error;
 
     const userDataSet = await getUserDataSet(userId);
     res.status(200).json(userDataSet);
   } catch(err: unknown) {
-    // 期限切れエラーの場合、特徴的なレスポンスを返す
+    // 期限切れエラーの場合、特徴的なレスポンスを返す（クライアント側でRefreshTokenの検証に移行するため）
     if (err instanceof TokenExpiredError) {
       devLog('認証トークンの期限切れ', ACCESS_TOKEN_EXPIRE_ERROR);
-      res.status(401).json(ACCESS_TOKEN_EXPIRE_ERROR)
-      return
+      res.status(401).json(ACCESS_TOKEN_EXPIRE_ERROR);
+      return;
     }
+
+    // その他のエラーは未認証とする
     res.status(401).json(INVALID_TOKEN_ERROR);
   }
 }
@@ -134,9 +127,10 @@ export const tokenCheck = async (req: Request, res: Response) => {
 // RefreshTokenによるトークン更新
 export const tokensRefresh = async(req: Request, res: Response, next: NextFunction) => {
   // リフレッシュトークンをCookieから検証（存在, 期限）
-  devLog('cookieの内容', req.cookies)
+  devLog('cookieの内容', req.cookies);
   const jwtToken = req.cookies?.jwt_token;
   const refreshToken = req.cookies?.refresh_token;
+
   if (!jwtToken || !refreshToken) {
     devLog('tokensRefreshエラー：', 'jwtまたはrefreshTokenがない')
     res.status(401).json(INVALID_TOKEN_ERROR);
@@ -147,19 +141,23 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
   try {
     // JWTからUserIDを取得
     const decodedJwtToken = decodeJwt(jwtToken);
-    const userId = decodedJwtToken?.userId
+    const userId = decodedJwtToken?.userId;
+
     if(!userId) {
-      devLog('tokensRefreshエラー：', 'userIdがない')
+      devLog('tokensRefreshエラー：', 'JWTにuserIdが存在しない')
       res.status(401).json(INVALID_TOKEN_ERROR);
       return
     }
+
     // DBからリフレッシュトークンの状態を取得
     const refreshTokenInDB = await dbQueryHandler(getRefreshToken, { userId, token: refreshToken});
+
     if (!refreshTokenInDB) {
       devLog('tokensRefreshコントローラ', 'refreshTokenがDBにない');
       res.status(401).json(INVALID_REFRESH_TOKEN);
-      return
+      return;
     }
+
     // refreshToken期限切れの場合、DB, Cookieから削除
     if (!checkExpire(refreshTokenInDB.expiresAt)) {
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
@@ -168,11 +166,14 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       res.status(401).json(INVALID_REFRESH_TOKEN);
       return
     }
-    // リフレッシュトークン生成 => DB更新 => set-Cookieに付加
+
+    // リフレッシュトークン再生成＋DB更新 => set-Cookieに付加
     const { token } = await refreshRefreshToken(userId);
     setRefreshTokenInCookie(res, token);
+
     // JWTを再度生=> JWTをSet-cookieに付加
     setJwtInCookie(res, userId);
+
     devLog('認証トークンを更新しました')
     res.status(200).end();
   } catch(err) {
