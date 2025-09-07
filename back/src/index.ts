@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser'
 import { errorHander } from './middlewares/errorHandler/errorHandler'
 import { devLog } from './utils/dev/devLog'
 import { verifyEmailConnection } from './config/mailer/transporter'
+import helmet from 'helmet'
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const app = express();
 app.use(express.json());   // JSONボディをパース
 app.use(cookieParser());   // Cookieデータにアクセス
 app.use(cors(corsOption)); // CORS対策
+app.use(helmet());
 
 initMysql(); // DB接続
 verifyEmailConnection(); // メールサーバ接続
