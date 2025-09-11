@@ -6,7 +6,7 @@ import CompletedTodos from "../features/todos/components/CompletedTodos";
 import { Records } from "../features/records/components/Records";
 import { useAppDispatch, useAppSelector } from "../reduxStore/hooks";
 import { checkAuthToken } from "../features/session/slices/sessionSlice";
-import { TodoSelector } from "../features/todos/components/timerPageContent/TodoSelector";
+import { TodoSelector } from "../features/todos/components/timerPageContent/todoSelector/TodoSelector";
 import { selectVisibleClass } from "../features/display/visibleSlice";
 import { useEffect } from "react";
 import { Opening } from "../features/opening/Opening";

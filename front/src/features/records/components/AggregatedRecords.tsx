@@ -2,7 +2,7 @@ import { useAppSelector } from "../../../reduxStore/hooks";
 import { thisMonthDate, thisWeekDate } from "../../../utils/time";
 import { selectRecords } from "../recordsSlice";
 import { RecordStat } from "./RecordStat";
-import { RecordStatContainerGray } from "./recordStatContainerGray";
+import { RecordStatContainerGray } from "./RecordStatContainerGray";
 
 export function AggregatedRecords() {
   const { weeklyRecord, monthlyRecord, totalRecord } = useAppSelector(selectRecords);

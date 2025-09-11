@@ -1,14 +1,13 @@
-import { useAppDispatch, useAppSelector } from "../../../../reduxStore/hooks";
-import { toastErrorRB, toastSuccessRB } from "../../../../utils/toast";
-import { selectTodos, updateTodoIsCompleted } from "../../todoSlice";
-import type { Todo } from "../../../../types/todoType";
+import { useAppDispatch, useAppSelector } from "../../../../../reduxStore/hooks";
+import { toastErrorRB, toastSuccessRB } from "../../../../../utils/toast";
+import { selectTodos, updateTodoIsCompleted } from "../../../todoSlice";
 
 type Props = {
   id: string,
-  setTodo: React.Dispatch<React.SetStateAction<Todo | null>>,
+  setTodoId: React.Dispatch<React.SetStateAction<string | null>>,
 }
 
-export function TodoCompleteBtnSm({ id, setTodo }: Props) {
+export function TodoCompleteBtnSm({ id, setTodoId }: Props) {
   const dispatch = useAppDispatch();
   const { error } = useAppSelector(selectTodos);
 
@@ -16,7 +15,7 @@ export function TodoCompleteBtnSm({ id, setTodo }: Props) {
     try {
       // dispatch
       await dispatch(updateTodoIsCompleted(id)).unwrap();
-      setTodo(null)
+      setTodoId(null)
       toastSuccessRB('Todoを完了しました', { autoClose: 2000 });
     } catch {
       const errorMessage = error || 'Todoの更新に失敗しました'
