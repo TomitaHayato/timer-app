@@ -9,7 +9,7 @@ const defaultRecordsQuery = () => ({
   monthsAgo: 0,
 });
 
-export const getAllSummarizedRecordsFromDB = async(userId: string, query?: { daysAgo: number, weeksAgo: number, monthsAgo: number } ) => {
+export const getSummarizedRecords = async(userId: string, query?: { daysAgo: number, weeksAgo: number, monthsAgo: number } ) => {
   const { daysAgo, weeksAgo, monthsAgo } = query ?? defaultRecordsQuery();
   const dailyRecord = await getRecordsByDate(userId, daysAgo);
   const weeklyRecord = await getRecordsByWeek(userId, weeksAgo);

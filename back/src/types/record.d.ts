@@ -1,8 +1,3 @@
-export type Record = {
-  workCount: number,
-  totalSec: number,
-}
-
 export type Records = {
   dailyRecord: RecordData,
   weeklyRecord: RecordData,
