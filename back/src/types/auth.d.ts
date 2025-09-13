@@ -1,10 +1,5 @@
 import { User } from "./user"
 
-export type Auth = {
-  user: User,
-  isAuthenticated: boolean,
-}
-
 export type signupParams = {
   name: string,
   email: string,

@@ -8,3 +8,9 @@ export type passwordResetParams = {
   password: string,
 }
 
+export type PasswordResetToken = {
+  id: string,
+  userId: string,
+  hashedToken: string,
+  tokenExpiredIn: Date,
+}

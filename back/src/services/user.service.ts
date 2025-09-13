@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
-import { NewUserPostParams } from "../types/user";
+import { NewUserPostParams, User } from "../types/user";
 import { makeRefreshToken } from "../utils/refreshToken";
 import { dbQueryHandler } from "../models/utils/queryErrorHandler";
 import { devLog } from "../utils/dev/devLog";
 import { createNewUser } from "../models/users/users";
 
-export const createNewUserWithRelationRecords = async(params: NewUserPostParams) => {
+export const createNewUserWithRelationRecords = async(params: NewUserPostParams): Promise<User> => {
   // refreshToken用の値
   const token = makeRefreshToken();
   const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定

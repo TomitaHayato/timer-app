@@ -11,8 +11,10 @@ export const createPasswordResetTokenFromUserId = async(userId: string) => {
   const hashedToken = await dataHash(token);
   const tokenExpiredIn = dayjs().add(30, 'minutes').toDate(); // 有効期限は30分
 
+  const passwordResetToken = await dbQueryHandler(createPasswordResetToken, { userId, hashedToken, tokenExpiredIn });
+
   return {
-    passwordResetToken: await dbQueryHandler(createPasswordResetToken, { userId, hashedToken, tokenExpiredIn }),
+    passwordResetToken,
     token,
   }
 }

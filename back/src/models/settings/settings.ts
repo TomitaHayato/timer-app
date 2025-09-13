@@ -1,10 +1,10 @@
 import { PrismaClient } from "../../../generated/prisma";
-import { PostSettingParams, UpdateSettingParams } from "../../types/setting";
-import { devLog } from "../../utils/dev/devLog";
+import { PostSettingParams, Setting, UpdateSettingParams } from "../../types/setting";
 import { selectSettingColumns } from "../utils/selectColumns";
 
-export const createSetting = async(prisma: PrismaClient, userId: string, params: PostSettingParams) => {
+export const createSetting = async(prisma: PrismaClient, userId: string, params: PostSettingParams): Promise<Setting> => {
   return await prisma.setting.create({
+    select: selectSettingColumns,
     data: {
       userId,
       ...params,
@@ -12,14 +12,14 @@ export const createSetting = async(prisma: PrismaClient, userId: string, params:
   });
 }
 
-export const getSettingByUserId = async(prisma: PrismaClient, userId: string) => {
+export const getSettingByUserId = async(prisma: PrismaClient, userId: string): Promise<Setting | null> => {
   return await prisma.setting.findUnique({
     select: selectSettingColumns,
     where: { userId }
   })
 }
 
-export const updateSetting = async(prisma: PrismaClient, userId: string, params: UpdateSettingParams) => {
+export const updateSetting = async(prisma: PrismaClient, userId: string, params: UpdateSettingParams): Promise<Setting> => {
   return await prisma.setting.update({
     where: { userId },
     data: { ...params },
@@ -27,7 +27,7 @@ export const updateSetting = async(prisma: PrismaClient, userId: string, params:
   });
 }
 
-export const deleteSettingByUserId = async(prisma: PrismaClient, userId: string) => {
+export const deleteSettingByUserId = async(prisma: PrismaClient, userId: string): Promise<void> => {
   await prisma.setting.delete({
     where: { userId }
   });

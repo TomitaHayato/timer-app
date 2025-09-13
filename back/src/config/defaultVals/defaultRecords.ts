@@ -1,13 +1,13 @@
-import { RecordData, Records } from "../../types/record";
+import { Record, RecordSummaryByPeriod } from "../../types/record";
 
-const defaultRecord: RecordData = {
+export const defaultRecord = (): Record => ({
   workCount: 0,
   workTime: 0,
-}
+})
 
-export const defaultRecords: Records = {
-  dailyRecord: defaultRecord,
-  weeklyRecord: defaultRecord,
-  monthlyRecord: defaultRecord,
-  totalRecord: defaultRecord,
+export const defaultRecords: RecordSummaryByPeriod = {
+  dailyRecord: defaultRecord(),
+  weeklyRecord: defaultRecord(),
+  monthlyRecord: defaultRecord(),
+  totalRecord: defaultRecord(),
 }

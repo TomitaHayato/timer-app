@@ -2,8 +2,8 @@ export type Todo = {
   id: string,
   title: string,
   isCompleted: boolean,
-  deadline?: Date,
-  completedAt?: Date,
+  deadline?: Date | null,
+  completedAt?: Date | null,
 }
 
 export type Todos = Todo[]

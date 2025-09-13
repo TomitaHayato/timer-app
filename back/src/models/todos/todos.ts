@@ -1,9 +1,9 @@
 import { PrismaClient } from "../../../generated/prisma";
-import { createTodoParams, updateTodoParams } from "../../types/todo";
+import { createTodoParams, Todo, Todos, updateTodoParams } from "../../types/todo";
 import { devLog } from "../../utils/dev/devLog";
 import { selectTodoColumns } from "../utils/selectColumns";
 
-export const getTodoById = async(prisma: PrismaClient, params: { userId: string, todoId: string }) => {
+export const getTodoById = async(prisma: PrismaClient, params: { userId: string, todoId: string }): Promise<Todo | null> => {
   const { userId, todoId } = params;
   return await prisma.todo.findUnique({
     select: selectTodoColumns,
@@ -15,7 +15,7 @@ export const getTodoById = async(prisma: PrismaClient, params: { userId: string,
 }
 
 // ユーザーのTodoを全件取得
-export const getUserTodos = async(prisma: PrismaClient, userId: string) => {
+export const getUserTodos = async(prisma: PrismaClient, userId: string): Promise<Todos> => {
   return await prisma.todo.findMany({
     select: selectTodoColumns,
     where: { userId },
@@ -23,7 +23,7 @@ export const getUserTodos = async(prisma: PrismaClient, userId: string) => {
 }
 
 // Todoを新規作成
-export const createTodo = async(prisma: PrismaClient, params: createTodoParams, userId: string) => {
+export const createTodo = async(prisma: PrismaClient, params: createTodoParams, userId: string): Promise<Todo> => {
   // 作成
   const newTodo = await prisma.todo.create({
     select: selectTodoColumns,
@@ -37,7 +37,7 @@ export const createTodo = async(prisma: PrismaClient, params: createTodoParams, 
 }
 
 // Todoの情報を更新
-export const updateTodo = async(prisma: PrismaClient, params: { todoParams: updateTodoParams, userId: string, todoId: string }) => {
+export const updateTodo = async(prisma: PrismaClient, params: { todoParams: updateTodoParams, userId: string, todoId: string }): Promise<Todo> => {
   const { todoParams, userId, todoId } = params;
   // 更新処理
   const updatedTodo = await prisma.todo.update({
@@ -56,7 +56,7 @@ export const updateTodo = async(prisma: PrismaClient, params: { todoParams: upda
 }
 
 // Todoのステータスを更新
-export const updateTodoStatus = async(prisma: PrismaClient, params: { userId: string, todoId: string, newStatus: boolean }) => {
+export const updateTodoStatus = async(prisma: PrismaClient, params: { userId: string, todoId: string, newStatus: boolean }): Promise<Todo> => {
   const { userId, todoId, newStatus } = params;
   // ステータス更新処理
   const updatedTodo = await prisma.todo.update({
