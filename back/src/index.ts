@@ -12,7 +12,7 @@ import helmet from 'helmet'
 
 dotenv.config();
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());   // JSONボディをパース
@@ -32,6 +32,4 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 app.use(errorHander); // 共通のエラーハンドルMiddlewara
 
-app.listen(port, () => {
-  devLog(`サーバ起動 port:${port}`)
-})
+app.listen(port, () => devLog(`サーバ起動 port:${port}`));

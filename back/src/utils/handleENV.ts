@@ -10,3 +10,6 @@ export const getEnvValue = (key: string): string => {
   }
   return origin;
 }
+
+// 実行環境の判定
+export const isProduction = (): boolean => process.env.NODE_ENV === "production";
