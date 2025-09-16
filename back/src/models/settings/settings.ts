@@ -4,7 +4,7 @@ import { selectSettingColumns } from "../utils/selectColumns";
 
 export const createSetting = async(prisma: PrismaClient, userId: string, params: PostSettingParams): Promise<Setting> => {
   return await prisma.setting.create({
-    select: selectSettingColumns,
+    select: selectSettingColumns(),
     data: {
       userId,
       ...params,
@@ -14,7 +14,7 @@ export const createSetting = async(prisma: PrismaClient, userId: string, params:
 
 export const getSettingByUserId = async(prisma: PrismaClient, userId: string): Promise<Setting | null> => {
   return await prisma.setting.findUnique({
-    select: selectSettingColumns,
+    select: selectSettingColumns(),
     where: { userId }
   })
 }
@@ -23,7 +23,7 @@ export const updateSetting = async(prisma: PrismaClient, userId: string, params:
   return await prisma.setting.update({
     where: { userId },
     data: { ...params },
-    select: selectSettingColumns,
+    select: selectSettingColumns(),
   });
 }
 
