@@ -1,7 +1,9 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
-import { NewUserPostParams, User, UserRelations, Users, UserUpdateParams, UserWithRisk } from "../../types/user";
-import { selectRecordColumns, selectSettingColumns, selectTodoColumns } from "../utils/selectColumns";
+import { NewUserPostParams, User, Users, UserUpdateParams, UserWithRisk } from "../../types/user";
+import { selectRecord } from "../records/utils/selectOption";
+import { selectSetting } from "../settings/utils/selectOption";
+import { selectTodo } from "../todos/utils/selectOption";
 import { selectUserColumnsWithIdAndPass, selectUserColumnsWithId, selectUserWithSettingAndTodos, UserWithSettingAndTodos } from "./utils/selectOption";
 
 export const getAllUser = async(prisma: PrismaClient): Promise<Users> => {
@@ -36,15 +38,9 @@ export const getUserWithRelation = async(
   return await prisma.user.findUnique({
     select: {
       ...selectUserColumnsWithId,
-      ...(setting && {
-        setting: { select: selectSettingColumns() }
-      }),
-      ...(records && {
-        records: { select: selectRecordColumns() }
-      }),
-      ...(todos && {
-        todos: { select: selectTodoColumns() },
-      }),
+      ...(setting && { setting: selectSetting }),
+      ...(records && { records: selectRecord }),
+      ...(todos && { todos: selectTodo }),
     },
     where: { id: userId },
   });

@@ -1,12 +1,12 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { createTodoParams, Todo, Todos, updateTodoParams } from "../../types/todo";
 import { devLog } from "../../utils/dev/devLog";
-import { selectTodoColumns } from "../utils/selectColumns";
+import { selectTodo } from "./utils/selectOption";
 
 export const getTodoById = async(prisma: PrismaClient, params: { userId: string, todoId: string }): Promise<Todo | null> => {
   const { userId, todoId } = params;
   return await prisma.todo.findUnique({
-    select: selectTodoColumns(),
+    ...selectTodo,
     where: {
       id: todoId,
       userId,
@@ -17,7 +17,7 @@ export const getTodoById = async(prisma: PrismaClient, params: { userId: string,
 // ユーザーのTodoを全件取得
 export const getUserTodos = async(prisma: PrismaClient, userId: string): Promise<Todos> => {
   return await prisma.todo.findMany({
-    select: selectTodoColumns(),
+    ...selectTodo,
     where: { userId },
   });
 }
@@ -26,7 +26,7 @@ export const getUserTodos = async(prisma: PrismaClient, userId: string): Promise
 export const createTodo = async(prisma: PrismaClient, params: createTodoParams, userId: string): Promise<Todo> => {
   // 作成
   const newTodo = await prisma.todo.create({
-    select: selectTodoColumns(),
+    ...selectTodo,
     data: {
       userId,
       ...params,
@@ -41,7 +41,7 @@ export const updateTodo = async(prisma: PrismaClient, params: { todoParams: upda
   const { todoParams, userId, todoId } = params;
   // 更新処理
   const updatedTodo = await prisma.todo.update({
-    select: selectTodoColumns(),
+    ...selectTodo,
     where: {
       id: todoId,
       userId,
@@ -60,7 +60,7 @@ export const updateTodoStatus = async(prisma: PrismaClient, params: { userId: st
   const { userId, todoId, newStatus } = params;
   // ステータス更新処理
   const updatedTodo = await prisma.todo.update({
-    select: selectTodoColumns(),
+    ...selectTodo,
     where: {
       id: todoId,
       userId,
