@@ -1,25 +1,25 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
-import { NewUserPostParams, User, Users, UserUpdateParams, UserWithRisk } from "../../types/user";
+import { NewUserPostParams, User, UserRelations, Users, UserUpdateParams, UserWithRisk } from "../../types/user";
 import { selectRecordColumns, selectSettingColumns, selectTodoColumns } from "../utils/selectColumns";
-import { selectUserColumnsWithIdAndPass, selectUserColumnsWithId } from "./utils/selectOption";
+import { selectUserColumnsWithIdAndPass, selectUserColumnsWithId, selectUserWithSettingAndTodos, UserWithSettingAndTodos } from "./utils/selectOption";
 
 export const getAllUser = async(prisma: PrismaClient): Promise<Users> => {
   return await prisma.user.findMany({
-    select: selectUserColumnsWithId(),
+    select: selectUserColumnsWithId,
   });
 }
 
 export const getUserById = async(prisma: PrismaClient, userId: string): Promise<User | null> => {
   return await prisma.user.findUnique({
-    select: selectUserColumnsWithId(),
+    select: selectUserColumnsWithId,
     where: { id: userId },
   });
 }
 
 export const getUserByEmail = async(prisma: PrismaClient, email: string): Promise<UserWithRisk | null> => {
   return await prisma.user.findUnique({
-    select: selectUserColumnsWithIdAndPass(),
+    select: selectUserColumnsWithIdAndPass,
     where: { email },
   });
 }
@@ -35,17 +35,27 @@ export const getUserWithRelation = async(
   const { userId, setting, todos, records } = params;
   return await prisma.user.findUnique({
     select: {
-      ...selectUserColumnsWithId(),
+      ...selectUserColumnsWithId,
       ...(setting && {
-        setting: { select: selectSettingColumns }
+        setting: { select: selectSettingColumns() }
       }),
       ...(records && {
-        records: { select: selectRecordColumns }
+        records: { select: selectRecordColumns() }
       }),
       ...(todos && {
-        todos: { select: selectTodoColumns },
+        todos: { select: selectTodoColumns() },
       }),
     },
+    where: { id: userId },
+  });
+}
+
+export const getUserWithSettingAndTodos = async(
+  prisma: PrismaClient,
+  userId: string
+): Promise<UserWithSettingAndTodos | null> => {
+  return await prisma.user.findUnique({
+    ...selectUserWithSettingAndTodos,
     where: { id: userId },
   });
 }
@@ -65,13 +75,13 @@ export const createNewUser = async(prisma: PrismaClient, params: NewUserPostPara
         }
       }
     },
-    select: selectUserColumnsWithId(),
+    select: selectUserColumnsWithId,
   });
 }
 
 export const updateUser = async(prisma: PrismaClient, params: UserUpdateParams, userId: string): Promise<User> => {
   const user = await prisma.user.update({
-    select: selectUserColumnsWithId(),
+    select: selectUserColumnsWithId,
     where: { id: userId },
     data: params,
   })

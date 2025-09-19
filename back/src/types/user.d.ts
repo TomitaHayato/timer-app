@@ -1,3 +1,7 @@
+import { Records } from "./record"
+import { Setting } from "./setting"
+import { Todos } from "./todo"
+
 export type User = {
   id: string,
   name: string,
@@ -22,4 +26,13 @@ export type NewUserPostParams = {
 export type UserUpdateParams = {
   name: string,
   email: string,
+}
+
+export type UserRelations = {
+  id: string,
+  name: string,
+  email: string,
+  setting?: Setting,
+  todos?: Todos,
+  records?: Records
 }
