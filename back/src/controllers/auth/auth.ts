@@ -15,6 +15,7 @@ import { checkExpire } from "../../utils/date";
 import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/authRefreshToken.service";
 import { createNewUserWithRelationRecords } from "../../services/user.service";
 import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
+import { getJwtTokenFromCookie, getRefreshTokenFromCookie } from "../utils/getTokenFromCookie";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -80,12 +81,12 @@ export const signOut = async(req: Request, res: Response, next: NextFunction) =>
   try {
     const userId = getUserIdFromJWT(req, res);
 
+    // DBの認証データ削除
+    await dbQueryHandler(deleteRefreshToken, userId);
+
     // Cookieの認証データ削除
     clearJwtCookie(res);
     clearRefreshTokenFromCookie(res);
-
-    // DBの認証データ削除
-    await dbQueryHandler(deleteRefreshToken, userId);
 
     res.status(200).json('ログアウトしました');
   } catch(err) {
@@ -97,7 +98,7 @@ export const signOut = async(req: Request, res: Response, next: NextFunction) =>
 // 認証トークンの有無・有効期限を確認
 export const tokenCheck = async (req: Request, res: Response) => {
   // CookieからJWT取得（authCheckミドルウェアを介していないので、req.cookiesから取得し検証する）
-  const token = req.cookies?.jwt_token;
+  const token = getJwtTokenFromCookie(req);
   if (!token) {
     devLog('tokenCheckコントローラ：', '認証Tokenなし')
     res.status(401).json(INVALID_TOKEN_ERROR);
@@ -107,7 +108,7 @@ export const tokenCheck = async (req: Request, res: Response) => {
   try {
     // Token検証
     const userId = verifyJwt(token).userId;
-    if (!userId) throw new Error;
+    if (typeof userId !== "string") throw new Error;
 
     const userDataSet = await getUserDataSet(userId);
     res.status(200).json(userDataSet);
@@ -126,10 +127,9 @@ export const tokenCheck = async (req: Request, res: Response) => {
 
 // RefreshTokenによるトークン更新
 export const tokensRefresh = async(req: Request, res: Response, next: NextFunction) => {
-  // リフレッシュトークンをCookieから検証（存在, 期限）
   devLog('cookieの内容', req.cookies);
-  const jwtToken = req.cookies?.jwt_token;
-  const refreshToken = req.cookies?.refresh_token;
+  const jwtToken = getJwtTokenFromCookie(req);
+  const refreshToken = getRefreshTokenFromCookie(req);
 
   if (!jwtToken || !refreshToken) {
     devLog('tokensRefreshエラー：', 'jwtまたはrefreshTokenがない')
@@ -143,7 +143,7 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
     const decodedJwtToken = decodeJwt(jwtToken);
     const userId = decodedJwtToken?.userId;
 
-    if(!userId) {
+    if(typeof userId !== "string") {
       devLog('tokensRefreshエラー：', 'JWTにuserIdが存在しない')
       res.status(401).json(INVALID_TOKEN_ERROR);
       return
