@@ -1,9 +1,6 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { defaultSetting } from "../../config/defaultVals/defaultSetting";
 import { NewUserPostParams, User, Users, UserUpdateParams, UserWithRisk } from "../../types/user";
-import { selectRecord } from "../records/utils/selectOption";
-import { selectSetting } from "../settings/utils/selectOption";
-import { selectTodo } from "../todos/utils/selectOption";
 import { selectUserColumnsWithIdAndPass, selectUserColumnsWithId, selectUserWithSettingAndTodos, UserWithSettingAndTodos } from "./utils/selectOption";
 
 export const getAllUser = async(prisma: PrismaClient): Promise<Users> => {
@@ -26,31 +23,11 @@ export const getUserByEmail = async(prisma: PrismaClient, email: string): Promis
   });
 }
 
-export const getUserWithRelation = async(
-  prisma: PrismaClient,
-  params: {
-    userId: string,
-    setting?: boolean,
-    todos?: boolean,
-    records?: boolean,
-}) => {
-  const { userId, setting, todos, records } = params;
-  return await prisma.user.findUnique({
-    select: {
-      ...selectUserColumnsWithId,
-      ...(setting && { setting: selectSetting }),
-      ...(records && { records: selectRecord }),
-      ...(todos && { todos: selectTodo }),
-    },
-    where: { id: userId },
-  });
-}
-
 export const getUserWithSettingAndTodos = async(
   prisma: PrismaClient,
   userId: string
-): Promise<UserWithSettingAndTodos | null> => {
-  return await prisma.user.findUnique({
+): Promise<UserWithSettingAndTodos> => {
+  return await prisma.user.findUniqueOrThrow({
     ...selectUserWithSettingAndTodos,
     where: { id: userId },
   });
