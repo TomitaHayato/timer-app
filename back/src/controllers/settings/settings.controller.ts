@@ -22,7 +22,7 @@ export const postSetting = async(req: Request, res: Response, next: NextFunction
 
   try {
     const setting = await dbQueryHandler(createSetting, userId, params);
-    res.status(200).json(setting);
+    res.status(201).json(setting);
   } catch(err) { next(err) }
 }
 

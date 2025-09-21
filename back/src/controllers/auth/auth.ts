@@ -40,7 +40,7 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
 
     // DBから作成したユーザーと関連レコードを取得
     const userDataSet = await getUserDataSet(newUser.id);
-    res.status(200).json(userDataSet);
+    res.status(201).json(userDataSet);
   } catch (err) {
     devLog('Signup処理のエラー：', err);
     next(err);
