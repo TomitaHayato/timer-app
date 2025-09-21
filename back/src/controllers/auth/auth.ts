@@ -28,7 +28,6 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
       email,
       hashedPassword: await dataHash(password),
     });
-    if(!newUser) throw new Error("Userが作成されていません");
     devLog('作成されたUser：', newUser);
 
     // 作成したリフレッシュトークンを取得

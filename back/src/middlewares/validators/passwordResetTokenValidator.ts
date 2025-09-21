@@ -12,7 +12,8 @@ export const passwordResetTokenValidator = [
     .notEmpty()
     .isLength({ min: 6 })
     .custom((value, { req }) => {
-      return value === req.body.password;
+      if (value === req.body.password) return true;
+
+      throw new Error('パスワードとパスワード確認が一致しません');
     })
-    .withMessage('パスワードとパスワード確認が一致しません'),
 ]

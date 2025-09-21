@@ -4,12 +4,9 @@ import { devLog } from "../../utils/dev/devLog";
 
 export const handleValidationResult = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
+  if (errors.isEmpty()) next();
 
-  if (!errors.isEmpty()) {
-    devLog('バリデーションOUT：', errors)
-    res.status(422).json({ errors: errors.array() });
-    return;
-  }
-
-  next();
+  devLog('バリデーションOUT：', errors.array());
+  res.status(422).json({ errors: errors.array() });
+  return;
 }
