@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { getUserIdFromRequest } from "../utils/getUserId";
+import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { deleteUserById, updateUser } from "../../models/users/users";
-import { dbQueryHandler } from "../../models/utils/errorHandler";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie } from "../../utils/jwt";
 import { clearRefreshTokenFromCookie } from "../../utils/refreshToken";
 import { devLog } from "../../utils/dev/devLog";
@@ -10,7 +10,7 @@ import { getRequestBody } from "../utils/getRequestBody";
 
 export const deleteUser = async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = getUserIdFromRequest(req, res);
+    const userId = getUserIdFromJWT(req, res);
     // User削除
     await dbQueryHandler(deleteUserById, userId);
     // 認証トークン失効 (DBからの削除はdeleteUserByIdで実行済)
@@ -24,10 +24,10 @@ export const deleteUser = async(req: Request, res: Response, next: NextFunction)
 
 export const updateUserProfile = async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = getUserIdFromRequest(req, res);
+    const userId = getUserIdFromJWT(req, res);
     const params: UserUpdateParams = getRequestBody<User>(req, res);
 
-    const newUser = await dbQueryHandler(updateUser, { params, userId });
+    const newUser = await dbQueryHandler(updateUser, params, userId);
     devLog('update後のUser:', newUser);
     res.status(200).json(newUser);
   } catch(err) { next(err) }

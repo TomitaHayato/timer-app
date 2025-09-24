@@ -1,4 +1,6 @@
+import { isProduction } from "../handleENV";
+
 export const devLog = (...args: unknown[]): void => {
-  if (process.env.NODE_ENV === 'production') return;
+  if (isProduction()) return;
   console.log(...args);
 }

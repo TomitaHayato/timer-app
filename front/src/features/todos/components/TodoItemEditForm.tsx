@@ -1,11 +1,10 @@
-import dayjs from "dayjs"
-import type { Todo, TodoAddParams } from "../types/todoType"
-import { useForm } from "react-hook-form"
-import { useEffect, useState } from "react"
-import { DayPicker } from "react-day-picker"
+import type { Todo, TodoAddParams, TodoUpdateParams } from "../../../types/todoType"
+import { Controller, useForm } from "react-hook-form"
+import { useEffect } from "react"
 import { useAppDispatch } from "../../../reduxStore/hooks"
 import { updateTodo } from "../todoSlice"
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast"
+import { DayPickerForm } from "./DayPickerForm"
 
 type Props = {
   todo: Todo,
@@ -13,35 +12,30 @@ type Props = {
 }
 
 // Todoの編集モード
-export function TodoItemEdit({ todo, setIsEdit }: Props) {
+export function TodoItemEditForm({ todo, setIsEdit }: Props) {
   const dispatch = useAppDispatch();
-  // 日付はステートで管理
-  const [deadline, setDeadline] = useState<Date | undefined>();
 
   const {
+    control,
     register,
     formState: { errors },
     reset,
-    handleSubmit
+    handleSubmit,
   } = useForm<TodoAddParams>({
     defaultValues: { title: '' }
   });
 
   useEffect(() => {
     reset({ title: todo.title });
-    setDeadline(todo.deadline);
   }, [todo, reset])
 
   const fetchUpdateTodo = async(data: { title: string }) => {
-    const params: TodoAddParams = {
+    const params: TodoUpdateParams = {
       ...data,
-      deadline,
+      id: todo.id,
     }
     try {
-      await dispatch(updateTodo({
-        id: todo.id,
-        params,
-      }));
+      await dispatch(updateTodo({ params }));
       toastSuccessRB('Todoを更新しました');
       setIsEdit(false)
     } catch {
@@ -51,46 +45,38 @@ export function TodoItemEdit({ todo, setIsEdit }: Props) {
 
   return(
     <>
-      <li className="list-row items-center px-2 py-2 mb-1 text-sm bg-gray-600">
-        <div>
-          <span className="icon-[line-md--confirm-circle-filled-to-circle-filled-transition] size-5 text-pink-400"></span>
-        </div>
-
-        <div>
+      <li className="flex justify-center gap-2 items-center px-2 py-2 mb-1 text-sm bg-gray-600">
+        <div className="min-w-10/12 text-center">
           <form onSubmit={handleSubmit(fetchUpdateTodo)}>
             { errors?.title?.message && <p className="text-xs text-error">{errors.title.message}</p> }
-            <input
-              type="text"
-              className="input input-sm"
-              { ...register('title', { required: '※タイトルを入力してください' }) }/>
+            <textarea
+              className="textarea"
+              { ...register('title', {
+                required: '※タイトルを入力してください',
+                maxLength: {
+                  value: 255,
+                  message: "255文字以内で入力してください",
+                }
+              })}/>
 
-            <div className="flex justify-start mt-0.5">
-              <button type="button" popoverTarget="rdp-popover-edit" className="input input-sm px-6 rounded-xl" style={{ anchorName: "--rdp" } as React.CSSProperties}>
-                {deadline ? dayjs(deadline).format('YYYY年 MM月DD日') : "Todoの期限を指定"}
-              </button>
-
-              <div popover="auto" id="rdp-popover-edit" className="dropdown" style={{ positionAnchor: "--rdp" } as React.CSSProperties}>
-                <DayPicker
-                  className="react-day-picker text-base"
-                  mode="single"
-                  selected={deadline}
-                  onSelect={setDeadline} />
-              </div>
+            <div className="mt-0.5">
+              <Controller
+                name="deadline"
+                control={control}
+                render={({ field }) => (
+                  <DayPickerForm field={field} />
+                )}
+              />
             </div>
 
-            <input type="submit" className="mt-2 btn btn-wide btn-sm" value='更新する'/>
+            <input type="submit" className="my-2 btn btn-primary btn-wide btn-sm" value='更新する'/>
           </form>
         </div>
 
         
-        <div className="flex gap-4">
-          <button className="btn btn-xs btn-outline btn-square" onClick={() => setIsEdit(false)}>
-            <span className="icon-[weui--previous-filled] size-5"></span>
-          </button>
-
-          {/* DELETEボタンの場所の穴埋め */}
-          <span className="size-5"></span>
-        </div>
+        <button className="btn btn-xs btn-outline btn-square" onClick={() => setIsEdit(false)}>
+          <span className="icon-[weui--previous-filled] size-5"></span>
+        </button>
       </li>
     </>
   )

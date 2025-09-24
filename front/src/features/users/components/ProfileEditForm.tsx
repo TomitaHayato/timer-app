@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import type { User } from "../../session/types/session";
+import type { User } from "../../../types/session";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { selectUser, updateUser } from "../../session/slices/sessionSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
@@ -34,7 +34,7 @@ export function ProfileEditForm({ setIsEdit }: Props) {
 
   return(
     <>
-      <div>
+      <div data-testid="profile-edit-form">
         <div className="flex justify-center items-center mb-8">
           <h3 className="text-xl font-semibold">プロフィール</h3>
           <button onClick={handleEditClick}><span className="btn text-gray-400 icon-[weui--previous-filled] size-6"></span></button>

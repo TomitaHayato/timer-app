@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { defaultRecords } from "./defaultRecords";
-import type { PostRecordParams, RecordsState, TermsRecords } from "./types/records";
+import type { PostRecordParams, RecordsState, TermsRecords } from "../../types/records";
 import type { AppDispatch, RootState } from "../../reduxStore/store";
 import { devLog } from "../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../utils/errorHandler/axiosError";
@@ -9,7 +9,7 @@ import { INVALID_REFRESH_TOKEN } from "../../utils/apiErrors/errorMessages";
 import { resetStateOfUser } from "../session/slices/sessionSlice";
 
 const initialState: RecordsState = {
-  records: defaultRecords,
+  records: defaultRecords(),
   loading: false,
   error: null,
 }
@@ -58,7 +58,7 @@ const recordsSlice = createSlice({
       state.records.totalRecord = totalRecord;
     },
     resetRecordsState: (state: RecordsState) => {
-      state.records = defaultRecords;
+      state.records = defaultRecords();
     },
   },
   extraReducers(builder) {

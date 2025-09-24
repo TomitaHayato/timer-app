@@ -1,5 +1,5 @@
 import type { UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form";
-import type { settingItems, SettingParams } from "../types/settingType";
+import type { settingItems, SettingParams } from "../../../types/settingType";
 import { useAppSelector } from "../../../reduxStore/hooks";
 import { selectSetting } from "../Slices/settingSlice";
 import { useEffect } from "react";

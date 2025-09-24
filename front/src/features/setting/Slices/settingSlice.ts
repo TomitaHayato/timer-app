@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { Setting, SettingParams, SettingState } from '../types/settingType'
+import type { Setting, SettingParams, SettingState } from '../../../types/settingType'
 import type { AppDispatch, RootState } from '../../../reduxStore/store'
 import { defaultSetting } from '../defaultSetting'
 import { getAxiosErrorMessageFromStatusCode } from '../../../utils/errorHandler/axiosError'

@@ -4,7 +4,6 @@ import { changeSimpleBg, changeVisible, selectSimpleBg } from "../../display/vis
 import { selectAuthStatus } from "../../session/slices/sessionSlice";
 import { LoginFormBtn } from "./LoginFormBtn";
 import { LogoutBtn } from "./LogoutBtn";
-import MobileDropDown from "./MobileDropDown";
 import { ProfileIconBtn } from "./PrifileIconBtn";
 
 export default function Header() {
@@ -24,18 +23,9 @@ export default function Header() {
 
   return(
     <>
-      <div className="navbar bg-ghost shadow-none h-16">
+      <div className="navbar bg-ghost shadow-none h-16" data-testid="header">
         <div className="navbar-start">
-          <MobileDropDown />
-          <a className="btn btn-ghost text-xl">Timer</a>
-        </div>
-
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <div></div>
-            </li>
-          </ul>
+          <button className="btn btn-ghost text-xl">Timer</button>
         </div>
 
         <div className="navbar-end">
@@ -46,7 +36,7 @@ export default function Header() {
             </button>
 
             {/* 集中ボタン */}
-            <button className={btnClass} onClick={handleVisibleClick}>
+            <button className={btnClass} onClick={handleVisibleClick} data-testid="focus-ctl-button">
               <span className="icon-[weui--eyes-off-outlined] size-6"></span>
               <p className="text-xs">集中</p>
             </button>

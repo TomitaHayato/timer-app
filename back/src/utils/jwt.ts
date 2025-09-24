@@ -1,14 +1,15 @@
 import jwt from 'jsonwebtoken'
 import { jwtPayload } from '../types/auth';
 import { Response } from 'express';
+import { getEnvValue, isProduction } from './handleENV';
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY
+const SECRET_KEY = getEnvValue("JWT_SECRET_KEY");
 if (!SECRET_KEY) {
   console.log('変数SECRET_KEYが定義されていません');
   process.exit(1);
 }
-const COOKIE_NAME = 'jwt_token'
-const ACCESS_TOKEN_EXPIRESIN = Number(process.env.ACCESS_TOKEN_EXPIRESIN) || (30 * 60)
+const COOKIE_NAME = getEnvValue("JWT_TOKEN_COOKIE_KEY");
+const ACCESS_TOKEN_EXPIRESIN = Number(getEnvValue("ACCESS_TOKEN_EXPIRESIN")) || (30 * 60);
 
 export const decodeJwt = (token: string) => {
   const decoded = jwt.decode(token, { json: true });
@@ -27,7 +28,8 @@ export const setJwtInCookie = (res: Response, userId: string): void => {
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
     maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days (refreshTokenの有効期限より1週間長い)
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProduction(),
+    sameSite: "lax",
   });
 }
 
@@ -35,7 +37,8 @@ export const clearJwtCookie = (res: Response): void => {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
     expires: new Date(0),
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProduction(),
+    sameSite: "lax",
   });
 }
 

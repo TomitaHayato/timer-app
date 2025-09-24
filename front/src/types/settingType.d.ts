@@ -1,5 +1,5 @@
-import type { ImageKey } from "../../../utils/staticFiles/imagePathMap"
-import type { WorkingSoundKey } from "../../../utils/staticFiles/soundFiles"
+import type { ImageKey } from "../utils/staticFiles/imagePathMap"
+import type { WorkingSoundKey } from "../utils/staticFiles/soundFiles"
 
 export type Setting= {
   workSec:  number,

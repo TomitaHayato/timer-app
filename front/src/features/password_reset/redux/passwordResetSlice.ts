@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { paramsForPasswordUpdate, passwordForgetParams, passwordResetState, tokenAndIdForPasswordReset } from "../types/password_reset";
+import type { paramsForPasswordUpdate, passwordForgetParams, passwordResetState, tokenAndIdForPasswordReset } from "../../../types/password_reset";
 import { clientCredentials } from "../../../utils/axios";
 import { devLog } from "../../../utils/logDev";
 import type { RootState } from "../../../reduxStore/store";

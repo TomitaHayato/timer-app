@@ -1,16 +1,17 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { Todo, TodoAddParams, Todos, TodosState } from './types/todoType'
+import type { Todo, TodoAddParams, Todos, TodosState, TodoUpdateParams } from '../../types/todoType'
 import type { AppDispatch, RootState } from '../../reduxStore/store';
 import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';
 import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axiosError';
-import { sortTodosByDeadline } from './utils/todosSort';
+import { sortTodosByDeadline, sortTodosByIsCompleted } from './utils/todosSort';
 import { fetchWithTokenRefresh } from '../../utils/fetch/fetchWithTokenRefresh';
 import { INVALID_REFRESH_TOKEN } from '../../utils/apiErrors/errorMessages';
 import { resetStateOfUser } from '../session/slices/sessionSlice';
+import { filterByDeadline } from './utils/todosFilter';
 
 const initialState: TodosState = {
-  todos: defaultTodos,
+  todos: defaultTodos(),
   loading: false,
   error: null,
 }
@@ -40,17 +41,16 @@ export const createTodo = createAsyncThunk<
 export const updateTodo = createAsyncThunk<
   Todos,
   {
-    id: string,
-    params: TodoAddParams,
+    params: TodoUpdateParams,
   },
   {
     rejectValue: string,
     dispatch: AppDispatch,
   }
 >('todos/update', async(data, thunkAPI) => {
-  const { id, params } = data;
+  const { params } = data;
   try {
-    const res = await fetchWithTokenRefresh(`/todos/${id}`, 'put', params);
+    const res = await fetchWithTokenRefresh(`/todos/${params.id}`, 'put', params);
     const todos: Todos = res.data;
     if (!todos) return thunkAPI.rejectWithValue('todosの取得に失敗しました');
     return todos;
@@ -117,7 +117,7 @@ const todosSlice = createSlice({
       state.todos = todos;
     },
     resetTodosState: (state: TodosState) => {
-      state.todos = defaultTodos;
+      state.todos = defaultTodos();
     },
   },
   extraReducers: builder => {
@@ -179,6 +179,7 @@ export const selectTodos = (state: RootState) => state.todos;
 export const selectSortedTodos = (state: RootState) => sortTodosByDeadline(state.todos.todos);
 export const selectTodosCompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => todo.isCompleted)
 export const selectTodosUncompleted = (state: RootState) => sortTodosByDeadline(state.todos.todos).filter((todo: Todo) => !todo.isCompleted)
+export const selectTodayTodos = (state: RootState) => sortTodosByIsCompleted(filterByDeadline(state.todos.todos, new Date()));
 
 export const {
   replaceTodos,

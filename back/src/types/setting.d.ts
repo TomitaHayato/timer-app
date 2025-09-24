@@ -4,8 +4,8 @@ export type Setting = {
   longRestSec: number,
   isMuted: boolean,
   volume: number,
-  workingSound?: string,
-  bgImage?: string,
+  workingSound?: string | null,
+  bgImage?: string | null,
 }
 
 export type PostSettingParams = {

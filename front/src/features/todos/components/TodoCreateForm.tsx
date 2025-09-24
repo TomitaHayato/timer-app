@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import type { TodoAddParams } from "../types/todoType"
+import type { TodoAddParams } from "../../../types/todoType"
 import { devLog } from "../../../utils/logDev"
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast"
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks"
@@ -43,7 +43,13 @@ export default function TodoCreateForm() {
           <input
             className="input join-item rounded-l-xl"
             placeholder="Title"
-            {...register('title', { required: '! Titleを入力してください' })}/>
+            { ...register('title', {
+              required: '! Titleを入力してください',
+              maxLength: {
+                value: 255,
+                message: "255文字以内で入力してください",
+              }
+            })}/>
 
           { <input type="submit" value='作成' className="join-item btn btn-info rounded-r-xl" disabled={!isAuth || loading}/> }
         </div>

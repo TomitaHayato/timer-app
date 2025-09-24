@@ -16,7 +16,7 @@ export function Records() {
             <h3 className={
               simpleBg
               ? "text-3xl text-center text-gray-500"
-              : "text-3xl text-center text-amber-400 font-semibold"
+              : "text-3xl text-center text-amber-500 font-semibold"
             }>記録</h3>
           </TextOnBgImageWrapper>
         </div>

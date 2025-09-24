@@ -8,15 +8,17 @@ import cookieParser from 'cookie-parser'
 import { errorHander } from './middlewares/errorHandler/errorHandler'
 import { devLog } from './utils/dev/devLog'
 import { verifyEmailConnection } from './config/mailer/transporter'
+import helmet from 'helmet'
 
 dotenv.config();
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());   // JSONボディをパース
 app.use(cookieParser());   // Cookieデータにアクセス
 app.use(cors(corsOption)); // CORS対策
+app.use(helmet());
 
 initMysql(); // DB接続
 verifyEmailConnection(); // メールサーバ接続
@@ -30,6 +32,4 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 app.use(errorHander); // 共通のエラーハンドルMiddlewara
 
-app.listen(port, () => {
-  devLog(`サーバ起動 port:${port}`)
-})
+app.listen(port, () => devLog(`サーバ起動 port:${port}`));

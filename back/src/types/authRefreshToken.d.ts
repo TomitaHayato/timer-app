@@ -1,4 +1,4 @@
-export type authRefreshToken = {
+export type AuthRefreshToken = {
   token: string,
   expiresAt: Date,
 }

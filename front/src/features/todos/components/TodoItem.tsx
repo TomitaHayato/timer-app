@@ -1,7 +1,7 @@
-import type { Todo } from "../types/todoType"
+import type { Todo } from "../../../types/todoType"
 import { memo, useState } from "react";
 import { TodoItemInfo } from "./TodoItemInfo";
-import { TodoItemEdit } from "./TodoItemEditForm";
+import { TodoItemEditForm } from "./TodoItemEditForm";
 
 type Props ={
   todo: Todo,
@@ -14,7 +14,7 @@ function TodoItem({ todo }: Props) {
     <>
       {
         isEdit
-        ? <TodoItemEdit todo={todo} setIsEdit={setIsEdit}/>
+        ? <TodoItemEditForm todo={todo} setIsEdit={setIsEdit}/>
         : <TodoItemInfo todo={todo} setIsEdit={setIsEdit}/>
       }
     </>

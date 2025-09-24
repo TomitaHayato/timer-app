@@ -1,3 +1,3 @@
-import type { Todos } from "./types/todoType";
+import type { Todos } from "../../types/todoType";
 
-export const defaultTodos: Todos = []
+export const defaultTodos = (): Todos => []

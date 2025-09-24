@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { AppDispatch, RootState } from "../../../reduxStore/store";
-import type { SessionState, SigninParams, SignupParams, User } from "../types/session";
+import type { SessionState, SigninParams, SignupParams, User } from "../../../types/session";
 import { clientCredentials } from "../../../utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { replaceSetting, resetSettingState } from "../../setting/Slices/settingSlice";
@@ -13,6 +13,8 @@ import { devLog } from "../../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
 import { fetchWithTokenRefresh } from "../../../utils/fetch/fetchWithTokenRefresh";
 import { INVALID_REFRESH_TOKEN } from "../../../utils/apiErrors/errorMessages";
+import type { UserData } from "../../../types/dataFromAPI";
+import type { TermsRecords } from "../../../types/records";
 
 const initialState: SessionState = {
   user: null,
@@ -52,8 +54,8 @@ export const signin = createAsyncThunk<
 
       // 各スライスにデータを配分
       const setting = userData.setting || defaultSetting();
-      const records = recordsData || defaultRecords;
-      const todos = userData.todos || defaultTodos
+      const records = recordsData || defaultRecords();
+      const todos = userData.todos || defaultTodos()
 
       thunkAPI.dispatch(replaceSetting(setting))
       thunkAPI.dispatch(replaceRecords(records))
@@ -78,14 +80,14 @@ export const signup = createAsyncThunk<
   try {
     const res = await clientCredentials.post('/auth/signup', params);
     devLog('signupのres:', res);
-    const { userData, recordsData } = res.data;
-    if (!userData)  return thunkAPI.rejectWithValue('userData is null');
+    const { userData, recordsData }: { userData?: UserData, recordsData?: TermsRecords } = res.data;
+    if (!userData) return thunkAPI.rejectWithValue('userData is null');
 
     devLog('UserData:', userData)
     // 各スライスにデータを配分
     const setting = userData.setting || defaultSetting();
-    const records = recordsData || defaultRecords;
-    const todos = userData.todos || defaultTodos
+    const records = recordsData || defaultRecords();
+    const todos = userData.todos || defaultTodos()
 
     thunkAPI.dispatch(replaceSetting(setting))
     thunkAPI.dispatch(replaceRecords(records))
@@ -113,8 +115,8 @@ export const signout = createAsyncThunk<
     await fetchWithTokenRefresh('/auth/signout', 'get');
     // 他のStateをリセット
     thunkAPI.dispatch(replaceSetting(defaultSetting()))
-    thunkAPI.dispatch(replaceRecords(defaultRecords))
-    thunkAPI.dispatch(replaceTodos(defaultTodos))
+    thunkAPI.dispatch(replaceRecords(defaultRecords()))
+    thunkAPI.dispatch(replaceTodos(defaultTodos()))
   } catch(err) {
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
     if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {

@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { TimerMode, TimerState } from './types/timerType'
+import type { TimerMode, TimerState } from '../../types/timerType'
 import type { RootState } from '../../reduxStore/store';
 import { devLog } from '../../utils/logDev';
 

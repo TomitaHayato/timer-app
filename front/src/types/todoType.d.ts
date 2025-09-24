@@ -11,6 +11,12 @@ export type TodoAddParams = {
   deadline?: Date,
 }
 
+export type TodoUpdateParams = {
+  id: string,
+  title: string,
+  deadline?: Date,
+}
+
 export type Todos = Todo[]
 
 export type TodosState = {

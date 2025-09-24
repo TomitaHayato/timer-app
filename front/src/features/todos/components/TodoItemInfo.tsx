@@ -1,6 +1,6 @@
 import dayjs from "dayjs"
 import { deadlineColor } from "../../../utils/class"
-import type { Todo } from "../types/todoType"
+import type { Todo } from "../../../types/todoType"
 import { TodoCompleteBtn } from "./TodoCompleteBtn"
 import { TodoRebornBtn } from "./TodoRebornBtn"
 import { TodoUpdateBtn } from "./TodoUpdateBtn"

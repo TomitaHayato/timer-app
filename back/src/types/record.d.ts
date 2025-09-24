@@ -1,21 +1,18 @@
-export type Record = {
-  workCount: number,
-  totalSec: number,
-}
-
-export type Records = {
-  dailyRecord: RecordData,
-  weeklyRecord: RecordData,
-  monthlyRecord: RecordData,
-  totalRecord: RecordData,
-}
-
 export type postRecordParams = {
   workCount: number,
   workTime: number,
 }
 
-export type RecordData = {
+export type Record = {
   workCount: number,
   workTime: number,
+}
+
+export type Records = Record[]
+
+export type RecordSummaryByPeriod = {
+  dailyRecord: Record,
+  weeklyRecord: Record,
+  monthlyRecord: Record,
+  totalRecord: Record,
 }

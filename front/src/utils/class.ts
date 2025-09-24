@@ -65,10 +65,23 @@ export const bgColorClass = (simpleBg: boolean) => {
   : 'bg-gray-100/75'
 }
 
-export const textColorClass = (simpleBg: boolean) => {
+export const containerGrayClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'p-2'
+  : 'bg-gray-100/75 rounded-xl p-2'
+}
+
+export const shortContainerGrayClass = (simpleBg: boolean) => {
+  return simpleBg
+  ? 'mx-auto max-w-1/2 p-2'
+  : 'mx-auto max-w-1/2 bg-gray-200/75 rounded-xl p-2'
+}
+
+
+export const statTitleColorClass = (simpleBg: boolean) => {
   return simpleBg
   ? 'text-gray-400 font-semibold'
-  : 'text-orange-300 font-extrabold'
+  : 'text-orange-500 font-extrabold'
 }
 
 export const textColorClassOnGrayBg = (simpleBg: boolean) => {

@@ -3,10 +3,11 @@ import { verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
+import { getJwtTokenFromCookie } from "../../controllers/utils/getTokenFromCookie";
 
-// JWTトークンを検証
+// JWTトークンを検証（認証が必要なエンドポイントに設置）
 export const authCheckMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies?.jwt_token; // リクエストのCookieからJWTを取得
+  const token = getJwtTokenFromCookie(req); // リクエストのCookieからJWTを取得
   if (!token) {
     devLog('認証Tokenなし')
     res.status(401).json(INVALID_TOKEN_ERROR);

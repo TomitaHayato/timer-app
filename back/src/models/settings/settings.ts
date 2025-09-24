@@ -1,52 +1,33 @@
 import { PrismaClient } from "../../../generated/prisma";
-import { PostSettingParams, UpdateSettingParams } from "../../types/setting";
-import { devLog } from "../../utils/dev/devLog";
-import { selectSettingColumns } from "../utils/selectColumns";
+import { PostSettingParams, Setting, UpdateSettingParams } from "../../types/setting";
+import { selectSetting } from "./utils/selectOption";
 
-export const createSetting = async(prisma: PrismaClient, queryInfo: { userId: string, params: PostSettingParams }) => {
-  const { userId, params } = queryInfo;
-
-  const newSettig = await prisma.setting.create({
+export const createSetting = async(prisma: PrismaClient, userId: string, params: PostSettingParams): Promise<Setting> => {
+  return await prisma.setting.create({
+    ...selectSetting,
     data: {
       userId,
       ...params,
     }
-  })
-  devLog('新しい設定値：', newSettig);
-  return newSettig;
+  });
 }
 
-export const getSettingByUserId = async(prisma: PrismaClient, userId: string) => {
+export const getSettingByUserId = async(prisma: PrismaClient, userId: string): Promise<Setting | null> => {
   return await prisma.setting.findUnique({
-    select: selectSettingColumns,
-    where: {
-      userId,
-    }
+    ...selectSetting,
+    where: { userId }
   })
 }
 
-export const updateSetting = async(prisma: PrismaClient, queryInfo: { userId: string, params: UpdateSettingParams }) => {
-  const { userId, params } = queryInfo;
-
-  const newSettig = await prisma.setting.update({
-    where: {
-      userId,
-    },
-    data: {
-      ...params,
-    }
-  })
-  devLog('更新後の設定値：', newSettig);
-  const setting = await prisma.setting.findUnique({
-    select: selectSettingColumns,
-    where: {
-      userId,
-    }
-  })
-  return setting;
+export const updateSetting = async(prisma: PrismaClient, userId: string, params: UpdateSettingParams): Promise<Setting> => {
+  return await prisma.setting.update({
+    ...selectSetting,
+    where: { userId },
+    data: { ...params },
+  });
 }
 
-export const deleteSettingByUserId = async(prisma: PrismaClient, userId: string) => {
+export const deleteSettingByUserId = async(prisma: PrismaClient, userId: string): Promise<void> => {
   await prisma.setting.delete({
     where: { userId }
   });

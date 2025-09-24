@@ -20,7 +20,7 @@ export const LogoutBtn = ({ btnClass }: Props) => {
 
   return(
     <>
-      <button className={btnClass} onClick={logout}>
+      <button className={btnClass} onClick={logout} data-testid="logout-btn">
         ログアウト
       </button>
     </>

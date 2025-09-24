@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { toastSuccessRB } from "../../../utils/toast";
 import { closeModal } from "../../../utils/modelCtl";
 import { devLog } from "../../../utils/logDev";
-import type { passwordForgetParams } from "../types/password_reset";
+import type { passwordForgetParams } from "../../../types/password_reset";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { fetchPasswordResetRequest, selectPasswordResetLoading } from "../redux/passwordResetSlice";
 
@@ -26,7 +26,7 @@ export const PasswordResetRequestForm = () => {
   }
 
   return(
-    <div className="py-8">
+    <div className="py-8" data-testid="password-reset-request-form">
       <p className="text-gray-300 mb-8">
         パスワードを再生成するアカウントのメールアドレスを入力してください。
         パスワードリセット用URLが送信されます

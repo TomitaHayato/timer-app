@@ -1,8 +1,5 @@
 import { randomUUID } from "crypto"
-import dayjs from "dayjs";
 import { Response } from "express";
-import { authRefreshToken } from "../types/authRefreshToken";
-import { devLog } from "./dev/devLog";
 
 const COOKIE_NAME = "refresh_token"
 const COOKIE_SCOPE = '/api/auth/token_refresh'; // refresh_tokenがリクエストに付加されるpathを限定
@@ -15,6 +12,7 @@ export const setRefreshTokenInCookie = (res: Response, refreshToken: string) => 
     maxAge: 14 * 24 * 60 * 60 * 1000, // 14days
     secure: process.env.NODE_ENV === 'production',
     path: COOKIE_SCOPE,
+    sameSite: "lax",
   });
 }
 
@@ -25,5 +23,6 @@ export const clearRefreshTokenFromCookie = (res: Response): void => {
     expires: new Date(0),
     secure: process.env.NODE_ENV === 'production',
     path: COOKIE_SCOPE,
+    sameSite: "lax",
   });
 }

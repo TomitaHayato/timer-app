@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { signIn, signOut, signUp, tokenCheck, tokensRefresh } from "../../controllers/auth/auth";
-import { signInValidator, userPostValidator } from "../../middlewares/validators/users";
+import { signInValidator, userPostValidator } from "../../middlewares/validators/usersValidator";
 import { handleValidationResult } from "../../middlewares/validators/handleValidationResult";
 import { authCheckMiddleware } from "../../middlewares/auth/auth";
 

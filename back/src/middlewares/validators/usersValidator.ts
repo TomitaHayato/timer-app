@@ -1,4 +1,6 @@
 import { body } from "express-validator";
+import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
+import { getUserByEmail } from "../../models/users/users";
 
 export const userPostValidator = [
   body('name')
@@ -11,12 +13,13 @@ export const userPostValidator = [
     .isString()
     .notEmpty()
     .isEmail()
-    .custom(async (value) => {
-      // DBからvalueのemailを持つUserを取得する。
-      // もし、そのUserが存在するならfalseを返す
-      return true
-    })
-    .withMessage('既に登録されたメールアドレスはご利用できません'),
+    .custom(async(value) => {
+      // emailの一意性を保証
+      const existingUser = await dbQueryHandler(getUserByEmail, value);
+      if (existingUser) throw new Error('既に登録されたメールアドレスはご利用できません');
+
+      return true;
+    }),
   body('password')
     .optional({ values: 'null' })
     .isString()
@@ -28,9 +31,10 @@ export const userPostValidator = [
     .notEmpty()
     .isLength({ min: 6 })
     .custom((value, { req }) => {
-      return value === req.body.password;
+      if (value === req.body.password) return true;
+
+      throw new Error('パスワードとパスワード確認が一致しません');
     })
-    .withMessage('パスワードとパスワード確認が一致しません'),
 ]
 
 export const signInValidator = [
