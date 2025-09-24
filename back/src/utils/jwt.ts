@@ -29,6 +29,7 @@ export const setJwtInCookie = (res: Response, userId: string): void => {
     httpOnly: true,
     maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days (refreshTokenの有効期限より1週間長い)
     secure: isProduction(),
+    sameSite: "lax",
   });
 }
 
@@ -37,6 +38,7 @@ export const clearJwtCookie = (res: Response): void => {
     httpOnly: true,
     expires: new Date(0),
     secure: isProduction(),
+    sameSite: "lax",
   });
 }
 

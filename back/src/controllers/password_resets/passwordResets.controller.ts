@@ -58,7 +58,7 @@ export const tokenCheck = async(req: Request, res: Response, next: NextFunction)
       res.status(403).json(INVALID_TOKEN_ERROR);
       return;
     }
-    res.status(200).json();
+    res.status(200).end();
   } catch(err) {
     devLog('passwordResetToken検証エラー：', err);
     next(err);

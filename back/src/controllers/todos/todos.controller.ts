@@ -42,7 +42,7 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
     res.status(422).json('無効なリクエストです');
     return;
   }
- 
+
   try {
     // 現在のステータスの値を取得
     const todo = await dbQueryHandler(getTodoById, { userId, todoId });
