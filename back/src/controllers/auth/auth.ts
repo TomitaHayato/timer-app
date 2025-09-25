@@ -5,18 +5,18 @@ import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
 import { getUserAndRecords } from "../../services/auth.service";
-import { deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId } from "../../models/authRefreshToken/authRefreshToken";
+import { deleteRefreshToken, getRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
 import { clearRefreshTokenFromCookie, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_REFRESH_TOKEN, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 import { getRequestBody } from "../utils/getRequestBody";
 import { signinParams } from "../../types/auth";
 import { checkExpire } from "../../utils/date";
-import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/authRefreshToken.service";
+import { refreshRefreshToken } from "../../services/authRefreshToken.service";
 import { createNewUserWithRelationRecords } from "../../services/user.service";
 import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { getJwtTokenFromCookie, getRefreshTokenFromCookie } from "../utils/getTokenFromCookie";
-import { createOrUpdateRefreshTokenAndCsrfSecret } from "../../services/refreshTokenAndCsrf.service";
+import { createOrUpdateRefreshTokenAndCsrfSecret, deleteRefreshTokenAndCsrfSecret } from "../../services/refreshTokenAndCsrf.service";
 import { generateCsrfToken, setCsrfTokenToReponseHeader } from "../utils/csrf";
 
 // ユーザー作成 + Settingのデフォルト値作成
@@ -89,7 +89,7 @@ export const signOut = async(req: Request, res: Response, next: NextFunction) =>
     const userId = getUserIdFromJWT(req, res);
 
     // DBの認証データ削除
-    await dbQueryHandler(deleteRefreshToken, userId);
+    await dbQueryHandler(deleteRefreshTokenAndCsrfSecret, userId);
 
     // Cookieの認証データ削除
     clearJwtCookie(res);
