@@ -55,18 +55,18 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     }
 
     // hashedPasswordカラムとpasswordのハッシュを比較
-    if (await hashCompare(password, user.hashedPassword)) {
-      const authRefreshToken = await createOrUpdateRefreshToken(user.id);
-
-      // リフレッシュトークンとアクセストークンをCookieにセット
-      setRefreshTokenInCookie(res, authRefreshToken.token);
-      setJwtInCookie(res, user.id);
-
-      const userWithRelation = await getUserAndRecords(user.id);
-      res.status(200).json(userWithRelation);
-    } else {
-      res.status(401).json('ログインに失敗しました。')
+    if (!(await hashCompare(password, user.hashedPassword))) {
+      res.status(401).json('ログインに失敗しました。');
     }
+
+    const authRefreshToken = await createOrUpdateRefreshToken(user.id);
+
+    // リフレッシュトークンとアクセストークンをCookieにセット
+    setRefreshTokenInCookie(res, authRefreshToken.token);
+    setJwtInCookie(res, user.id);
+
+    const userWithRelation = await getUserAndRecords(user.id);
+    res.status(200).json(userWithRelation);
   } catch(err) {
     devLog('ログイン失敗');
     res.status(422).json('ログインに失敗しました')
