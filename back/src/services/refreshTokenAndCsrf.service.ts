@@ -40,9 +40,10 @@ export const createOrUpdateRefreshTokenAndCsrfSecret = async(prisma: PrismaClien
   });
 }
 
+// 該当レコードがない場合にエラーにならないよう、deleteManyを使用
 export const deleteRefreshTokenAndCsrfSecret = async(prisma: PrismaClient, userId: string) => {
   return await prisma.$transaction(async(tx) => {
-    await tx.authRefreshToken.delete({ where: { userId } });
-    await tx.csrfSecret.delete({ where: { userId } });
+    await tx.authRefreshToken.deleteMany({ where: { userId } });
+    await tx.csrfSecret.deleteMany({ where: { userId } });
   })
 }

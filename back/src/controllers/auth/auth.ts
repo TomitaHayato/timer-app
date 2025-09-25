@@ -17,7 +17,8 @@ import { createNewUserWithRelationRecords } from "../../services/user.service";
 import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { getJwtTokenFromCookie, getRefreshTokenFromCookie } from "../utils/getTokenFromCookie";
 import { createOrUpdateRefreshTokenAndCsrfSecret, deleteRefreshTokenAndCsrfSecret } from "../../services/refreshTokenAndCsrf.service";
-import { generateCsrfToken, setCsrfTokenToReponseHeader } from "../utils/csrf";
+import { generateCsrfTokenAuto, setCsrfTokenToReponseHeader } from "../utils/csrf";
+import { getCsrfTokenAndSecret } from "../../services/csrf.service";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -62,7 +63,7 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     }
 
     // csrfトークン生成
-    const { secret, csrfToken } = await generateCsrfToken();
+    const { secret, csrfToken } = await generateCsrfTokenAuto();
 
     // csrf-secret, refreshTokenをDBに保存
     const { 
@@ -117,7 +118,12 @@ export const tokenCheck = async (req: Request, res: Response) => {
     const userId = verifyJwt(token).userId;
     if (typeof userId !== "string") throw new Error;
 
+    // JSONデータ取得
     const userWithRelation = await getUserAndRecords(userId);
+
+    // csrfをヘッダにセット
+    const { secret } = await getCsrfTokenAndSecret(userId);
+    setCsrfTokenToReponseHeader(res, secret);
     res.status(200).json(userWithRelation);
   } catch(err: unknown) {
     // 期限切れエラーの場合、特徴的なレスポンスを返す（クライアント側でRefreshTokenの検証に移行するため）
@@ -165,11 +171,11 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    // refreshToken期限切れの場合、DB, Cookieから削除
+    // refreshToken期限切れの場合、DB・Cookieから削除 + csrfSecretも削除
     if (!checkExpire(refreshTokenInDB.expiresAt)) {
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
+      await dbQueryHandler(deleteRefreshTokenAndCsrfSecret, userId);
       clearRefreshTokenFromCookie(res);
-      await dbQueryHandler(deleteRefreshToken, userId);
       res.status(401).json(INVALID_REFRESH_TOKEN);
       return
     }
