@@ -16,6 +16,8 @@ import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/
 import { createNewUserWithRelationRecords } from "../../services/user.service";
 import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { getJwtTokenFromCookie, getRefreshTokenFromCookie } from "../utils/getTokenFromCookie";
+import { createOrUpdateRefreshTokenAndCsrfSecret } from "../../services/refreshTokenAndCsrf.service";
+import { generateCsrfToken, setCsrfTokenToReponseHeader } from "../utils/csrf";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -36,7 +38,7 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
 
     // DBから作成したユーザーと関連レコードを取得
     const userWithRelation = await getUserAndRecords(newUser.id);
-    res.setHeader("X-CSRF-Token", csrfToken);
+    setCsrfTokenToReponseHeader(res, csrfToken);
     res.status(201).json(userWithRelation);
   } catch (err) {
     devLog('Signup処理のエラー：', err);
@@ -59,13 +61,22 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
       res.status(401).json('ログインに失敗しました。');
     }
 
-    const authRefreshToken = await createOrUpdateRefreshToken(user.id);
+    // csrfトークン生成
+    const { secret, csrfToken } = await generateCsrfToken();
+
+    // csrf-secret, refreshTokenをDBに保存
+    const { 
+      refreshTokenRecord,
+    } = await dbQueryHandler(createOrUpdateRefreshTokenAndCsrfSecret, { userId: user.id, secret });
 
     // リフレッシュトークンとアクセストークンをCookieにセット
-    setRefreshTokenInCookie(res, authRefreshToken.token);
+    setRefreshTokenInCookie(res, refreshTokenRecord.token);
     setJwtInCookie(res, user.id);
 
     const userWithRelation = await getUserAndRecords(user.id);
+
+    // レスポンスヘッダにcsrfTokenをセット
+    setCsrfTokenToReponseHeader(res, csrfToken);
     res.status(200).json(userWithRelation);
   } catch(err) {
     devLog('ログイン失敗');

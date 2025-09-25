@@ -4,7 +4,7 @@ import { makeRefreshToken } from "../utils/refreshToken";
 import { dbQueryHandler } from "../models/utils/queryErrorHandler";
 import { devLog } from "../utils/dev/devLog";
 import { createNewUser } from "../models/users/users";
-import { generateCsrfToken } from "../utils/csrf";
+import { generateCsrfToken } from "../controllers/utils/csrf";
 import { CsrfInfo } from "../types/csrf";
 
 export const createNewUserWithRelationRecords = async(params: NewUserPostParams): Promise<{ user: User, refreshToken: string, csrfToken: string }> => {
@@ -20,6 +20,6 @@ export const createNewUserWithRelationRecords = async(params: NewUserPostParams)
   return {
     user,
     refreshToken: token,
-    csrfToken: csrfInfo.token,
+    csrfToken: csrfInfo.csrfToken,
   }
 }
