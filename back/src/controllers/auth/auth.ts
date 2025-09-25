@@ -4,7 +4,7 @@ import { dataHash, hashCompare } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
-import { getUserDataSet } from "../../services/auth.service";
+import { getUserAndRecords } from "../../services/auth.service";
 import { deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId } from "../../models/authRefreshToken/authRefreshToken";
 import { clearRefreshTokenFromCookie, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
@@ -23,24 +23,21 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
 
   try {
     // 新しいUserと関連レコードをDBに追加
-    const newUser = await createNewUserWithRelationRecords({
+    const { user: newUser, refreshToken, csrfToken } = await createNewUserWithRelationRecords({
       name,
       email,
       hashedPassword: await dataHash(password),
     });
     devLog('作成されたUser：', newUser);
 
-    // 作成したリフレッシュトークンを取得
-    const authRefreshToken = await dbQueryHandler(getRefreshTokenByUserId, newUser.id);
-    if(!authRefreshToken) throw new Error("リフレッシュトークンが作成されていません");
-
     // リフレッシュトークンとアクセストークンをCookieにセット
-    setRefreshTokenInCookie(res, authRefreshToken.token);
+    setRefreshTokenInCookie(res, refreshToken);
     setJwtInCookie(res, newUser.id);
 
     // DBから作成したユーザーと関連レコードを取得
-    const userDataSet = await getUserDataSet(newUser.id);
-    res.status(201).json(userDataSet);
+    const userWithRelation = await getUserAndRecords(newUser.id);
+    res.setHeader("X-CSRF-Token", csrfToken);
+    res.status(201).json(userWithRelation);
   } catch (err) {
     devLog('Signup処理のエラー：', err);
     next(err);
@@ -65,8 +62,8 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
       setRefreshTokenInCookie(res, authRefreshToken.token);
       setJwtInCookie(res, user.id);
 
-      const userDataSet = await getUserDataSet(user.id);
-      res.status(200).json(userDataSet);
+      const userWithRelation = await getUserAndRecords(user.id);
+      res.status(200).json(userWithRelation);
     } else {
       res.status(401).json('ログインに失敗しました。')
     }
@@ -109,8 +106,8 @@ export const tokenCheck = async (req: Request, res: Response) => {
     const userId = verifyJwt(token).userId;
     if (typeof userId !== "string") throw new Error;
 
-    const userDataSet = await getUserDataSet(userId);
-    res.status(200).json(userDataSet);
+    const userWithRelation = await getUserAndRecords(userId);
+    res.status(200).json(userWithRelation);
   } catch(err: unknown) {
     // 期限切れエラーの場合、特徴的なレスポンスを返す（クライアント側でRefreshTokenの検証に移行するため）
     if (err instanceof TokenExpiredError) {

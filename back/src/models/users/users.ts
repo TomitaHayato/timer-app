@@ -33,7 +33,9 @@ export const getUserWithSettingAndTodos = async(
   });
 }
 
-export const createNewUser = async(prisma: PrismaClient, params: NewUserPostParams, token: string, expiresAt: Date): Promise<User> => {
+export const createNewUser = async(prisma: PrismaClient, queryParams: { params: NewUserPostParams, token: string, expiresAt: Date, csrfSecret: string }): Promise<User> => {
+  const { params, token, expiresAt, csrfSecret } = queryParams;
+  
   // 作成処理
   return await prisma.user.create({
     data: {
@@ -46,6 +48,9 @@ export const createNewUser = async(prisma: PrismaClient, params: NewUserPostPara
           token,
           expiresAt,
         }
+      },
+      csrfSecret: {
+        create: { secret: csrfSecret }
       }
     },
     select: selectUserColumnsWithId,
