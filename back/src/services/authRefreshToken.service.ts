@@ -5,9 +5,14 @@ import { devLog } from "../utils/dev/devLog";
 import { makeRefreshToken } from "../utils/refreshToken";
 import { AuthRefreshToken } from "../types/authRefreshToken";
 
-export const createNewRefreshToken = async(userId: string): Promise<AuthRefreshToken> => {
+export const generateRefreshTokenInfo = () => {
   const token = makeRefreshToken();
   const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定
+  return { token, expiresAt }
+}
+
+export const createNewRefreshToken = async(userId: string): Promise<AuthRefreshToken> => {
+  const { token, expiresAt } = generateRefreshTokenInfo();
   const newToken = await dbQueryHandler(createRefreshToken, { userId, token, expiresAt });
   devLog('新規作成したauthRefreshToken', newToken);
   return newToken;
@@ -15,8 +20,7 @@ export const createNewRefreshToken = async(userId: string): Promise<AuthRefreshT
 
 // userIdで指定したrefreshTokenのtoken, expiresAtを更新
 export const refreshRefreshToken = async(userId: string): Promise<AuthRefreshToken> => {
-  const newToken = makeRefreshToken();
-  const expiresAt = dayjs().add(14, 'day').toDate(); // 期限を2週間後に設定
+  const { token: newToken, expiresAt } = generateRefreshTokenInfo();
   return await dbQueryHandler(updateRefreshToken, { userId, newToken, expiresAt })
 }
 

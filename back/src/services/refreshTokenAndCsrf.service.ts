@@ -1,9 +1,13 @@
 import { PrismaClient } from "../../generated/prisma";
 import { selectAuthRefreshToken } from "../models/authRefreshToken/utils/selectOption";
 import { selectCsrfSecret } from "../models/csrfSecret/utils/selectOption";
+import { generateRefreshTokenInfo } from "./authRefreshToken.service";
 
-export const createOrUpdateRefreshTokenAndCsrfSecret = async(prisma: PrismaClient, params: { userId: string, refreshToken: string, expiresAt: Date, secret: string }) => {
-  const { userId, refreshToken, expiresAt, secret } = params
+export const createOrUpdateRefreshTokenAndCsrfSecret = async(prisma: PrismaClient, params: { userId: string, secret: string }) => {
+  const { userId, secret } = params;
+  // refreshTokenのトークン、期限を作成
+  const { token: refreshToken, expiresAt } = generateRefreshTokenInfo();
+
   return await prisma.$transaction(async (tx) => {
     const refreshTokenRecord = await tx.authRefreshToken.upsert({
       ...selectAuthRefreshToken,
@@ -34,4 +38,11 @@ export const createOrUpdateRefreshTokenAndCsrfSecret = async(prisma: PrismaClien
       refreshTokenRecord,
     }
   });
+}
+
+export const deleteRefreshTokenAndCsrfSecret = async(prisma: PrismaClient, userId: string) => {
+  return await prisma.$transaction(async(tx) => {
+    await tx.authRefreshToken.delete({ where: { userId } });
+    await tx.csrfSecret.delete({ where: { userId } });
+  })
 }
