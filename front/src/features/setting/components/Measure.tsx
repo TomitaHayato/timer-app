@@ -3,7 +3,7 @@ import type { settingItems, SettingParams } from "../../../types/settingType";
 import { useAppSelector } from "../../../reduxStore/hooks";
 import { selectSetting } from "../Slices/settingSlice";
 import { useEffect } from "react";
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../auth/slices/authSlice";
 import { FormShortText } from "./formShortText";
 
 type Props = {

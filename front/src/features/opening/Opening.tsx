@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { selectSessionLoading } from "../session/slices/sessionSlice";
+import { selectSessionLoading } from "../auth/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../../reduxStore/hooks";
-import { devLog } from "../../utils/logDev";
 import { getRandomBgClass } from "../../utils/staticFiles/imagePathMap";
 import { openingEnd } from "./openingSlice";
 import { Title } from "../../components/Title";
 
 export function Opening() {
-  devLog('Openingコンポーネント');
   const isSessionLoading = useAppSelector(selectSessionLoading);
   const dispatch = useAppDispatch();
   const [isVisible, setIsVisible] = useState(true);

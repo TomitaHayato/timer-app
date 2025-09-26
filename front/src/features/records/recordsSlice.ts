@@ -6,7 +6,7 @@ import { devLog } from "../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../utils/errorHandler/axiosError";
 import { fetchWithTokenRefresh } from "../../utils/fetch/fetchWithTokenRefresh";
 import { INVALID_REFRESH_TOKEN } from "../../utils/apiErrors/errorMessages";
-import { resetStateOfUser } from "../session/slices/sessionSlice";
+import { resetStateOfUser } from "../auth/slices/authSlice";
 
 const initialState: RecordsState = {
   records: defaultRecords(),

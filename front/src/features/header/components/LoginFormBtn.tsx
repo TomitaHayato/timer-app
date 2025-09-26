@@ -1,7 +1,7 @@
 import { Modal } from "../../../components/Modal"
 import { openModal } from "../../../utils/modelCtl";
-import { LoginForm } from "../../session/components/LoginForm"
-import { SignupForm } from "../../session/components/SignupForm"
+import { LoginForm } from "../../auth/components/LoginForm"
+import { SignupForm } from "../../auth/components/SignupForm"
 
 type Props = {
   btnClass: string,

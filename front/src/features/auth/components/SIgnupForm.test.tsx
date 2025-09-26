@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import userEvent from "@testing-library/user-event"
 import { screen } from "@testing-library/dom";
 import { cleanup } from "@testing-library/react";
-import type { SessionState } from "../../../types/session";
+import type { SessionState } from "../../../types/auth";
 import { renderWithProvider } from "../../../utils/test/testingLibraryCustom";
 import { SignupForm } from "./SignupForm";
 import { userDataFromAPI } from "../../../utils/test/dammyData/dammyState";

@@ -7,7 +7,7 @@ import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axi
 import { sortTodosByDeadline, sortTodosByIsCompleted } from './utils/todosSort';
 import { fetchWithTokenRefresh } from '../../utils/fetch/fetchWithTokenRefresh';
 import { INVALID_REFRESH_TOKEN } from '../../utils/apiErrors/errorMessages';
-import { resetStateOfUser } from '../session/slices/sessionSlice';
+import { resetStateOfUser } from '../auth/slices/authSlice';
 import { filterByDeadline } from './utils/todosFilter';
 
 const initialState: TodosState = {

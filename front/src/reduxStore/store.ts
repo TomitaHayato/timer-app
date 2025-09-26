@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { timerReducer } from '../features/timer/timerSlice'
 import { todosReducer } from '../features/todos/todoSlice'
 import { settingReducer } from '../features/setting/Slices/settingSlice'
-import { sessionReducer } from '../features/session/slices/sessionSlice'
+import { authReducer } from '../features/auth/slices/authSlice'
 import { recordsReducer } from '../features/records/recordsSlice'
 import { visibleReducer } from '../features/display/visibleSlice'
 import { passwordResetReducer } from '../features/password_reset/redux/passwordResetSlice'
@@ -12,7 +12,7 @@ const rootReducers = combineReducers({
   timer: timerReducer,
   todos: todosReducer,
   setting: settingReducer,
-  session: sessionReducer,
+  auth: authReducer,
   records: recordsReducer,
   visible: visibleReducer,
   passwordReset: passwordResetReducer,

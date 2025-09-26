@@ -3,9 +3,10 @@ export type User = {
   email: string,
 }
 
-export type SessionState = {
+export type AuthState = {
   user: User | null,
   isAuthenticated: boolean,
+  csrfToken: string | null,
   loading: boolean,
   error: string | null,
 }

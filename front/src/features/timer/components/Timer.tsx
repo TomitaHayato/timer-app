@@ -14,7 +14,7 @@ import { btnLgClass, restBtnClass } from "../../../utils/class";
 import { useTimerHook } from "../hooks/useTimerHook";
 import { useSoundHowls } from "../hooks/soundSet";
 import { TextOnBgImageWrapper } from "../../../components/TextOnBgImageWrapper";
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../auth/slices/authSlice";
 
 export default function Timer() {
   // ポップアップの表示

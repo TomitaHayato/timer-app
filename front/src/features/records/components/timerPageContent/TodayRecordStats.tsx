@@ -2,7 +2,7 @@ import { useAppSelector } from "../../../../reduxStore/hooks";
 import { containerGrayClass, statTitleColorClass } from "../../../../utils/class";
 import { todayDate } from "../../../../utils/time";
 import { selectSimpleBg } from "../../../display/visibleSlice";
-import { selectAuthStatus } from "../../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../../auth/slices/authSlice";
 import { selectRecords } from "../../recordsSlice";
 import { RecordStat } from "../RecordStat";
 

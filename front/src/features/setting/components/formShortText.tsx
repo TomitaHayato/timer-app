@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../../reduxStore/hooks"
-import { selectAuthStatus } from "../../session/slices/sessionSlice"
+import { selectAuthStatus } from "../../auth/slices/authSlice"
 
 export function FormShortText() {
   const isAuth = useAppSelector(selectAuthStatus);

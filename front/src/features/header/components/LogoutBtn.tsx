@@ -1,6 +1,6 @@
 import { useAppDispatch } from "../../../reduxStore/hooks"
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
-import { signout } from "../../session/slices/sessionSlice"
+import { signout } from "../../auth/slices/authSlice"
 
 type Props = {
   btnClass: string,

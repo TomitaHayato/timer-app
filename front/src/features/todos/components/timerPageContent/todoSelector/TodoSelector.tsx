@@ -5,7 +5,7 @@ import { openModal } from "../../../../../utils/modelCtl";
 import { selectSortedTodos } from "../../../todoSlice";
 import { useAppSelector } from "../../../../../reduxStore/hooks";
 import { SelectedTodo } from "./SelectedTodo";
-import { selectAuthStatus } from "../../../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../../../auth/slices/authSlice";
 import { btnMdClass } from "../../../../../utils/class";
 import { selectSimpleBg } from "../../../../display/visibleSlice";
 import { TodoOptions } from "./TodoOptions";

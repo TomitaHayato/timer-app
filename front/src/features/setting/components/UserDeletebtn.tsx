@@ -2,7 +2,7 @@ import { useAppSelector } from "../../../reduxStore/hooks";
 import { clientCredentials } from "../../../utils/axios";
 import { devLog } from "../../../utils/logDev";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast"
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../auth/slices/authSlice";
 
 export function UserDeleteBtn() {
   const isAuth = useAppSelector(selectAuthStatus);

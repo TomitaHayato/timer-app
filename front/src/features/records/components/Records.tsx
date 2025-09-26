@@ -1,7 +1,7 @@
 import { TextOnBgImageWrapper } from "../../../components/TextOnBgImageWrapper";
 import { useAppSelector } from "../../../reduxStore/hooks"
 import { selectSimpleBg } from "../../display/visibleSlice";
-import { selectAuthStatus } from "../../session/slices/sessionSlice"
+import { selectAuthStatus } from "../../auth/slices/authSlice"
 import { AggregatedRecords } from "./AggregatedRecords";
 
 export function Records() {
