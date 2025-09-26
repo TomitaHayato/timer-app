@@ -10,7 +10,8 @@ export const verifyCsrfTokenMiddleware = async(req: Request, res: Response, next
   try {
     const csrfToken = getCsrfTokenFromReponseHeader(req);
     if (!csrfToken) {
-      res.status(422).json('csrfトークンがありません');
+      devLog('csrfトークンがない')
+      res.status(403).json('csrfトークンがありません');
       return;
     }
 
