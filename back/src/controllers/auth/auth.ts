@@ -124,6 +124,7 @@ export const tokenCheck = async (req: Request, res: Response) => {
     // csrfをヘッダにセット
     const { secret } = await getCsrfTokenAndSecret(userId);
     setCsrfTokenToReponseHeader(res, secret);
+
     res.status(200).json(userWithRelation);
   } catch(err: unknown) {
     // 期限切れエラーの場合、特徴的なレスポンスを返す（クライアント側でRefreshTokenの検証に移行するため）
