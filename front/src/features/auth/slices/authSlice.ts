@@ -128,15 +128,42 @@ export const signout = createAsyncThunk<
   try {
     await fetchWithTokenRefresh('/auth/signout', 'delete');
     // 他のStateをリセット
-    thunkAPI.dispatch(replaceSetting(defaultSetting()))
-    thunkAPI.dispatch(replaceRecords(defaultRecords()))
-    thunkAPI.dispatch(replaceTodos(defaultTodos()))
+    thunkAPI.dispatch(replaceSetting(defaultSetting()));
+    thunkAPI.dispatch(replaceRecords(defaultRecords()));
+    thunkAPI.dispatch(replaceTodos(defaultTodos()));
   } catch(err) {
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
     if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
       // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
       thunkAPI.dispatch(resetStateOfUser());
     }
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+})
+
+export const deleteUser = createAsyncThunk<
+  undefined,
+  undefined,
+  {
+    rejectValue: string,
+    dispatch: AppDispatch,
+  }
+>('auth/delete', async(_, thunkAPI) => {
+  try {
+    await fetchWithTokenRefresh("/users", "delete");
+    // 他のStateをリセット
+    thunkAPI.dispatch(replaceSetting(defaultSetting()));
+    thunkAPI.dispatch(replaceRecords(defaultRecords()));
+    thunkAPI.dispatch(replaceTodos(defaultTodos()));
+    return;
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
+
+    // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
+    if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
+      thunkAPI.dispatch(resetStateOfUser());
+    }
+
     return thunkAPI.rejectWithValue(errorMessage);
   }
 })
@@ -259,6 +286,21 @@ const authSlice = createSlice({
         state.csrfToken = null;
       })
       .addCase(signout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unexpected error';
+      })
+      // ユーザー削除
+      .addCase(deleteUser.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.csrfToken = null;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Unexpected error';
       })
