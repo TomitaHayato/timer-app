@@ -16,9 +16,8 @@ export const fetchWithTokenRefresh = async(url: string, method: httpMethod, data
     devLog(`${url}のリクエスト結果:`, res)
     return res;
   } catch(e) {
-    devLog('/auth/checkでエラー:', e)
+    // Accessトークンが期限切れの場合、トークンのリフレッシュエンドポイントにアクセス
     if (isAxiosError(e) && e.response?.data?.error === ACCESS_TOKEN_EXPIRE_ERROR) {
-      // Accessトークンが期限切れの場合、トークンのリフレッシュエンドポイントにアクセス
       try {
         const resFromTokenRefresh = await clientCredentials.post('/auth/token_refresh');
         if(!resFromTokenRefresh) {
@@ -26,8 +25,8 @@ export const fetchWithTokenRefresh = async(url: string, method: httpMethod, data
           throw new Error();
         }
         devLog('tokenのリフレッシュ完了');
+        devLog('/auth/token_refreshのResponse', resFromTokenRefresh);
 
-        devLog('/auth/token_refreshのResponst', resFromTokenRefresh);
         // もう一度、目的のエンドポイントを叩く
         const res = await clientCredentials.request({
           url,

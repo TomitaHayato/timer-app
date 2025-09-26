@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { AppDispatch, RootState } from "../../../reduxStore/store";
-import type { AuthState, SigninParams, SignupParams, User } from "../../../types/auth";
+import type { AuthState, SigninParams, SignupParams, User, UserAndCsrfToken } from "../../../types/auth";
 import { clientCredentials } from "../../../utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { replaceSetting, resetSettingState } from "../../setting/Slices/settingSlice";
@@ -40,7 +40,7 @@ export const resetStateOfUser = () => (dispatch: AppDispatch) => {
 }
 
 export const signin = createAsyncThunk<
-  User,
+  UserAndCsrfToken,
   SigninParams,
   { rejectValue: string }
 >(
@@ -49,22 +49,28 @@ export const signin = createAsyncThunk<
     try {
       const res = await clientCredentials.post('/auth/signin', params);
       devLog('signinのres.headers: ', res.headers);
+
       const { userData, recordsData } = res.data;
-      if (!userData) return thunkAPI.rejectWithValue('userData is null');
-      devLog('UserData:', userData);
+      const csrfToken = res.headers["x-csrf-token"];
+      if (!userData || !recordsData || !csrfToken) return thunkAPI.rejectWithValue('renponseData is lost');
+      // devLog('UserData:', userData);
+      // devLog('recordsData:', recordsData);
+      // devLog('csrfToken:', csrfToken);
 
       // 各スライスにデータを配分
       const setting = userData.setting || defaultSetting();
       const records = recordsData || defaultRecords();
-      const todos = userData.todos || defaultTodos()
-
-      thunkAPI.dispatch(replaceSetting(setting))
-      thunkAPI.dispatch(replaceRecords(records))
-      thunkAPI.dispatch(replaceTodos(todos))
+      const todos = userData.todos || defaultTodos();
+      thunkAPI.dispatch(replaceSetting(setting));
+      thunkAPI.dispatch(replaceRecords(records));
+      thunkAPI.dispatch(replaceTodos(todos));
 
       return {
-        email: userData.email,
-        name: userData.name,
+        user: {
+          email: userData.email,
+          name: userData.name,
+        },
+        csrfToken,
       }
     } catch(err) {
       const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログインに失敗しました');
@@ -74,29 +80,36 @@ export const signin = createAsyncThunk<
 )
 
 export const signup = createAsyncThunk<
-  User,
+  UserAndCsrfToken,
   SignupParams,
   { rejectValue: string }
 >('auth/signup', async(params, thunkAPI) => {
   try {
     const res = await clientCredentials.post('/auth/signup', params);
     devLog('signupのres:', res);
-    const { userData, recordsData }: { userData?: UserData, recordsData?: TermsRecords } = res.data;
-    if (!userData) return thunkAPI.rejectWithValue('userData is null');
 
-    devLog('UserData:', userData)
+    // responseデータを取得
+    const { userData, recordsData }: { userData?: UserData, recordsData?: TermsRecords } = res.data;
+    const csrfToken = res.headers["x-csrf-token"];
+    if (!userData || !recordsData || !csrfToken) return thunkAPI.rejectWithValue('renponseData is lost');
+    // devLog('UserData:', userData);
+    // devLog('recordsData:', recordsData);
+    // devLog('csrfToken:', csrfToken);
+
     // 各スライスにデータを配分
     const setting = userData.setting || defaultSetting();
     const records = recordsData || defaultRecords();
-    const todos = userData.todos || defaultTodos()
-
-    thunkAPI.dispatch(replaceSetting(setting))
-    thunkAPI.dispatch(replaceRecords(records))
-    thunkAPI.dispatch(replaceTodos(todos))
+    const todos = userData.todos || defaultTodos();
+    thunkAPI.dispatch(replaceSetting(setting));
+    thunkAPI.dispatch(replaceRecords(records));
+    thunkAPI.dispatch(replaceTodos(todos));
 
     return {
-      email: userData.email,
-      name: userData.name,
+      user: {
+        email: userData.email,
+        name: userData.name,
+      },
+      csrfToken,
     }
   } catch(err) {
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サインアップに失敗しました');
@@ -130,29 +143,35 @@ export const signout = createAsyncThunk<
 
 // AccessTokenの検証エンドポイント。トップページマウント時に実行
 export const checkAuthToken = createAsyncThunk<
-  User,
+  UserAndCsrfToken,
   undefined,
   { rejectValue: string }
 >('auth/check', async(_, thunkAPI) => {
   try {
     const res = await fetchWithTokenRefresh('/auth/check', 'get');
 
+    // レスポンスデータを取得
     const { userData, recordsData } = res.data;
-    if (!userData) return thunkAPI.rejectWithValue('userData is null');
+    const csrfToken = res.headers["x-csrf-token"];
+    if (!userData || !recordsData ||  !csrfToken) return thunkAPI.rejectWithValue('auth/check responseData is lost');
+    // devLog(csrfToken);
+    // devLog('userData:', userData);
+    // devLog('recordsData:', recordsData);
 
-    devLog('UserData:', userData)
-    // 各スライスにデータを配分
+    // 関連データをステートにセット
     const setting = userData.setting || defaultSetting();
-    const records = recordsData || defaultRecords;
-    const todos = userData.todos || defaultTodos
-
-    thunkAPI.dispatch(replaceSetting(setting))
-    thunkAPI.dispatch(replaceRecords(records))
-    thunkAPI.dispatch(replaceTodos(todos))
+    const todos = userData.todos || defaultTodos();
+    const records = recordsData || defaultRecords();
+    thunkAPI.dispatch(replaceSetting(setting));
+    thunkAPI.dispatch(replaceRecords(records));
+    thunkAPI.dispatch(replaceTodos(todos));
 
     return {
-      email: userData.email,
-      name: userData.name,
+      user: {
+        name: userData.name,
+        email: userData.email,
+      },
+      csrfToken,
     }
   } catch(err) {
     devLog('auth/checkのエラー：', err);
@@ -203,12 +222,10 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null
       })
-      .addCase(signin.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(signin.fulfilled, (state, action: PayloadAction<UserAndCsrfToken>) => {
         state.loading = false;
-        const name = action.payload?.name
-        const email = action.payload?.email
-        if(!name || !email) return
-        state.user = { name, email }
+        state.user = action.payload.user;
+        state.csrfToken = action.payload.csrfToken;
         state.isAuthenticated = true
       })
       .addCase(signin.rejected, (state, action) => {
@@ -220,13 +237,11 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null
       })
-      .addCase(signup.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(signup.fulfilled, (state, action: PayloadAction<UserAndCsrfToken>) => {
         state.loading = false;
-        const name = action.payload?.name;
-        const email = action.payload?.email;
-        if(!name || !email) return
-        state.user = { name, email }
-        state.isAuthenticated = true
+        state.user = action.payload.user;
+        state.csrfToken = action.payload.csrfToken;
+        state.isAuthenticated = true;
       })
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
@@ -252,9 +267,10 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null
       })
-      .addCase(checkAuthToken.fulfilled, (state, action:PayloadAction<User>) => {
+      .addCase(checkAuthToken.fulfilled, (state, action:PayloadAction<UserAndCsrfToken>) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.csrfToken = action.payload.csrfToken;
         state.isAuthenticated = true;
       })
       .addCase(checkAuthToken.rejected, (state) => {
