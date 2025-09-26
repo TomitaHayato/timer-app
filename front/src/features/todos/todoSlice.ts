@@ -21,11 +21,15 @@ export const createTodo = createAsyncThunk<
   TodoAddParams,
   {
     rejectValue: string,
+    state: RootState,
     dispatch: AppDispatch,
   }
 >('todos/create', async(params, thunkAPI) => {
   try {
-    const res = await authFetch('/todos', 'post', params);
+    const csrfToken = thunkAPI.getState().auth.csrfToken;
+    if (!csrfToken) throw new Error('csrfTokenがReduxストアにありません');
+    const res = await authFetch('/todos', 'post', params, undefined, csrfToken);
+
     const todos: Todos = res.data;
     if (!todos) return thunkAPI.rejectWithValue('todosの取得に失敗しました');
     return todos;

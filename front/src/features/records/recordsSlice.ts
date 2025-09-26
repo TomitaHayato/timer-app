@@ -20,11 +20,15 @@ export const createRecord = createAsyncThunk<
   PostRecordParams,
   {
     rejectValue: string,
+    state: RootState,
     dispatch: AppDispatch,
   }
 >('records/create', async(params, thunkAPI) => {
   try {
-    const res = await authFetch('/records', 'post', params);
+    const csrfToken = thunkAPI.getState().auth.csrfToken;
+    if (!csrfToken) throw new Error('csrfTokenがReduxストアにありません');
+    const res = await authFetch('/records', 'post', params, {}, csrfToken);
+
     const records = res.data;
     if (!records.dailyRecord || !records.weeklyRecord || !records.monthlyRecord || !records.totalRecord) {
       return thunkAPI.rejectWithValue('Recordの取得に失敗しました');

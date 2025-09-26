@@ -47,8 +47,8 @@ export const signin = createAsyncThunk<
   'auth/signin',
   async(params, thunkAPI) => {
     try {
-      const res = await clientCredentials.post('/auth/signin', params);
-      devLog('signinのres.headers: ', res.headers);
+      const res = await clientCredentials().post('/auth/signin', params);
+      // devLog('signinのres.headers: ', res.headers);
 
       const { userData, recordsData } = res.data;
       const csrfToken = res.headers["x-csrf-token"];
@@ -85,8 +85,8 @@ export const signup = createAsyncThunk<
   { rejectValue: string }
 >('auth/signup', async(params, thunkAPI) => {
   try {
-    const res = await clientCredentials.post('/auth/signup', params);
-    devLog('signupのres:', res);
+    const res = await clientCredentials().post('/auth/signup', params);
+    // devLog('signupのres:', res);
 
     // responseデータを取得
     const { userData, recordsData }: { userData?: UserData, recordsData?: TermsRecords } = res.data;
@@ -336,10 +336,11 @@ const authSlice = createSlice({
   }
 });
 
-export const selectSessionError = (state: RootState) => state.auth.error
-export const selectSessionLoading = (state: RootState) => state.auth.loading
+export const selectSessionError = (state: RootState) => state.auth.error;
+export const selectSessionLoading = (state: RootState) => state.auth.loading;
 export const selectUser = (state: RootState) => state.auth.user;
-export const selectAuthStatus = (state: RootState) => state.auth.isAuthenticated
+export const selectAuthStatus = (state: RootState) => state.auth.isAuthenticated;
+export const selectCsrdfToken = (state: RootState) => state.auth.csrfToken;
 
 export const {
   resetAuthState,
