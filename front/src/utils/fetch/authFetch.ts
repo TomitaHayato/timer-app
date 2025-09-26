@@ -4,28 +4,22 @@ import { devLog } from "../logDev";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_REFRESH_TOKEN } from "../apiErrors/errorMessages";
 import type { httpMethod } from "../../types/http";
 
-// 認可が必要なエンドポイントにリクエストする際、期限切れのJWTに対して認証トークンのリフレッシュを行う
-export const fetchWithTokenRefresh = async(url: string, method: httpMethod, data?: object, option?: object) => {
+// 認可が必要なエンドポイントを叩く際、期限切れのJWTに対して認証トークンのリフレッシュを行う
+export const authFetch = async(url: string, method: httpMethod, data?: object, option?: object) => {
   try {
-    const res = await clientCredentials.request({
+    return await clientCredentials.request({
       url,
       method,
       data,
       ...option
     });
-    devLog(`${url}のリクエスト結果:`, res)
-    return res;
   } catch(e) {
     // Accessトークンが期限切れの場合、トークンのリフレッシュエンドポイントにアクセス
     if (isAxiosError(e) && e.response?.data?.error === ACCESS_TOKEN_EXPIRE_ERROR) {
       try {
-        const resFromTokenRefresh = await clientCredentials.post('/auth/token_refresh');
-        if(!resFromTokenRefresh) {
-          devLog('/auth/token_refreshのレスポンスがない');
-          throw new Error();
-        }
+        // リフレッシュトークン検証エンドポイントを叩く
+        await clientCredentials.post('/auth/token_refresh');
         devLog('tokenのリフレッシュ完了');
-        devLog('/auth/token_refreshのResponse', resFromTokenRefresh);
 
         // もう一度、目的のエンドポイントを叩く
         const res = await clientCredentials.request({
@@ -43,7 +37,7 @@ export const fetchWithTokenRefresh = async(url: string, method: httpMethod, data
         throw new Error();
       }
     } else {
-      throw new Error(); // 期限切れ以外の場合、外側のcatch節にエラーを伝搬
+      throw new Error(); // 認証トークンの期限切れ以外 => 外にエラーを伝播
     }
   }
 }

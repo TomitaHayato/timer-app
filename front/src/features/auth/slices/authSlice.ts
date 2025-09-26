@@ -11,7 +11,7 @@ import { defaultRecords } from "../../records/defaultRecords";
 import { defaultTodos } from "../../todos/defaultTodos";
 import { devLog } from "../../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
-import { fetchWithTokenRefresh } from "../../../utils/fetch/fetchWithTokenRefresh";
+import { authFetch } from "../../../utils/fetch/authFetch";
 import { INVALID_REFRESH_TOKEN } from "../../../utils/apiErrors/errorMessages";
 import type { UserData } from "../../../types/dataFromAPI";
 import type { TermsRecords } from "../../../types/records";
@@ -126,7 +126,7 @@ export const signout = createAsyncThunk<
   }
 >('auth/signout', async(_, thunkAPI) => {
   try {
-    await fetchWithTokenRefresh('/auth/signout', 'delete');
+    await authFetch('/auth/signout', 'delete');
     // 他のStateをリセット
     thunkAPI.dispatch(replaceSetting(defaultSetting()));
     thunkAPI.dispatch(replaceRecords(defaultRecords()));
@@ -150,7 +150,7 @@ export const deleteUser = createAsyncThunk<
   }
 >('auth/delete', async(_, thunkAPI) => {
   try {
-    await fetchWithTokenRefresh("/users", "delete");
+    await authFetch("/users", "delete");
     // 他のStateをリセット
     thunkAPI.dispatch(replaceSetting(defaultSetting()));
     thunkAPI.dispatch(replaceRecords(defaultRecords()));
@@ -175,7 +175,7 @@ export const checkAuthToken = createAsyncThunk<
   { rejectValue: string }
 >('auth/check', async(_, thunkAPI) => {
   try {
-    const res = await fetchWithTokenRefresh('/auth/check', 'get');
+    const res = await authFetch('/auth/check', 'get');
 
     // レスポンスデータを取得
     const { userData, recordsData } = res.data;
@@ -218,7 +218,7 @@ export const updateUser = createAsyncThunk<
   }
 >('auth/updateUser', async(params, thunkAPI) => {
   try {
-    const res = await fetchWithTokenRefresh('/users', 'put', params);
+    const res = await authFetch('/users', 'put', params);
     return res.data;
   } catch(err) {
     devLog('auth/updateUserのエラー：', err);
