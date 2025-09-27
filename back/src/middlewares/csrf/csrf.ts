@@ -10,7 +10,7 @@ export const verifyCsrfTokenMiddleware = async(req: Request, res: Response, next
   try {
     const csrfToken = getCsrfTokenFromReponseHeader(req);
     if (!csrfToken) {
-      devLog('csrfトークンがない')
+      // devLog('csrfトークンがない')
       res.status(403).json('csrfトークンがありません');
       return;
     }
@@ -20,12 +20,14 @@ export const verifyCsrfTokenMiddleware = async(req: Request, res: Response, next
     const csrfSecret = await dbQueryHandler(getCsrfSecret, userId);
     if (!csrfSecret) {
       // 認証は完了しているが、csrfSecretがDBに存在しない場合（不測の事態）;
+      // devLog('不測の事態')
       res.status(403).json("再度ログインしてください");
       return;
     }
 
     // トークン検証
     if (!verifyCsrfToken({ token: csrfToken, secret: csrfSecret.secret })) {
+      // devLog('csrf Token検証失敗')
       res.status(403).json("権限がありません");
       return;
     }

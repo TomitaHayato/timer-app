@@ -122,8 +122,8 @@ export const tokenCheck = async (req: Request, res: Response) => {
     const userWithRelation = await getUserAndRecords(userId);
 
     // csrfをヘッダにセット
-    const { secret } = await getCsrfTokenAndSecret(userId);
-    setCsrfTokenToReponseHeader(res, secret);
+    const { csrfToken } = await getCsrfTokenAndSecret(userId);
+    setCsrfTokenToReponseHeader(res, csrfToken);
 
     res.status(200).json(userWithRelation);
   } catch(err: unknown) {
