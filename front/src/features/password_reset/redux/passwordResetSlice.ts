@@ -19,7 +19,7 @@ export const fetchPasswordResetRequest = createAsyncThunk<
 >(
   'passowrd_reset/password_forget', async(params, thunkAPI) => {
     try {
-      await clientCredentials.post('/password_reset/send_mail', params, { timeout: 5000 });
+      await clientCredentials().post('/password_reset/send_mail', params, { timeout: 5000 });
     } catch(err) {
       devLog('fetchPasswordResetRequestのエラー:', err);
       const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'パスワードリセット申請に失敗しました')
@@ -37,7 +37,7 @@ export const fetchCheckPasswordResetToken = createAsyncThunk<
   'passowrd_reset/check_token', async(data, thunkAPI) => {
     const { id, token } = data;
     try {
-      const res = await clientCredentials.post('password_reset/token_check', { id, token });
+      const res = await clientCredentials().post('password_reset/token_check', { id, token });
       devLog('password_reset/check_tokenのResponse:', res);
       return;
     } catch(err) {
@@ -56,7 +56,7 @@ export const fetchUpdateUserPassword = createAsyncThunk<
 >(
   'password_reset/password_update', async(params, thunkAPI) => {
     try {
-      const res = await clientCredentials.put('/password_reset/password_update', params);
+      const res = await clientCredentials().put('/password_reset/password_update', params);
       devLog('PUT /password_reset/password_updateのResponse：', res);
       return
     } catch(err) {

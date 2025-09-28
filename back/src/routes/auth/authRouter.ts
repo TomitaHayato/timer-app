@@ -9,7 +9,7 @@ const router = Router()
 router.get('/check', tokenCheck);
 router.post('/signup', userPostValidator, handleValidationResult, signUp);
 router.post('/signin', signInValidator  , handleValidationResult, signIn);
-router.get('/signout', authCheckMiddleware, signOut);
+router.delete('/signout', authCheckMiddleware, signOut);
 router.post('/token_refresh', tokensRefresh);
 
 export default router

@@ -8,9 +8,12 @@ export const client = axios.create({
 })
 
 // Cookieを伴うリクエスト
-export const clientCredentials = axios.create({
+export const clientCredentials = ( additionalHeader?: object ) => axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 2000,
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+    ...additionalHeader,
+  },
 })

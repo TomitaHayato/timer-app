@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppSelector } from "../../../reduxStore/hooks";
-import { selectUser } from "../../session/slices/sessionSlice";
+import { selectUser } from "../../auth/slices/authSlice";
 import { ProfileContent } from "./ProfileContent";
 import { ProfileEditForm } from "./ProfileEditForm";
 

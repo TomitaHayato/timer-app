@@ -5,17 +5,17 @@ export const settingsPostValidator = [
   body('workSec')
     .exists({values: 'null'})
     .notEmpty()
-    .isInt({ min: 10, max: 60 })
+    .isInt({ min: 10 * 60, max: 60 * 60 })
     .toInt(),
   body('restSec')
     .exists({values: 'null'})
     .notEmpty()
-    .isInt({ min: 1, max: 10 })
+    .isInt({ min: 1 * 60, max: 10 * 60 })
     .toInt(),
   body('longRestSec')
     .exists({values: 'null'})
     .notEmpty()
-    .isInt({ min: 5, max: 60 })
+    .isInt({ min: 5 * 60, max: 60 * 60 })
     .toInt(),
   body('isMuted')
     .exists({values: 'null'})
@@ -38,15 +38,15 @@ export const settingsPostValidator = [
 export const settingsUpdateValidator = [
   body('workSec')
     .optional({ values: 'null' })
-    .isInt({ min: 10, max: 60 })
+    .isInt({ min: 10 * 60, max: 60 * 60 })
     .toInt(),
   body('restSec')
     .optional({ values: 'null' })
-    .isInt({ min: 1, max: 10 })
+    .isInt({ min: 1 * 60, max: 10 * 60 })
     .toInt(),
   body('longRestSec')
     .optional({ values: 'null' })
-    .isInt({ min: 5, max: 60 })
+    .isInt({ min: 5 * 60, max: 60 * 60 })
     .toInt(),
   body('isMuted')
     .optional({ values: 'null' })

@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { btnSmClass } from "../../../utils/class";
 import { changeSimpleBg, changeVisible, selectSimpleBg } from "../../display/visibleSlice";
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../auth/slices/authSlice";
 import { LoginFormBtn } from "./LoginFormBtn";
 import { LogoutBtn } from "./LogoutBtn";
 import { ProfileIconBtn } from "./PrifileIconBtn";

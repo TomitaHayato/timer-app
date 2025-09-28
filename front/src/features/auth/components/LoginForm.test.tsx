@@ -4,7 +4,7 @@ import { screen } from "@testing-library/dom";
 import { cleanup } from "@testing-library/react";
 import { renderWithProvider } from "../../../utils/test/testingLibraryCustom";
 import { LoginForm } from "./LoginForm";
-import type { SessionState } from "../../../types/session";
+import type { AuthState } from "../../../types/auth";
 import { userDataFromAPI } from "../../../utils/test/dammyData/dammyState";
 
 // axiosのMock化
@@ -15,9 +15,10 @@ vi.mock('../../../utils/axios', () => {
   }
 })
 
-const loadingSessionState: SessionState = {
+const loadingSessionState: AuthState = {
   user: null,
   isAuthenticated: false,
+  csrfToken: null,
   loading: true,
   error: null,
 }
@@ -39,7 +40,7 @@ describe("LoginForm.tsx", () => {
     test("APIの認証中はLoading用のUIが表示", () => {
       // loading = trueの状態でレンダリング
       renderWithProvider(<LoginForm />, {
-        preloadedState: { session: loadingSessionState }
+        preloadedState: { auth: loadingSessionState }
       });
 
       expect(screen.queryByTestId('login-btn')).not.toBeInTheDocument();

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import userEvent from "@testing-library/user-event"
 import { screen } from "@testing-library/dom";
 import { cleanup } from "@testing-library/react";
-import type { SessionState } from "../../../types/session";
+import type { AuthState } from "../../../types/auth";
 import { renderWithProvider } from "../../../utils/test/testingLibraryCustom";
 import { SignupForm } from "./SignupForm";
 import { userDataFromAPI } from "../../../utils/test/dammyData/dammyState";
@@ -15,9 +15,10 @@ vi.mock('../../../utils/axios', () => {
   }
 })
 
-const loadingSessionState: SessionState = {
+const loadingSessionState: AuthState = {
   user: null,
   isAuthenticated: false,
+  csrfToken: null,
   loading: true,
   error: null,
 }
@@ -55,7 +56,7 @@ describe("SignupForm.tsx", () => {
 
     test("ロード中はLoading UIが表示", () => {
       renderWithProvider(<SignupForm />, {
-        preloadedState: { session: loadingSessionState },
+        preloadedState: { auth: loadingSessionState },
       })
       expect(screen.queryByTestId('loading-btn')).toBeInTheDocument()
       expect(screen.queryByTestId('新規登録')).not.toBeInTheDocument()

@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { AppDispatch, RootState } from "../../../reduxStore/store";
-import type { SessionState, SigninParams, SignupParams, User } from "../../../types/session";
+import type { AuthState, SigninParams, SignupParams, User, UserAndCsrfToken } from "../../../types/auth";
 import { clientCredentials } from "../../../utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { replaceSetting, resetSettingState } from "../../setting/Slices/settingSlice";
@@ -11,14 +11,15 @@ import { defaultRecords } from "../../records/defaultRecords";
 import { defaultTodos } from "../../todos/defaultTodos";
 import { devLog } from "../../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../../utils/errorHandler/axiosError";
-import { fetchWithTokenRefresh } from "../../../utils/fetch/fetchWithTokenRefresh";
+import { authFetch } from "../../../utils/fetch/authFetch";
 import { INVALID_REFRESH_TOKEN } from "../../../utils/apiErrors/errorMessages";
 import type { UserData } from "../../../types/dataFromAPI";
 import type { TermsRecords } from "../../../types/records";
 
-const initialState: SessionState = {
+const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  csrfToken: null,
   loading: false,
   error: null,
 }
@@ -27,7 +28,7 @@ const initialState: SessionState = {
 export const resetStateOfUser = () => (dispatch: AppDispatch) => {
   devLog('ログインユーザーに関するステートを削除');
   const resetThunks = [
-    resetSessionState(),
+    resetAuthState(),
     resetRecordsState(),
     resetSettingState(),
     resetTodosState(),
@@ -39,31 +40,37 @@ export const resetStateOfUser = () => (dispatch: AppDispatch) => {
 }
 
 export const signin = createAsyncThunk<
-  User,
+  UserAndCsrfToken,
   SigninParams,
   { rejectValue: string }
 >(
-  'session/signin',
+  'auth/signin',
   async(params, thunkAPI) => {
     try {
-      const res = await clientCredentials.post('/auth/signin', params);
-      devLog('signinのres.data: ', res.data);
+      const res = await clientCredentials().post('/auth/signin', params);
+      // devLog('signinのres.headers: ', res.headers);
+
       const { userData, recordsData } = res.data;
-      if (!userData) return thunkAPI.rejectWithValue('userData is null');
-      devLog('UserData:', userData);
+      const csrfToken = res.headers["x-csrf-token"];
+      if (!userData || !recordsData || !csrfToken) return thunkAPI.rejectWithValue('renponseData is lost');
+      // devLog('UserData:', userData);
+      // devLog('recordsData:', recordsData);
+      // devLog('csrfToken:', csrfToken);
 
       // 各スライスにデータを配分
       const setting = userData.setting || defaultSetting();
       const records = recordsData || defaultRecords();
-      const todos = userData.todos || defaultTodos()
-
-      thunkAPI.dispatch(replaceSetting(setting))
-      thunkAPI.dispatch(replaceRecords(records))
-      thunkAPI.dispatch(replaceTodos(todos))
+      const todos = userData.todos || defaultTodos();
+      thunkAPI.dispatch(replaceSetting(setting));
+      thunkAPI.dispatch(replaceRecords(records));
+      thunkAPI.dispatch(replaceTodos(todos));
 
       return {
-        email: userData.email,
-        name: userData.name,
+        user: {
+          email: userData.email,
+          name: userData.name,
+        },
+        csrfToken,
       }
     } catch(err) {
       const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログインに失敗しました');
@@ -73,29 +80,36 @@ export const signin = createAsyncThunk<
 )
 
 export const signup = createAsyncThunk<
-  User,
+  UserAndCsrfToken,
   SignupParams,
   { rejectValue: string }
->('session/signup', async(params, thunkAPI) => {
+>('auth/signup', async(params, thunkAPI) => {
   try {
-    const res = await clientCredentials.post('/auth/signup', params);
-    devLog('signupのres:', res);
-    const { userData, recordsData }: { userData?: UserData, recordsData?: TermsRecords } = res.data;
-    if (!userData) return thunkAPI.rejectWithValue('userData is null');
+    const res = await clientCredentials().post('/auth/signup', params);
+    // devLog('signupのres:', res);
 
-    devLog('UserData:', userData)
+    // responseデータを取得
+    const { userData, recordsData }: { userData?: UserData, recordsData?: TermsRecords } = res.data;
+    const csrfToken = res.headers["x-csrf-token"];
+    if (!userData || !recordsData || !csrfToken) return thunkAPI.rejectWithValue('renponseData is lost');
+    // devLog('UserData:', userData);
+    // devLog('recordsData:', recordsData);
+    // devLog('csrfToken:', csrfToken);
+
     // 各スライスにデータを配分
     const setting = userData.setting || defaultSetting();
     const records = recordsData || defaultRecords();
-    const todos = userData.todos || defaultTodos()
-
-    thunkAPI.dispatch(replaceSetting(setting))
-    thunkAPI.dispatch(replaceRecords(records))
-    thunkAPI.dispatch(replaceTodos(todos))
+    const todos = userData.todos || defaultTodos();
+    thunkAPI.dispatch(replaceSetting(setting));
+    thunkAPI.dispatch(replaceRecords(records));
+    thunkAPI.dispatch(replaceTodos(todos));
 
     return {
-      email: userData.email,
-      name: userData.name,
+      user: {
+        email: userData.email,
+        name: userData.name,
+      },
+      csrfToken,
     }
   } catch(err) {
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サインアップに失敗しました');
@@ -110,13 +124,13 @@ export const signout = createAsyncThunk<
     rejectValue: string,
     dispatch: AppDispatch,
   }
->('session/signout', async(_, thunkAPI) => {
+>('auth/signout', async(_, thunkAPI) => {
   try {
-    await fetchWithTokenRefresh('/auth/signout', 'get');
+    await authFetch('/auth/signout', 'delete');
     // 他のStateをリセット
-    thunkAPI.dispatch(replaceSetting(defaultSetting()))
-    thunkAPI.dispatch(replaceRecords(defaultRecords()))
-    thunkAPI.dispatch(replaceTodos(defaultTodos()))
+    thunkAPI.dispatch(replaceSetting(defaultSetting()));
+    thunkAPI.dispatch(replaceRecords(defaultRecords()));
+    thunkAPI.dispatch(replaceTodos(defaultTodos()));
   } catch(err) {
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
     if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
@@ -127,34 +141,67 @@ export const signout = createAsyncThunk<
   }
 })
 
+export const deleteUser = createAsyncThunk<
+  undefined,
+  undefined,
+  {
+    rejectValue: string,
+    dispatch: AppDispatch,
+  }
+>('auth/delete', async(_, thunkAPI) => {
+  try {
+    await authFetch("/users", "delete");
+    // 他のStateをリセット
+    thunkAPI.dispatch(replaceSetting(defaultSetting()));
+    thunkAPI.dispatch(replaceRecords(defaultRecords()));
+    thunkAPI.dispatch(replaceTodos(defaultTodos()));
+    return;
+  } catch(err) {
+    const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'ログアウトに失敗しました');
+
+    // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
+    if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
+      thunkAPI.dispatch(resetStateOfUser());
+    }
+
+    return thunkAPI.rejectWithValue(errorMessage);
+  }
+})
+
 // AccessTokenの検証エンドポイント。トップページマウント時に実行
 export const checkAuthToken = createAsyncThunk<
-  User,
+  UserAndCsrfToken,
   undefined,
   { rejectValue: string }
->('session/check', async(_, thunkAPI) => {
+>('auth/check', async(_, thunkAPI) => {
   try {
-    const res = await fetchWithTokenRefresh('/auth/check', 'get');
+    const res = await authFetch('/auth/check', 'get');
 
+    // レスポンスデータを取得
     const { userData, recordsData } = res.data;
-    if (!userData) return thunkAPI.rejectWithValue('userData is null');
+    const csrfToken = res.headers["x-csrf-token"];
+    if (!userData || !recordsData ||  !csrfToken) return thunkAPI.rejectWithValue('auth/check responseData is lost');
+    // devLog(csrfToken);
+    // devLog('userData:', userData);
+    // devLog('recordsData:', recordsData);
 
-    devLog('UserData:', userData)
-    // 各スライスにデータを配分
+    // 関連データをステートにセット
     const setting = userData.setting || defaultSetting();
-    const records = recordsData || defaultRecords;
-    const todos = userData.todos || defaultTodos
-
-    thunkAPI.dispatch(replaceSetting(setting))
-    thunkAPI.dispatch(replaceRecords(records))
-    thunkAPI.dispatch(replaceTodos(todos))
+    const todos = userData.todos || defaultTodos();
+    const records = recordsData || defaultRecords();
+    thunkAPI.dispatch(replaceSetting(setting));
+    thunkAPI.dispatch(replaceRecords(records));
+    thunkAPI.dispatch(replaceTodos(todos));
 
     return {
-      email: userData.email,
-      name: userData.name,
+      user: {
+        name: userData.name,
+        email: userData.email,
+      },
+      csrfToken,
     }
   } catch(err) {
-    devLog('session/checkのエラー：', err);
+    devLog('auth/checkのエラー：', err);
     const errorMessage = getAxiosErrorMessageFromStatusCode(err, 'サーバとの通信に失敗しました');
     devLog(errorMessage);
     return thunkAPI.rejectWithValue(errorMessage)
@@ -169,12 +216,12 @@ export const updateUser = createAsyncThunk<
     rejectValue: string,
     dispatch: AppDispatch,
   }
->('session/updateUser', async(params, thunkAPI) => {
+>('auth/updateUser', async(params, thunkAPI) => {
   try {
-    const res = await fetchWithTokenRefresh('/users', 'put', params);
+    const res = await authFetch('/users', 'put', params);
     return res.data;
   } catch(err) {
-    devLog('session/updateUserのエラー：', err);
+    devLog('auth/updateUserのエラー：', err);
     if (err instanceof Error && err.message === INVALID_REFRESH_TOKEN ) {
       // AccessTokenとRefreshTokenが期限切れの場合、ステートをリセット
       thunkAPI.dispatch(resetStateOfUser());
@@ -185,14 +232,15 @@ export const updateUser = createAsyncThunk<
   }
 });
 
-const sessionSlice = createSlice({
-  name: 'session',
+const authSlice = createSlice({
+  name: 'auth',
   initialState,
   reducers: {
     // トークンの有効期限切れの際にdispatch
-    resetSessionState: state => {
+    resetAuthState: state => {
       state.user = null;
       state.isAuthenticated = false;
+      state.csrfToken = null;
     },
   },
   extraReducers: builder => {
@@ -201,12 +249,10 @@ const sessionSlice = createSlice({
         state.loading = true;
         state.error = null
       })
-      .addCase(signin.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(signin.fulfilled, (state, action: PayloadAction<UserAndCsrfToken>) => {
         state.loading = false;
-        const name = action.payload?.name
-        const email = action.payload?.email
-        if(!name || !email) return
-        state.user = { name, email }
+        state.user = action.payload.user;
+        state.csrfToken = action.payload.csrfToken;
         state.isAuthenticated = true
       })
       .addCase(signin.rejected, (state, action) => {
@@ -218,13 +264,11 @@ const sessionSlice = createSlice({
         state.loading = true;
         state.error = null
       })
-      .addCase(signup.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(signup.fulfilled, (state, action: PayloadAction<UserAndCsrfToken>) => {
         state.loading = false;
-        const name = action.payload?.name;
-        const email = action.payload?.email;
-        if(!name || !email) return
-        state.user = { name, email }
-        state.isAuthenticated = true
+        state.user = action.payload.user;
+        state.csrfToken = action.payload.csrfToken;
+        state.isAuthenticated = true;
       })
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
@@ -239,8 +283,24 @@ const sessionSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
+        state.csrfToken = null;
       })
       .addCase(signout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unexpected error';
+      })
+      // ユーザー削除
+      .addCase(deleteUser.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.csrfToken = null;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Unexpected error';
       })
@@ -249,14 +309,16 @@ const sessionSlice = createSlice({
         state.loading = true;
         state.error = null
       })
-      .addCase(checkAuthToken.fulfilled, (state, action:PayloadAction<User>) => {
+      .addCase(checkAuthToken.fulfilled, (state, action:PayloadAction<UserAndCsrfToken>) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.csrfToken = action.payload.csrfToken;
         state.isAuthenticated = true;
       })
       .addCase(checkAuthToken.rejected, (state) => {
         state.loading = false;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
+        state.csrfToken = null;
       })
       // User情報更新
       .addCase(updateUser.pending, (state) => {
@@ -274,13 +336,14 @@ const sessionSlice = createSlice({
   }
 });
 
-export const selectSessionError = (state: RootState) => state.session.error
-export const selectSessionLoading = (state: RootState) => state.session.loading
-export const selectUser = (state: RootState) => state.session.user;
-export const selectAuthStatus = (state: RootState) => state.session.isAuthenticated
+export const selectSessionError = (state: RootState) => state.auth.error;
+export const selectSessionLoading = (state: RootState) => state.auth.loading;
+export const selectUser = (state: RootState) => state.auth.user;
+export const selectAuthStatus = (state: RootState) => state.auth.isAuthenticated;
+export const selectCsrdfToken = (state: RootState) => state.auth.csrfToken;
 
 export const {
-  resetSessionState,
-} = sessionSlice.actions;
+  resetAuthState,
+} = authSlice.actions;
 
-export const sessionReducer = sessionSlice.reducer;
+export const authReducer = authSlice.reducer;

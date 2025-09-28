@@ -3,7 +3,7 @@ import { Measure } from "./Measure";
 import type { SettingParams } from "../../../types/settingType";
 import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { replaceSetting, selectSetting, selectSettingState, updateSetting } from "../Slices/settingSlice";
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../auth/slices/authSlice";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import { devLog } from "../../../utils/logDev";
 import { LoadingSpans } from "../../../components/btn/LoadingSpans";

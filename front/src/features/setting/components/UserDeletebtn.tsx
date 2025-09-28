@@ -1,11 +1,10 @@
-import { useAppSelector } from "../../../reduxStore/hooks";
-import { clientCredentials } from "../../../utils/axios";
-import { devLog } from "../../../utils/logDev";
+import { useAppDispatch, useAppSelector } from "../../../reduxStore/hooks";
 import { toastErrorRB, toastSuccessRB } from "../../../utils/toast"
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { deleteUser, selectAuthStatus } from "../../auth/slices/authSlice";
 
 export function UserDeleteBtn() {
   const isAuth = useAppSelector(selectAuthStatus);
+  const dispatch = useAppDispatch();
 
   const handleClick = async() => {
     if(!isAuth) return;
@@ -14,8 +13,7 @@ export function UserDeleteBtn() {
     if (!confirm) return;
 
     try {
-      const res = await clientCredentials.delete('/users');
-      devLog(res)
+      await dispatch(deleteUser()).unwrap();
       toastSuccessRB('ユーザー情報を削除しました')
     } catch {
       toastErrorRB('ユーザー情報の削除に失敗しました');

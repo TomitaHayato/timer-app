@@ -5,9 +5,9 @@ import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';
 import { getAxiosErrorMessageFromStatusCode } from '../../utils/errorHandler/axiosError';
 import { sortTodosByDeadline, sortTodosByIsCompleted } from './utils/todosSort';
-import { fetchWithTokenRefresh } from '../../utils/fetch/fetchWithTokenRefresh';
+import { authFetch } from '../../utils/fetch/authFetch';
 import { INVALID_REFRESH_TOKEN } from '../../utils/apiErrors/errorMessages';
-import { resetStateOfUser } from '../session/slices/sessionSlice';
+import { resetStateOfUser } from '../auth/slices/authSlice';
 import { filterByDeadline } from './utils/todosFilter';
 
 const initialState: TodosState = {
@@ -21,11 +21,15 @@ export const createTodo = createAsyncThunk<
   TodoAddParams,
   {
     rejectValue: string,
+    state: RootState,
     dispatch: AppDispatch,
   }
 >('todos/create', async(params, thunkAPI) => {
   try {
-    const res = await fetchWithTokenRefresh('/todos', 'post', params);
+    const csrfToken = thunkAPI.getState().auth.csrfToken;
+    if (!csrfToken) throw new Error('csrfTokenがReduxストアにありません');
+    const res = await authFetch('/todos', 'post', params, undefined, csrfToken);
+
     const todos: Todos = res.data;
     if (!todos) return thunkAPI.rejectWithValue('todosの取得に失敗しました');
     return todos;
@@ -50,7 +54,7 @@ export const updateTodo = createAsyncThunk<
 >('todos/update', async(data, thunkAPI) => {
   const { params } = data;
   try {
-    const res = await fetchWithTokenRefresh(`/todos/${params.id}`, 'put', params);
+    const res = await authFetch(`/todos/${params.id}`, 'put', params);
     const todos: Todos = res.data;
     if (!todos) return thunkAPI.rejectWithValue('todosの取得に失敗しました');
     return todos;
@@ -72,7 +76,7 @@ export const deleteTodo = createAsyncThunk<
   }
 >('todos/delete', async(todoId, thunkAPI) => {
   try{
-    const res = await fetchWithTokenRefresh(`/todos/${todoId}`, 'delete');
+    const res = await authFetch(`/todos/${todoId}`, 'delete');
     const todos = res.data;
     if (!todos) return thunkAPI.rejectWithValue('todosの削除に失敗しました');
     return todos;
@@ -93,7 +97,7 @@ export const updateTodoIsCompleted = createAsyncThunk<
   }
 >('todos/isCompleted', async(todoId, thunkAPI) => {
   try {
-    const res = await fetchWithTokenRefresh(`/todos/${todoId}/is_completed`, 'put');
+    const res = await authFetch(`/todos/${todoId}/is_completed`, 'put');
     const todos = res.data;
     devLog('Todos取得', todos)
     if (!todos) return thunkAPI.rejectWithValue('todosの更新に失敗しました');

@@ -9,7 +9,7 @@ import { toastErrorRB, toastSuccessRB } from "../../../utils/toast";
 import type { PostRecordParams } from "../../../types/records";
 import { devLog } from "../../../utils/logDev";
 import { createRecord } from "../../records/recordsSlice";
-import { selectAuthStatus } from "../../session/slices/sessionSlice";
+import { selectAuthStatus } from "../../auth/slices/authSlice";
 import { useEffect, useState } from "react";
 
 export function useTimerHook() {

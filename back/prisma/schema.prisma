@@ -28,6 +28,7 @@ model User {
   records   Record[]
   passwordResetTokens PasswordResetToken[]
   authRefreshToken AuthRefreshToken?
+  csrfSecret CsrfSecret?
 }
 
 model Todo {
@@ -81,5 +82,12 @@ model PasswordResetToken {
   hashedToken String
   tokenExpiredIn DateTime
   userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CsrfSecret {
+  id String @id @default(uuid())
+  secret String
+  userId String @unique
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

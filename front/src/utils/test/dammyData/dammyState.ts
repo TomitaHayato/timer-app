@@ -1,4 +1,4 @@
-import type { SessionState, User } from "../../../types/session"
+import type { SessionState, User } from "../../../types/auth"
 import { defaultSetting } from "../../../features/setting/defaultSetting"
 import type { Todo, Todos, TodosState } from "../../../types/todoType"
 

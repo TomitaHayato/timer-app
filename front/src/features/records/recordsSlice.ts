@@ -4,9 +4,9 @@ import type { PostRecordParams, RecordsState, TermsRecords } from "../../types/r
 import type { AppDispatch, RootState } from "../../reduxStore/store";
 import { devLog } from "../../utils/logDev";
 import { getAxiosErrorMessageFromStatusCode } from "../../utils/errorHandler/axiosError";
-import { fetchWithTokenRefresh } from "../../utils/fetch/fetchWithTokenRefresh";
+import { authFetch } from "../../utils/fetch/authFetch";
 import { INVALID_REFRESH_TOKEN } from "../../utils/apiErrors/errorMessages";
-import { resetStateOfUser } from "../session/slices/sessionSlice";
+import { resetStateOfUser } from "../auth/slices/authSlice";
 
 const initialState: RecordsState = {
   records: defaultRecords(),
@@ -20,11 +20,15 @@ export const createRecord = createAsyncThunk<
   PostRecordParams,
   {
     rejectValue: string,
+    state: RootState,
     dispatch: AppDispatch,
   }
 >('records/create', async(params, thunkAPI) => {
   try {
-    const res = await fetchWithTokenRefresh('/records', 'post', params);
+    const csrfToken = thunkAPI.getState().auth.csrfToken;
+    if (!csrfToken) throw new Error('csrfTokenがReduxストアにありません');
+    const res = await authFetch('/records', 'post', params, {}, csrfToken);
+
     const records = res.data;
     if (!records.dailyRecord || !records.weeklyRecord || !records.monthlyRecord || !records.totalRecord) {
       return thunkAPI.rejectWithValue('Recordの取得に失敗しました');

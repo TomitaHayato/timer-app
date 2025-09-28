@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../../reduxStore/hooks";
-import { selectUser } from "../../session/slices/sessionSlice";
+import { selectUser } from "../../auth/slices/authSlice";
 
 type Props = {
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>,

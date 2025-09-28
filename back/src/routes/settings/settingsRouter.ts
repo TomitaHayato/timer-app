@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { authCheckMiddleware } from "../../middlewares/auth/auth";
-import { getSetting, postSetting, putSetting } from "../../controllers/settings/settings.controller";
+import { postSetting, putSetting } from "../../controllers/settings/settings.controller";
+import { verifyCsrfTokenMiddleware } from "../../middlewares/csrf/csrf";
+import { settingsPostValidator, settingsUpdateValidator } from "../../middlewares/validators/settingsValidator";
+import { handleValidationResult } from "../../middlewares/validators/handleValidationResult";
 
 const router = Router();
 
 router.use(authCheckMiddleware);
 
-// router.get('/', getSetting);
-router.post('/', postSetting);
-router.put('/', putSetting);
+router.post('/', verifyCsrfTokenMiddleware, settingsPostValidator, handleValidationResult, postSetting);
+router.put('/', settingsUpdateValidator, handleValidationResult, putSetting);
 
 export default router;

@@ -4,9 +4,9 @@ import type { AppDispatch, RootState } from '../../../reduxStore/store'
 import { defaultSetting } from '../defaultSetting'
 import { getAxiosErrorMessageFromStatusCode } from '../../../utils/errorHandler/axiosError'
 import { devLog } from '../../../utils/logDev'
-import { fetchWithTokenRefresh } from '../../../utils/fetch/fetchWithTokenRefresh'
+import { authFetch } from '../../../utils/fetch/authFetch'
 import { INVALID_REFRESH_TOKEN } from '../../../utils/apiErrors/errorMessages'
-import { resetStateOfUser } from '../../session/slices/sessionSlice'
+import { resetStateOfUser } from '../../auth/slices/authSlice'
 
 const initialState: SettingState = {
   setting: defaultSetting(),
@@ -31,7 +31,7 @@ export const updateSetting = createAsyncThunk<
     volume: Number(params.volume),
   }
   try {
-    const res = await fetchWithTokenRefresh('/settings', 'put', safeParams);
+    const res = await authFetch('/settings', 'put', safeParams);
     devLog('Setting更新成功：', res.data);
     return res.data
   } catch(err) {

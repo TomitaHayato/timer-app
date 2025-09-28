@@ -4,18 +4,21 @@ import { dataHash, hashCompare } from "../../utils/dataHash";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie, decodeJwt, setJwtInCookie, verifyJwt } from "../../utils/jwt";
 import { devLog } from "../../utils/dev/devLog";
-import { getUserDataSet } from "../../services/auth.service";
-import { deleteRefreshToken, getRefreshToken, getRefreshTokenByUserId } from "../../models/authRefreshToken/authRefreshToken";
+import { getUserAndRecords } from "../../services/auth.service";
+import { deleteRefreshToken, getRefreshToken } from "../../models/authRefreshToken/authRefreshToken";
 import { clearRefreshTokenFromCookie, setRefreshTokenInCookie } from "../../utils/refreshToken";
 import { TokenExpiredError } from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRE_ERROR, INVALID_REFRESH_TOKEN, INVALID_TOKEN_ERROR } from "../../utils/errorResponse";
 import { getRequestBody } from "../utils/getRequestBody";
 import { signinParams } from "../../types/auth";
 import { checkExpire } from "../../utils/date";
-import { createOrUpdateRefreshToken, refreshRefreshToken } from "../../services/authRefreshToken.service";
+import { refreshRefreshToken } from "../../services/authRefreshToken.service";
 import { createNewUserWithRelationRecords } from "../../services/user.service";
 import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { getJwtTokenFromCookie, getRefreshTokenFromCookie } from "../utils/getTokenFromCookie";
+import { createOrUpdateRefreshTokenAndCsrfSecret, deleteRefreshTokenAndCsrfSecret } from "../../services/refreshTokenAndCsrf.service";
+import { generateCsrfTokenAuto, setCsrfTokenToReponseHeader } from "../utils/csrf";
+import { getCsrfTokenAndSecret } from "../../services/csrf.service";
 
 // ユーザー作成 + Settingのデフォルト値作成
 export const signUp = async(req: Request, res: Response, next: NextFunction) => {
@@ -23,24 +26,21 @@ export const signUp = async(req: Request, res: Response, next: NextFunction) => 
 
   try {
     // 新しいUserと関連レコードをDBに追加
-    const newUser = await createNewUserWithRelationRecords({
+    const { user: newUser, refreshToken, csrfToken } = await createNewUserWithRelationRecords({
       name,
       email,
       hashedPassword: await dataHash(password),
     });
     devLog('作成されたUser：', newUser);
 
-    // 作成したリフレッシュトークンを取得
-    const authRefreshToken = await dbQueryHandler(getRefreshTokenByUserId, newUser.id);
-    if(!authRefreshToken) throw new Error("リフレッシュトークンが作成されていません");
-
     // リフレッシュトークンとアクセストークンをCookieにセット
-    setRefreshTokenInCookie(res, authRefreshToken.token);
+    setRefreshTokenInCookie(res, refreshToken);
     setJwtInCookie(res, newUser.id);
 
     // DBから作成したユーザーと関連レコードを取得
-    const userDataSet = await getUserDataSet(newUser.id);
-    res.status(201).json(userDataSet);
+    const userWithRelation = await getUserAndRecords(newUser.id);
+    setCsrfTokenToReponseHeader(res, csrfToken);
+    res.status(201).json(userWithRelation);
   } catch (err) {
     devLog('Signup処理のエラー：', err);
     next(err);
@@ -58,18 +58,27 @@ export const signIn = async(req: Request, res: Response, next: NextFunction) => 
     }
 
     // hashedPasswordカラムとpasswordのハッシュを比較
-    if (await hashCompare(password, user.hashedPassword)) {
-      const authRefreshToken = await createOrUpdateRefreshToken(user.id);
-
-      // リフレッシュトークンとアクセストークンをCookieにセット
-      setRefreshTokenInCookie(res, authRefreshToken.token);
-      setJwtInCookie(res, user.id);
-
-      const userDataSet = await getUserDataSet(user.id);
-      res.status(200).json(userDataSet);
-    } else {
-      res.status(401).json('ログインに失敗しました。')
+    if (!(await hashCompare(password, user.hashedPassword))) {
+      res.status(401).json('ログインに失敗しました。');
     }
+
+    // csrfトークン生成
+    const { secret, csrfToken } = await generateCsrfTokenAuto();
+
+    // csrf-secret, refreshTokenをDBに保存
+    const { 
+      refreshTokenRecord,
+    } = await dbQueryHandler(createOrUpdateRefreshTokenAndCsrfSecret, { userId: user.id, secret });
+
+    // リフレッシュトークンとアクセストークンをCookieにセット
+    setRefreshTokenInCookie(res, refreshTokenRecord.token);
+    setJwtInCookie(res, user.id);
+
+    const userWithRelation = await getUserAndRecords(user.id);
+
+    // レスポンスヘッダにcsrfTokenをセット
+    setCsrfTokenToReponseHeader(res, csrfToken);
+    res.status(200).json(userWithRelation);
   } catch(err) {
     devLog('ログイン失敗');
     res.status(422).json('ログインに失敗しました')
@@ -81,7 +90,7 @@ export const signOut = async(req: Request, res: Response, next: NextFunction) =>
     const userId = getUserIdFromJWT(req, res);
 
     // DBの認証データ削除
-    await dbQueryHandler(deleteRefreshToken, userId);
+    await dbQueryHandler(deleteRefreshTokenAndCsrfSecret, userId);
 
     // Cookieの認証データ削除
     clearJwtCookie(res);
@@ -109,8 +118,14 @@ export const tokenCheck = async (req: Request, res: Response) => {
     const userId = verifyJwt(token).userId;
     if (typeof userId !== "string") throw new Error;
 
-    const userDataSet = await getUserDataSet(userId);
-    res.status(200).json(userDataSet);
+    // JSONデータ取得
+    const userWithRelation = await getUserAndRecords(userId);
+
+    // csrfをヘッダにセット
+    const { csrfToken } = await getCsrfTokenAndSecret(userId);
+    setCsrfTokenToReponseHeader(res, csrfToken);
+
+    res.status(200).json(userWithRelation);
   } catch(err: unknown) {
     // 期限切れエラーの場合、特徴的なレスポンスを返す（クライアント側でRefreshTokenの検証に移行するため）
     if (err instanceof TokenExpiredError) {
@@ -157,11 +172,11 @@ export const tokensRefresh = async(req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    // refreshToken期限切れの場合、DB, Cookieから削除
+    // refreshToken期限切れの場合、DB・Cookieから削除 + csrfSecretも削除
     if (!checkExpire(refreshTokenInDB.expiresAt)) {
       devLog('tokensRefreshコントローラ', 'tokenが期限切れ');
+      await dbQueryHandler(deleteRefreshTokenAndCsrfSecret, userId);
       clearRefreshTokenFromCookie(res);
-      await dbQueryHandler(deleteRefreshToken, userId);
       res.status(401).json(INVALID_REFRESH_TOKEN);
       return
     }
