@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createSetting, getSettingByUserId, updateSetting } from "../../models/settings/settings";
 import { PostSettingParams } from "../../types/setting";
-import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
+import { getUserIdFromJWT } from "../../middlewares/utils/getUserIdFromJwt";
 import { devLog } from "../../utils/dev/devLog";
-import { getRequestBody } from "../utils/getRequestBody";
+import { getRequestBody } from "../../middlewares/utils/getRequestBody";
 
 export const getSetting = async(req: Request, res: Response, next: NextFunction) => {
   const userId = getUserIdFromJWT(req, res);

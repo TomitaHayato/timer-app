@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { getRequestBody } from "../utils/getRequestBody"
+import { getRequestBody } from "../../middlewares/utils/getRequestBody"
 import { emailForPasswordReset, passwordResetParams } from "../../types/passwordResetToken";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { getUserByEmail } from "../../models/users/users";

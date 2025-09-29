@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
+import { getUserIdFromJWT } from "../../middlewares/utils/getUserIdFromJwt";
 import { deleteUserById, updateUser } from "../../models/users/users";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { clearJwtCookie } from "../../utils/jwt";
 import { clearRefreshTokenFromCookie } from "../../utils/refreshToken";
 import { devLog } from "../../utils/dev/devLog";
 import { User, UserUpdateParams } from "../../types/user";
-import { getRequestBody } from "../utils/getRequestBody";
+import { getRequestBody } from "../../middlewares/utils/getRequestBody";
 
 export const deleteUser = async(req: Request, res: Response, next: NextFunction) => {
   try {

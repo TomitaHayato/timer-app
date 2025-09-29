@@ -2,7 +2,7 @@ import Csrf from "csrf";
 import { CsrfInfo } from "../../types/csrf";
 import { Request, Response } from "express";
 
-const CSRF_TOKEN_HEADER = "X-Csrf-Token";
+const CSRF_TOKEN_HEADER = "X-CSRF-TOKEN";
 
 export const generateCsrfTokenAuto = async(): Promise<CsrfInfo> => {
   const csrfInstance = new Csrf();

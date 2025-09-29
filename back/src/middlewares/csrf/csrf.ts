@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { getCsrfTokenFromReponseHeader, verifyCsrfToken } from "../../controllers/utils/csrf";
+import { getCsrfTokenFromReponseHeader, verifyCsrfToken } from "../utils/csrf";
 import { devLog } from "../../utils/dev/devLog";
-import { getUserIdFromJWT } from "../../controllers/utils/getUserIdFromJwt";
+import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
 import { getCsrfSecret } from "../../models/csrfSecret/csrfSecret.model";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 
