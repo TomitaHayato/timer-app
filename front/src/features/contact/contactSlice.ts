@@ -9,7 +9,7 @@ const initialState: ContactState = {
   error: null,
 }
 
-const sendContact = createAsyncThunk<
+export const sendContact = createAsyncThunk<
   void,
   ContactFormParams,
   { rejectValue: string }
@@ -18,8 +18,8 @@ const sendContact = createAsyncThunk<
     await client('/contact', { method: 'post', params });
     return;
   } catch(err) {
-    devLog(err);
-    thunkAPI.rejectWithValue("メールの送信に失敗しました");
+    devLog("メール送信失敗：", err);
+    return thunkAPI.rejectWithValue("メールの送信に失敗しました");
   }
 });
 
