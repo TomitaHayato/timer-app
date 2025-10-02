@@ -5,7 +5,7 @@ import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { getUserByEmail } from "../../models/users/users";
 import { dataHash } from "../../utils/dataHash";
 import { updateUserPasswordAndDeleteResetToken } from "../../models/passwordResetToken/passwordResetToken.model";
-import { EmailInfo } from "../../config/mailer/mailer";
+import { EmailInfo } from "../../types/mailer";
 import { passwordResetEmailBody } from "../../config/mailer/templates/password_reset/text_body.";
 import { passwordResetEmailHtmlBody } from "../../config/mailer/templates/password_reset/html_body";
 import { sendEmail } from "../../config/mailer/transporter";

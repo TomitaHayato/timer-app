@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer'
-import { EmailInfo } from './mailer'
+import { EmailInfo } from '../../types/mailer'
 import { devLog } from '../../utils/dev/devLog'
 
 const _transporter = nodemailer.createTransport({
