@@ -7,6 +7,7 @@ import { recordsReducer } from '../features/records/recordsSlice'
 import { visibleReducer } from '../features/display/visibleSlice'
 import { passwordResetReducer } from '../features/password_reset/redux/passwordResetSlice'
 import { openingReducer } from '../features/opening/openingSlice'
+import { contactReducer } from '../features/contact/contactSlice'
 
 const rootReducers = combineReducers({
   timer: timerReducer,
@@ -17,6 +18,7 @@ const rootReducers = combineReducers({
   visible: visibleReducer,
   passwordReset: passwordResetReducer,
   opening: openingReducer,
+  contact: contactReducer,
 })
 
 export const store = configureStore({ reducer: rootReducers })
