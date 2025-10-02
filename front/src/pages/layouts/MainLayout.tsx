@@ -5,6 +5,7 @@ import { changeVisible, selectSimpleBg, selectVisible, selectVisibleClass } from
 import { bgCustom } from "../../utils/class";
 import { selectSetting } from "../../features/setting/Slices/settingSlice";
 import { getBgImageClass } from "../../utils/staticFiles/imagePathMap";
+import { Footer } from "../../features/footer/components/Footer";
 
 export function MainLayout() {
   const { bgImage } = useAppSelector(selectSetting);
@@ -29,8 +30,10 @@ export function MainLayout() {
 
           <Outlet />
 
+          <div>
+            <Footer />
+          </div>
         </div>
-
       </div>
     </>
   )
