@@ -12,9 +12,10 @@ type Props = {
 }
 
 export const ContactForm = ({ modalId }: Props) => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormParams>();
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<ContactFormParams>();
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector(selectContactState);
+  const replyValue = watch("reply");
 
   const onSubmit = async(params: ContactFormParams) => {
     try {
@@ -46,7 +47,7 @@ export const ContactForm = ({ modalId }: Props) => {
           <p className="mb-2">返信は必要ですか？</p>
           <div className="flex gap-12 mb-6">
             <label>
-              <input type="radio" value="false" className="radio" {...register("reply")} />
+              <input type="radio" value="false" className="radio" {...register("reply")} defaultChecked />
               不要
             </label>
 
@@ -55,6 +56,14 @@ export const ContactForm = ({ modalId }: Props) => {
               必要
             </label>
           </div>
+
+          <p>返信先メールアドレス</p>
+          { replyValue === "true" && <FormErrorText errorText={ errors.email?.message }/> }
+          <input
+            type="email"
+            className="input mb-6"
+            {...register("email", replyValue === "true" ? { required: "返信先メールアドレスを入力してください" } : {} )}
+            disabled={replyValue === "false"}/>
 
           <p>本文</p>
           <FormErrorText errorText={ errors.body?.message }/>
