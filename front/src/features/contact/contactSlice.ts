@@ -15,7 +15,7 @@ export const sendContact = createAsyncThunk<
   { rejectValue: string }
 >("contact/send", async(params, thunkAPI) => {
   try {
-    await client('/contact', { method: 'post', params });
+    await client.post('/contact', params, { timeout: 5000 });
     return;
   } catch(err) {
     devLog("メール送信失敗：", err);
