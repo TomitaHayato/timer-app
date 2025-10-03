@@ -2,10 +2,9 @@ import { body } from "express-validator";
 
 export const todosPostValidator = [
   body('title')
-    .exists({values: 'null'})
+    .trim()
     .notEmpty()
     .isString()
-    .trim()
     .escape()
     .isLength({min: 1, max: 255}),
   body('deadline')
@@ -15,7 +14,6 @@ export const todosPostValidator = [
 
 export const todosUpdateValidator = [
   body('title')
-    .optional({ values: 'null' })
     .isString()
     .trim()
     .escape()
