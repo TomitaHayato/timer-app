@@ -4,12 +4,12 @@ import { getUserByEmail } from "../../models/users/users";
 
 export const userPostValidator = [
   body('name')
-    .optional({ values: 'null' })
+    .trim()
     .isString()
     .notEmpty()
     .escape(),
   body('email')
-    .optional({ values: 'null' })
+    .trim()
     .isString()
     .notEmpty()
     .isEmail()
@@ -21,12 +21,12 @@ export const userPostValidator = [
       return true;
     }),
   body('password')
-    .optional({ values: 'null' })
+    .trim()
     .isString()
     .notEmpty()
     .isLength({ min: 6 }),
   body('passwordConfirmation')
-    .optional({ values: 'null' })
+    .trim()
     .isString()
     .notEmpty()
     .isLength({ min: 6 })
@@ -39,12 +39,11 @@ export const userPostValidator = [
 
 export const signInValidator = [
   body('email')
-    .optional({ values: 'null' })
+    .trim()
     .notEmpty()
     .isString()
     .isEmail(),
   body('password')
-    .optional({ values: 'null' })
     .isString()
     .notEmpty(),
 ]

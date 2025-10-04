@@ -3,9 +3,9 @@ import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createTodo, deleteTodo, getTodoById, getUserTodos, updateTodo, updateTodoStatus } from "../../models/todos/todos";
 import { createTodoParams, updateTodoParams } from "../../types/todo";
 import { isEmptyObj } from "../../utils/object";
-import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
-import { getIdFromRequestURLParams } from "../utils/getIdFromRequestParams";
-import { getRequestBody } from "../utils/getRequestBody";
+import { getUserIdFromJWT } from "../../middlewares/utils/getUserIdFromJwt";
+import { getIdFromRequestURLParams } from "../../middlewares/utils/getIdFromRequestParams";
+import { getRequestBody } from "../../middlewares/utils/getRequestBody";
 
 // Todosを全件取得
 export const todosIndex = async(req: Request, res: Response, next: NextFunction) => {

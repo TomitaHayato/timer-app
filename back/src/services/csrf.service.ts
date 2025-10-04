@@ -1,4 +1,4 @@
-import { generateCsrfTokenAuto, generateCsrfTokenFromSecret } from "../controllers/utils/csrf";
+import { generateCsrfTokenAuto, generateCsrfTokenFromSecret } from "../middlewares/utils/csrf";
 import { createOrUpdateCsrfSecret, getCsrfSecret } from "../models/csrfSecret/csrfSecret.model";
 import { dbQueryHandler } from "../models/utils/queryErrorHandler";
 import { CsrfInfo } from "../types/csrf";

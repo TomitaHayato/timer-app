@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express"
-import { getRequestBody } from "../utils/getRequestBody"
+import { getRequestBody } from "../../middlewares/utils/getRequestBody"
 import { emailForPasswordReset, passwordResetParams } from "../../types/passwordResetToken";
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { getUserByEmail } from "../../models/users/users";
 import { dataHash } from "../../utils/dataHash";
 import { updateUserPasswordAndDeleteResetToken } from "../../models/passwordResetToken/passwordResetToken.model";
-import { EmailInfo } from "../../config/mailer/mailer";
+import { EmailInfo } from "../../types/mailer";
 import { passwordResetEmailBody } from "../../config/mailer/templates/password_reset/text_body.";
 import { passwordResetEmailHtmlBody } from "../../config/mailer/templates/password_reset/html_body";
 import { sendEmail } from "../../config/mailer/transporter";

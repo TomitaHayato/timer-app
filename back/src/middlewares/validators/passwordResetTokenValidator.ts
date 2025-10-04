@@ -2,12 +2,12 @@ import { body } from "express-validator";
 
 export const passwordResetTokenValidator = [
   body('password')
-    .optional({ values: 'null' })
+    .trim()
     .isString()
     .notEmpty()
     .isLength({ min: 6 }),
   body('passwordConfirmation')
-    .optional({ values: 'null' })
+    .trim()
     .isString()
     .notEmpty()
     .isLength({ min: 6 })

@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express"
 import { dbQueryHandler } from "../../models/utils/queryErrorHandler";
 import { createRecord } from "../../models/records/records";
 import { devLog } from "../../utils/dev/devLog";
-import { getUserIdFromJWT } from "../utils/getUserIdFromJwt";
-import { getRequestBody } from "../utils/getRequestBody";
+import { getUserIdFromJWT } from "../../middlewares/utils/getUserIdFromJwt";
+import { getRequestBody } from "../../middlewares/utils/getRequestBody";
 import { postRecordParams } from "../../types/record";
 import { getSummarizedRecords } from "../../services/records.service";
 
