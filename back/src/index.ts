@@ -30,4 +30,4 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 app.use(errorHander); // 共通のエラーハンドルMiddlewara
 
-app.listen(port, () => devLog(`サーバ起動 port:${port}`));
+app.listen(port, () => console.log("サーバ起動"));

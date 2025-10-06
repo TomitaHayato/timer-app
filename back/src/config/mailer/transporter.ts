@@ -15,10 +15,10 @@ const _transporter = nodemailer.createTransport({
 export const verifyEmailConnection = async() => {
   try {
     await _transporter.verify();
-    devLog('メール接続成功')
+    console.log('メール接続成功')
   } catch(err) {
     // 接続失敗でも、サーバは落とさない
-    devLog('メール接続失敗：', err);
+    console.log('メール接続失敗');
   }
 };
 
