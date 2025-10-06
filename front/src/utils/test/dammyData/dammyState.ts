@@ -1,4 +1,4 @@
-import type { SessionState, User } from "../../../types/auth"
+import type { AuthState, User } from "../../../types/auth"
 import { defaultSetting } from "../../../features/setting/defaultSetting"
 import type { Todo, Todos, TodosState } from "../../../types/todoType"
 
@@ -9,10 +9,11 @@ const _createDammyUser = (userStatus?: User): User => {
   }
 }
 
-export const loggedInSessionState = (): SessionState => {
+export const loggedInSessionState = (): AuthState => {
   return {
     user: _createDammyUser(),
     isAuthenticated: true,
+    csrfToken: null,
     loading: false,
     error: null,
   }

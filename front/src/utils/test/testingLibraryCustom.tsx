@@ -20,7 +20,7 @@ export const renderWithProvider = (ui: React.ReactNode, options: { preloadedStat
 export const renderWithProviderLoggedIn = (ui: React.ReactNode, options: { preloadedState?: Partial<RootState>, store?: AppStore}): void => {
   const { preloadedState, store } = options;
   const storeInstance = store || setupStore({
-    session: loggedInSessionState(),
+    auth: loggedInSessionState(),
     ...preloadedState,
   });
 
