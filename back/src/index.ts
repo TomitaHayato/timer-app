@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express'
+import express, { Request, Response } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import routers from './routes/index'
@@ -21,12 +21,13 @@ app.use(helmet());
 
 verifyEmailConnection(); // メールサーバ接続
 
-app.use('/api', routers);
-
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
+// ヘルスチェック用エンドポイント
+app.get('/', (req: Request, res: Response) => {
   devLog('リクエスト', req.method, req.hostname);
-  res.status(200).send('終了');
+  res.status(200).end();
 });
+
+app.use('/api', routers);
 
 app.use(errorHander); // 共通のエラーハンドルMiddlewara
 
