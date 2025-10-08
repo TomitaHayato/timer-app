@@ -38,29 +38,25 @@ export default function TodoCreateForm() {
     <>
       { errors.title?.message && <p className="text-error text-start">{errors.title.message}</p> }
       { !isAuth && <p className="text-error">ログインが必要です</p> }
-      <form className="join join-vertical w-full" onSubmit={ handleSubmit(onSubmit) }>
-        <div className="join w-full">
-          <input
-            className="input join-item rounded-l-xl"
-            placeholder="Title"
-            { ...register('title', {
-              required: '! Titleを入力してください',
-              maxLength: {
-                value: 255,
-                message: "255文字以内で入力してください",
-              }
-            })}/>
-
-          { <input type="submit" value='作成' className="join-item btn btn-info rounded-r-xl" disabled={!isAuth || loading}/> }
-        </div>
+      <form className="flex flex-col items-center w-full" onSubmit={ handleSubmit(onSubmit) }>
+        <input
+          className="input rounded-xl mb-4"
+          placeholder="Title"
+          { ...register('title', {
+            required: '! Titleを入力してください',
+            maxLength: {
+              value: 255,
+              message: "255文字以内で入力してください",
+            }
+          })}/>
 
         {/* 期限を指定 */}
-        <div className="flex justify-start mt-0.5 w-1/2">
-          <button type="button" popoverTarget="rdp-popover" className="input input-sm px-6 rounded-xl" style={{ anchorName: "--rdp" } as React.CSSProperties}>
+        <div className="flex justify-start mt-0.5 w-1/2 mb-4">
+          <button type="button" popoverTarget="day-picker" className="input rounded-xl" style={{ anchorName: "--date-form" } as React.CSSProperties}>
             {deadline ? dayjs(deadline).format('YYYY年 MM月DD日') : "Todoの期限を指定"}
           </button>
 
-          <div popover="auto" id="rdp-popover" className="dropdown" style={{ positionAnchor: "--rdp" } as React.CSSProperties}>
+          <div popover="auto" id="day-picker" className="dropdown" style={{ positionAnchor: "--date-form" } as React.CSSProperties}>
             <DayPicker
               className="react-day-picker text-base"
               mode="single"
@@ -68,6 +64,8 @@ export default function TodoCreateForm() {
               onSelect={setDeadline} />
           </div>
         </div>
+
+        <input type="submit" value='作成' className="btn btn-wide btn-info" disabled={!isAuth || loading}/>
       </form>
     </>
   )
