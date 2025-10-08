@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import type { Todo, TodoAddParams, Todos, TodosState, TodoUpdateParams } from '../../types/todoType'
+import type { Todo, TodoAddParams, TodoIsCompletedUpdateParams, Todos, TodosState, TodoUpdateParams } from '../../types/todoType'
 import type { AppDispatch, RootState } from '../../reduxStore/store';
 import { defaultTodos } from './defaultTodos';
 import { devLog } from '../../utils/logDev';
@@ -90,14 +90,14 @@ export const deleteTodo = createAsyncThunk<
 
 export const updateTodoIsCompleted = createAsyncThunk<
   Todos,
-  string,
+  { id: string, params: TodoIsCompletedUpdateParams },
   {
     rejectValue: string,
     dispatch: AppDispatch,
   }
->('todos/isCompleted', async(todoId, thunkAPI) => {
+>('todos/isCompleted', async({ id, params }, thunkAPI) => {
   try {
-    const res = await authFetch(`/todos/${todoId}/is_completed`, 'put');
+    const res = await authFetch(`/todos/${id}/is_completed`, 'put', params);
     const todos = res.data;
     devLog('Todos取得', todos)
     if (!todos) return thunkAPI.rejectWithValue('todosの更新に失敗しました');

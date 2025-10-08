@@ -38,6 +38,7 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
   const userId = getUserIdFromJWT(req, res);
 
   const todoId: string = req.params.id;
+  const { newIsCompleted } = getRequestBody<{newIsCompleted: boolean}>(req, res);
   if(!todoId) {
     res.status(422).json('無効なリクエストです');
     return;
@@ -50,9 +51,8 @@ export const updateTodosStatus = async(req: Request, res: Response, next: NextFu
       res.status(422).json('無効なリクエストです');
       return;
     }
-    const statusNow: boolean = todo.isCompleted;
     // 更新処理（isCompletedを反転）
-    await dbQueryHandler(updateTodoStatus, { userId, todoId, newStatus: !statusNow });
+    await dbQueryHandler(updateTodoStatus, { userId, todoId, newIsCompleted: newIsCompleted });
     // 最新状態を返す
     const todos = await dbQueryHandler(getUserTodos, userId);
     res.status(200).json(todos);

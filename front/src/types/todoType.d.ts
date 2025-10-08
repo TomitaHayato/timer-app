@@ -17,6 +17,10 @@ export type TodoUpdateParams = {
   deadline?: Date,
 }
 
+export type TodoIsCompletedUpdateParams = {
+  newIsCompleted: boolean
+}
+
 export type Todos = Todo[]
 
 export type TodosState = {

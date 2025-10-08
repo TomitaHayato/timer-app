@@ -13,7 +13,7 @@ export function TodoCompleteBtn({ id }: Props) {
   const handleClick = async() => {
     try {
       // dispatch
-      await dispatch(updateTodoIsCompleted(id)).unwrap();
+      await dispatch(updateTodoIsCompleted({ id, params: { newIsCompleted: true } })).unwrap();
       toastSuccessRB('Todoを完了しました', { autoClose: 2000 })
     } catch {
       const errorMessage = error || 'Todoの更新に失敗しました'

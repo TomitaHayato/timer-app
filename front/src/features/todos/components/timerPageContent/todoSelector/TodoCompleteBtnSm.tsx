@@ -14,7 +14,7 @@ export function TodoCompleteBtnSm({ id, setTodoId }: Props) {
   const handleClick = async() => {
     try {
       // dispatch
-      await dispatch(updateTodoIsCompleted(id)).unwrap();
+      await dispatch(updateTodoIsCompleted({ id, params: { newIsCompleted: true } })).unwrap();
       setTodoId(null)
       toastSuccessRB('Todoを完了しました', { autoClose: 2000 });
     } catch {
